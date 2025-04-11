@@ -35,6 +35,22 @@
     </div>
   </ng-template>
 </p-toast>
+<p-toast position="center" key="petty" (onClose)="onReject()" [modal]="true" [autoZIndex]="true">
+    <ng-template let-message pTemplate="message">
+        <div style="text-align: center">
+            <i class="pi pi-exclamation-triangle" style="font-size: 3em"></i>
+            <h3>{{message.summary}}</h3>
+            <p>{{message.detail}}</p>
+        </div>
+
+        <div class="ui-g ui-fluid">
+            <div class="ui-g-12 pull-right">
+                <button type="button" pButton (click)="onRejectpetty()" label="Ok" class="ui-button-secondary"></button>
+            </div>
+        </div>
+
+    </ng-template>
+</p-toast>
 
 <div class="row">
   <div class="col-xs-12">
@@ -54,7 +70,9 @@
                             </div>
                             <div class="col-sm-3">
                                 <label class="control-label">CostCentre <sup class="text-danger">*</sup></label>
-                                <select class="form-control" name="CostCenID" #CostCenID="ngModel" [(ngModel)]="objsearch.Cost_Cen_ID" [ngClass]="{'clearance': searchFormSubmit && CostCenID?.errors?.required}" required>
+                                <select class="form-control" name="CostCenID" #CostCenID="ngModel" [(ngModel)]="objsearch.Cost_Cen_ID"
+                                 [attr.disabled]="($CompacctAPI.CompacctCookies.User_Type != 'A') ? true : null"
+                                 [ngClass]="{'clearance': searchFormSubmit && CostCenID?.errors?.required}" required>
                                           <option  [ngValue]="undefined">Select</option>
                                    <option *ngFor = "let option of costCenterList" [value] ="option.Cost_Cen_ID">
                                       {{option.Cost_Cen_Name}}
@@ -113,22 +131,22 @@
                                                   </a>
                                                 </li>
                                                 <li>
-                                                    <a (click)="Print(col)">
-                                                        <i class="fa fa-fw fa-print"></i> Print
-                                                    </a>
-                                                </li>
-                                                <li>
-                                                    <a (click)="DeleteJournal(col)">
-                                                        <i class="fa fa-fw fa-trash" aria-hidden="true"></i>
-                                                        Delete
-                                                    </a>
-                                                </li>
-                                                <li>
                                                     <a (click)="CopyJournal(col)">
                                                         <i class="fa fa-fw fa-files-o" aria-hidden="true"></i>
                                                         Copy Voucher
                                                     </a>
                                                 </li> -->
+                                                <li>
+                                                    <a (click)="Print(col)">
+                                                        <i class="fa fa-fw fa-print"></i> Print
+                                                    </a>
+                                                </li>
+                                                <li *ngIf="$CompacctAPI.CompacctCookies.Del_Right === 'Y'">
+                                                    <a (click)="DeleteVoucher(col)">
+                                                        <i class="fa fa-fw fa-trash" aria-hidden="true"></i>
+                                                        Delete
+                                                    </a>
+                                                </li>
                                             </ul>
                                         </div>
                                     </td>
@@ -167,6 +185,8 @@
                                 name="Cost_Cen_ID_Trn"
                                 #Cost_Cen_ID_Trn="ngModel"
                                [(ngModel)]="objpettyCash.Cost_Cen_ID_Trn"
+                               (change)="GetBalance()"
+                               [disabled]="$CompacctAPI.CompacctCookies.User_Type != 'A'"
                                [ngClass]="{'clearance': pettyCashFormSubmit && Cost_Cen_ID_Trn?.errors?.required}"
                                 required
                                 >
@@ -181,19 +201,19 @@
                                 <div class="col-sm-4">
                                     <label class="control-label">Ledger &nbsp;<span class="text-danger">*</span></label>
                                     <p-dropdown [options]="LedgerList"
-                                     name="Ledger_ID" 
-                                     [(ngModel)]="objpettyCash.Ledger_ID"
-                                    [showClear]="true" 
-                                    [emptyFilterMessage]="' No Ledger Found'"
-                                     (onChange)="changesubLedgertop(objpettyCash.Ledger_ID)"
-                                    [filter]="true" 
-                                    filterBy="label,value"
-                                     [resetFilterOnHide]="true"
-                                    [placeholder]="'Select Ledger'" 
-                                    [virtualScroll]="true"
-                                     #Ledger_ID="ngModel"
-                                    [styleClass]="pettyCashFormSubmit && Ledger_ID.errors?.required ? 'clearance': ''" 
-                                    required>
+                                        name="Ledger_ID" 
+                                        [(ngModel)]="objpettyCash.Ledger_ID"
+                                        [showClear]="true" 
+                                        [emptyFilterMessage]="' No Ledger Found'"
+                                        (onChange)="changesubLedgertop(objpettyCash.Ledger_ID)"
+                                        [filter]="true" 
+                                        filterBy="label,value"
+                                        [resetFilterOnHide]="true"
+                                        [placeholder]="'Select Ledger'" 
+                                        [virtualScroll]="true"
+                                        #Ledger_ID="ngModel"
+                                        [styleClass]="pettyCashFormSubmit && Ledger_ID.errors?.required ? 'clearance': ''" 
+                                        required>
                                 </p-dropdown>
                                 </div>
                                 <div class="col-sm-4" >
@@ -202,8 +222,9 @@
                                             name="Balance"
                                             #Balance="ngModel"
                                             [(ngModel)]="objpettyCash.Balance"
-                                            placeholder="1000"
-                                            disabled>
+                                            placeholder="Balance"
+                                            disabled="true"
+                                            [ngClass]="(objpettyCash.Balance < 0) ? 'text-red' : 'text-blue'">
                                 </div>
                                 <div class="col-sm-4" >
                                
@@ -218,13 +239,16 @@
                                 <label class="control-label">Expense Head Ledger &nbsp;<span class="text-danger">*</span></label>
                                 <p-dropdown [options]="ExpenseHeadLedgerList" 
                                 name="Ledger_ID_lower"
+                                #Ledger_ID_lower="ngModel"
+                                [(ngModel)]="objpettyCashLower.Ledger_ID"
                                 [showClear]="true" 
                                 [emptyFilterMessage]="' No Ledger Found'"
                                 [filter]="true" 
                                 filterBy="label,value"
-                                 [resetFilterOnHide]="true"
+                                [resetFilterOnHide]="true"
                                 [placeholder]="'Select Ledger'" 
                                 [virtualScroll]="true" itemSize="30" 
+                                [styleClass]="pettyCashlowerFormSubmit && Ledger_ID_lower.errors?.required ? 'clearance': ''" 
                                 required>
                                 </p-dropdown>
                             </div>
@@ -232,32 +256,41 @@
                                 <label class="control-label">Amount<sup class="text-danger">*</sup></label>
                                     <input class="form-control"
                                             name="Amountlower"
+                                            #Amountlower="ngModel"
+                                            [(ngModel)]="objpettyCashLower.Amount"
                                             placeholder="Amount"
                                             CompacctDigitonly="true"
+                                            [ngClass]="{'clearance': pettyCashlowerFormSubmit && Amountlower?.errors?.required}"
                                             required>
                             </div>
                             <div class="col-sm-3">
-                                <label class="control-label">Bill/Ref No<sup class="text-danger">*</sup></label>
+                                <label class="control-label">Bill/Ref No<sup class="text-danger"></sup></label>
                                 <input class="form-control"
                                         name="BillRefNo"
-                                        placeholder="Bill/Ref No"
-                                        required>
+                                        #BillRefNo="ngModel"
+                                        [(ngModel)]="objpettyCashLower.bill_ref_no_for_petty"
+                                        placeholder="Bill/Ref No">
                             </div>
                             <div class="col-sm-3">
-                                <label class="control-label">Bill Date<sup class="text-danger">*</sup></label>
+                                <label class="control-label">Bill Date<sup class="text-danger"></sup></label>
                                  <ejs-datepicker  [(value)]="billdata" [format]="'dd/MMM/yyyy'" ></ejs-datepicker>
                             </div>
                         </div>
                         <div class="form-group">
                             <div class="col-sm-3">
-                                <label class="control-label">Remarks<sup class="text-danger"></sup></label>
+                                <label class="control-label">Remarks<sup class="text-danger">*</sup></label>
                                 <textarea class="form-control" 
                                 name="Remarks" 
+                                #Remarks="ngModel"
+                                [(ngModel)]="objpettyCashLower.remarks_for_petty"
                                  rows="2"
-                                 placeholder="Naration"></textarea>
+                                 placeholder="Naration"
+                                 [ngClass]="{'clearance': pettyCashlowerFormSubmit && Remarks?.errors?.required}"
+                                 required></textarea>
                             </div>
                             <div class="col-sm-2" >
-                                <button style="margin-top: 28px;margin-left: 15px;" class="btn btn-primary pull-left" >
+                                <button style="margin-top: 28px;margin-left: 15px;" class="btn btn-primary pull-left" 
+                                (click)="AddDetails(pettyCashlowerForm.form.valid)">
                                     <span class="glyphicon glyphicon-plus"></span>Add
                                 </button>
 
@@ -275,20 +308,34 @@
                                     <th>Bill/Ref</th>
                                     <th>Bill/Ref Date</th>
                                     <th>Remarks</th>
+                                    <th></th>
                                </tr>
                           </thead>
                           <tbody>
-                            <!-- <tr  *ngFor="let col of lowerList; let i = index" >
+                            <tr  *ngFor="let col of lowerList; let i = index" >
                                 <td>{{i + 1}}</td>
-                                <td>{{col.Cost_Cen_Name}}</td>
-                                <td>{{col.Ledger_Name}}</td>
+                                <td>{{col.Ledger_Name ? col.Ledger_Name : ''}}</td>
                                 <td>{{col.DR_Amt ? col.DR_Amt : ''}}</td>
+                                <td>{{col.bill_ref_no_for_petty ? col.bill_ref_no_for_petty : ''}}</td>
+                                <td>{{col.bill_ref_date_petty ? (col.bill_ref_date_petty | date : 'dd/MMM/yyyy') : ''}}</td>
+                                <td>{{col.remarks_for_petty ? col.remarks_for_petty : ''}}</td>
                                 <td><button (click)="DeleteProduct(i)" class="btn danger"><i class="fa fa-trash"></i></button></td>
-                            </tr> -->
+                            </tr>
+                            <tr *ngIf="lowerList.length" >
+                                <td  nowrap colspan="7" style="text-align: left; font-weight: 600;" ><span>Total Amount :</span> {{GetTotalCrAmt()}} &nbsp;&nbsp;&nbsp;<span>Total Balance : </span> <span [ngClass]="(objpettyCash.Balance < 0) ? 'text-red' : 'text-blue'">{{objpettyCash.Balance}}</span></td>
+                            </tr>
                           </tbody>
                         </table>
                     </div> 
-
+                    <div class="box-footer">
+                        <button class="btn btn-primary pull-right"
+                                (click)="SavePettyCash(pettyCashForm.form.valid)"
+                                id="load"
+                                [disabled]="Spinner">
+                                <p-progressSpinner *ngIf="Spinner" [style]="{width: '15px', height: '15px'}" strokeWidth="8"  animationDuration=".5s"></p-progressSpinner>
+                            <span *ngIf="!Spinner" class="glyphicon glyphicon-save"></span>{{buttonname}}
+                        </button>
+                    </div>
                 </p-tabPanel>
             </p-tabView>
 
