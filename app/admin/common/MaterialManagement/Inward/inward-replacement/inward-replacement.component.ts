@@ -21,9 +21,9 @@ export class InwardReplacementComponent implements OnInit {
   tabIndexToView = 0;
   buttonname = 'Create';
   Spinner = false;
-  items = [];
-  cols = [];
-  menuList = [];
+  items:any[] = [];
+  cols:any[] = [];
+  menuList:any[] = [];
   DocDate = new Date();
   expDate: any;
   replacementForm: FormGroup;
@@ -49,6 +49,7 @@ export class InwardReplacementComponent implements OnInit {
   searchData:any[] = [];
   dataNotFound: boolean = false;
   delete_doc_No:any={};
+  databaseName: any;
 
   constructor(
     private $http: HttpClient ,
@@ -67,6 +68,7 @@ export class InwardReplacementComponent implements OnInit {
     }
 
   ngOnInit() {
+    this.getDatabase();
     this.items = [ 'BROWSE', 'CREATE'];
     this.menuList = [
       {label: 'Edit', icon: 'pi pi-fw pi-user-edit'},
@@ -76,7 +78,6 @@ export class InwardReplacementComponent implements OnInit {
         'Header' : 'Inward Replacement',
         'Link' : 'Material Management -> Inward -> Inward Replacement'
       });
-
     const date = this.DateService.dateConvert(moment(new Date, 'YYYY-MM-DD')['_d']).split('/') ;
     const add2Year = Number(date[2]) + 2;
     this.expDate = date[0] + '/' + date[1] + '/' + add2Year;
@@ -129,7 +130,7 @@ export class InwardReplacementComponent implements OnInit {
       Supp_Ref_No: [''],
       Supp_Ref_Date: [''],
 
-      Type_ID: [97],
+      Type_ID: this.databaseName === "GN_Meenakshi_Delhi" ? [102] : [97],
       CN_Date: [''],
       Product_ID:[''],
       Replacement_Against:[''],
@@ -160,6 +161,15 @@ export class InwardReplacementComponent implements OnInit {
     this.getCurrency();
   }
 
+  getDatabase(){
+    this.$http
+        .get("/Common/Get_Database_Name",
+        {responseType: 'text'})
+        .subscribe((data: any) => {
+          this.databaseName = data;
+          console.log("databaseName===",data)
+        });
+  }
   getDateRange(dateRangeObj) {
     if (dateRangeObj.length) {   
       this.searchForm.get('From_Txn_Date').setValue(dateRangeObj[0]);
@@ -740,7 +750,7 @@ delete (delete_doc_No) {
     this.tabIndexToView = e.index;
     this.items = [ 'BROWSE', 'CREATE'];
     this.buttonname = 'Create';
-   this.clearData();
+    this.clearData();
   }
   clearData() {
       this.Spinner = false;
@@ -760,8 +770,12 @@ delete (delete_doc_No) {
       // this.dataNotFound = false;   
       this.replacementForm.get('Cost_Cen_ID').setValue(this.$CompacctAPI.CompacctCookies.Cost_Cen_ID);
       this.getCostCenterDetails();
-      this.replacementForm.get('Currency_ID').setValue(1);       
-      this.replacementForm.get('Type_ID').setValue(97);
+      this.replacementForm.get('Currency_ID').setValue(1);   
+      if(this.databaseName === "GN_Meenakshi_Delhi"){
+        this.replacementForm.get('Type_ID').setValue(102);
+      } else {
+        this.replacementForm.get('Type_ID').setValue(97);
+      }
       this.replacementForm.get('UOM').setValue('PCS');
   }
 }

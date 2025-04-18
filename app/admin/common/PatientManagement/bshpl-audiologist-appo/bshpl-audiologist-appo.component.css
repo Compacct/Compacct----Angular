@@ -1,5 +1,6 @@
 
 div.label-t {
+  min-height: 32px !important;
   padding: 6px 12px;
   background: rgb(206 216 216 / 51%);
 }
@@ -49,10 +50,6 @@ textarea.form-control {
   background-color: #3c8dbc !important;
 }
 
-div.label-t {
-  padding: 6px 12px;
-  background: rgb(206 216 216 / 51%);
-}
 .input-group .input-group-addon {
   border-radius: 0;
   border-color: #d2d6de;

@@ -1,0 +1,61 @@
+div.table-responsive.table-id>p-table>div>div {
+    width: auto !important;
+}
+div.table-responsive1.table-id>p-table>div>div {
+    width: 50% !important;
+    border: 1px solid black !important;
+}
+body .ui-table .ui-table-tbody > tr > td {
+    border: 1px solid rgb(255, 255, 255) !important;
+}
+#borderstyle {
+    border: 1px solid black !important;
+}
+.ui-table-auto-layout > .ui-table-wrapper{
+    width: auto !important;
+}
+.box-body {
+    padding-top: 10px !important;
+    padding-left: 10px !important;
+}
+.pull-right {
+    float: right!important;
+}
+
+.custombutton {
+    margin-top: 27px;
+}
+
+.text-red-active > td {
+    color:red;
+}
+div.label-t {
+    padding: 6px 12px;
+    background: rgb(206 216 216 / 51%);
+}
+p:link {
+    color: black;
+    background-color: transparent;
+    text-decoration: none;
+    cursor: pointer;
+  }
+p:hover {
+    color: rgb(64, 110, 227);
+    background-color: transparent;
+    text-decoration: underline;
+    cursor: pointer;
+  }
+.custombutton1 {
+    margin-left: 90px;
+}
+.custombutton2 {
+    margin-top: -16px;
+}
+body .ui-tabview.ui-tabview-top .ui-tabview-nav {
+    border-bottom: 1px solid #c1c1c1 !important;
+    margin-bottom: 0px;
+}
+.text-link-active {
+    cursor: pointer;
+    color: rgb(64, 110, 227);
+}

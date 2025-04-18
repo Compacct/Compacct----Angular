@@ -195,7 +195,7 @@
             <label>Date:</label>&nbsp; {{Doc_date}}
 
         </div> -->
-        <div class="col-sm-12" *ngIf="databaseName != 'GN_JOH_HR'">
+        <div class="col-sm-12" *ngIf="databaseName != 'GN_CCSAHA_Kolkata'">
             <label>Attendance Type <sup class="text-danger">*</sup></label>&nbsp;
             <select name="attentype" #attentype="ngModel" [(ngModel)]="Atten_Type" [ngClass]="{'clearance': attendancetypeFormSubmitted && attentype?.errors?.required}" required>
            <option  [ngValue]="undefined">Select</option>
@@ -204,14 +204,15 @@
             </option>
            </select>
         </div>
-        <div class="col-sm-12" *ngIf="databaseName === 'GN_JOH_HR'">
+        <div class="col-sm-12" *ngIf="databaseName === 'GN_CCSAHA_Kolkata'">
             <label>Attendance Type <sup class="text-danger">*</sup></label>&nbsp;
-            <select name="attentype" #attentype="ngModel" [(ngModel)]="Atten_Type" [ngClass]="{'clearance': attendancetypeFormSubmitted && attentype?.errors?.required}" required>
+            <select name="attentype" #attentype="ngModel" [(ngModel)]="Atten_Type" (change)="GetBalance()" [ngClass]="{'clearance': attendancetypeFormSubmitted && attentype?.errors?.required}" required>
            <option  [ngValue]="undefined">Select</option>
            <option *ngFor = "let option of AttenTypelist" value="{{option.Atten_Type_ID}}">
              {{option.Atten_Type}}
             </option>
-           </select>
+           </select> &nbsp;
+           <div *ngIf="Atten_Type == 6 || Atten_Type == 8 || Atten_Type == 9" style="padding: 6px 12px; margin-left: 115px; width: 80px; background: rgb(206 216 216 / 51%);">{{Balance ? Balance : "-"}}</div>
         </div>
     </form>
         <hr>

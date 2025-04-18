@@ -45,6 +45,7 @@ export class MasterProductHearingComponent implements OnInit {
   rangeList:any[]= [];
   betteryList:any[]= [];
   editProductList:any[] =[];
+  databaseName: any;
 
   ObjProduct = new Product();
   @ViewChild('fileInput' , { static: false}) fileInput: FileUpload;
@@ -70,6 +71,9 @@ export class MasterProductHearingComponent implements OnInit {
     this.getProductType();
   }
   // INIT DATA
+
+
+
   GetCategory() {
     this.$http.get('/Master_Product_Category/GetAllData').subscribe((data: any) => {
       this.ProductCategoryLists = data ? data : [];

@@ -448,7 +448,7 @@ export class JohDailyAttendanceComponent implements OnInit {
       Date : this.DateService.dateConvert(new Date(this.Daily_Atten_Date))
     }
     if(valid){
-    // if(this.Balance != 0){ 
+    if(this.Balance != 0){ 
     if(isleave === true) {
       const obj = {
         "SP_String": "SP_Leave_Application",
@@ -475,16 +475,16 @@ export class JohDailyAttendanceComponent implements OnInit {
     else {
       this.SaveAttendanceType();
     }
-    // }
-    // else{
-    //   this.compacctToast.clear();
-    //   this.compacctToast.add({
-    //     key: "compacct-toast",
-    //     severity: "error",
-    //     summary: "Warn Message",
-    //     detail: "Leave can not apply. "
-    //   });
-    // }
+    }
+    else{
+      this.compacctToast.clear();
+      this.compacctToast.add({
+        key: "compacct-toast",
+        severity: "error",
+        summary: "Warn Message",
+        detail: "Leave can not apply. "
+      });
+    }
     }
   }
   SaveAttendanceType(){

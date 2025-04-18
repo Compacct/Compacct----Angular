@@ -63,7 +63,7 @@ export class MasterCostCenterComponent implements OnInit {
   @ViewChild("fileInput", { static: false }) fileInput: FileUpload;
   constructor(
     private $http: HttpClient,
-    private commonApi: CompacctCommonApi,
+    public commonApi: CompacctCommonApi,
     private Header: CompacctHeader,
     private compacctToast: MessageService
   ) {}
@@ -93,6 +93,7 @@ export class MasterCostCenterComponent implements OnInit {
         this.CostCenterList = data ? data : [];
         console.log("this.CostCenterList =", this.CostCenterList);
       });
+    
   }
 
   // INIT DATA

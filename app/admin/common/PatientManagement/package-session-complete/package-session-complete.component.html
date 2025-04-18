@@ -1,0 +1,109 @@
+<p-toast key="compacct-toast" baseZIndex="99999">
+</p-toast>
+
+<div class="row">
+    <div class="col-xs-12">
+        <div class="box box-primary">
+            <div class="form-horizontal">
+                <div class="box-body">
+                    <p-tabView > 
+                        <form name="packageSessionCompleteForm" #packageSessionCompleteForm="ngForm" novalidate >
+                            <div class="row">
+                                <div class="col-sm-3">
+                                    <label class="control-label">Mobile Number<sup class="text-danger">*</sup></label>
+                                    <input type="text" class="form-control" placeholder="Enter mobile number" name="Mobile"
+                                      #Mobile="ngModel" [(ngModel)]="objpackageSessionComplete.Mobile"
+                                      CompacctDigitonly="true" maxlength="10" minlength="10" (change)="changeNumber()">
+                                  </div>
+                                <div class="col-sm-3">
+                                    <label class="control-label">Name<sup class="text-danger">*</sup></label>
+                                    <select name="FootFallID" 
+                                            class="form-control" [(ngModel)]="objpackageSessionComplete.FootFallID"
+                                            #FootFallID="ngModel" (change)="changeName()" >
+                                            <option [ngValue]="undefined">Select</option>
+                                            <option *ngFor="let option of nameList" value="{{option.Foot_Fall_ID}}">{{option.Prefix}} {{option.Contact_Name}}</option>
+                                        </select>
+                                 </div>
+                                 <div class="col-sm-6">
+                                    <label class="control-label">Package<sup class="text-danger">*</sup></label>
+                                    <select name="Package" 
+                                            class="form-control" [(ngModel)]="objpackageSessionComplete.Package_ID"
+                                            #Package="ngModel" (change)="getSessionDataList()"  >
+                                            <option [ngValue]="undefined">Select</option>
+                                            <option *ngFor="let option of packageList" value="{{option.Package_ID}}">( {{option.Order_No}} ) {{option.Package_Name}}  </option>
+                                        </select>
+                                 </div>       
+                            </div>
+                        </form>
+                    
+                       
+                            <!-- <p-table [value]="sessionDataList" 
+                            [rowHover]="true"
+                            [autoLayout]="true" 
+                            [rowHover]="true">
+
+                              <ng-template pTemplate="header">
+                                    <tr>
+                                        <th>Session</th>
+                                        <th></th>
+                                      
+                                    </tr>
+                                </ng-template> 
+                                <ng-template pTemplate="body" let-col>
+                                    <tr>
+                                    <td>{{col.Consultancy_Sub_Descr ? col.Consultancy_Sub_Descr:"-"}}</td>
+                                    <td> <p-checkbox  [(ngModel)]="col.check" name="{{col.Cons_Sub_ID}}name" binary="true"></p-checkbox></td>
+                                    </tr>
+                                </ng-template>
+                            </p-table> -->
+                            <br>
+                      
+                    <hr class="box boxboxDivide-primary ng-scope" *ngIf="sessionDataList.length">
+                        <div class="container">
+                            <div class="row " >
+                                <div class="col-sm-3" ></div>
+                                <div class="col-sm-6" >
+                                    <table class="table table-bordered" *ngIf="sessionDataList.length">
+                                        <thead style="background-color:#3c8dbc;color:white;">
+                                           <tr style="background-color:#3c8dbc;color:white;">
+                                             <th nowrap  class="text-center" style="vertical-align:middle">Sl. No.</th>
+                                             <th nowrap class="text-center" style="vertical-align:middle">Session </th>
+                                             <th nowrap style="vertical-align:middle"> 
+                                                <p-checkbox  [(ngModel)]="checkAll" (onChange)="checkAllBox()"  label="Select All" name="selectAll" binary="true"></p-checkbox> 
+                                            </th>
+                                           </tr>
+                                       
+                                        </thead>
+                                       <tbody>
+                                           <tr *ngFor=" let col of sessionDataList; let ind = index; let odd = odd;" [class.even]="odd">
+                                             <td>{{ ind + 1  }}</td>
+                                             <td>{{col.Consultancy_Sub_Descr ? col.Consultancy_Sub_Descr:"-"}}</td>
+                                             <td> <p-checkbox  [(ngModel)]="col.check" name="{{col.Cons_Sub_ID}}name" binary="true"></p-checkbox></td>
+                                        </tr>
+                                       </tbody>
+                                      </table>
+                                </div>
+                                <div class="col-sm-3" ></div>
+                            
+                        </div>
+                        </div>
+                        
+                      <div class="box-footer" *ngIf="sessionDataList.length">
+                            <hr class="box boxboxDivide-primary ng-scope">
+                            <button class="btn btn-primary pull-right" (click)="updatePackage()" id="load" [disabled]="Spinner">
+                                <p-progressSpinner *ngIf="Spinner" [style]="{width: '15px', height: '15px'}" strokeWidth="8"  animationDuration=".5s"></p-progressSpinner>
+                            <span *ngIf="!Spinner" class="glyphicon glyphicon-save"></span> Manually Complete
+                          </button>
+                          <p style="text-align: right;
+                          margin-top: 54px;
+                          color: red;
+                          font-size: 14px;
+                          font-weight: 600;"><sup style=" font-size: 14px;" >*</sup>Forcefull Complete Without Bill</p>
+                        </div>
+                       
+                    </p-tabView>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

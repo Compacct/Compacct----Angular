@@ -85,6 +85,12 @@
                                                                    Patient Details
                                                                 </a>
                                                             </li>
+                                                             <li *ngIf="this.databaseName=='GN_Soft_Hear_UP'">
+                                                                <a (click)="viewCaseHistory(col)" >
+                                                                   <i class="fa fa-eye"></i>
+                                                                   View Case History
+                                                                </a>
+                                                            </li>
                                                             <li *ngIf="databaseName != 'GN_Crystal_Mumbai'">
                                                                 <a (click)="actionClick_UpdateAppo(col)">
                                                                     <i class="fa fa-repeat"></i>
@@ -198,6 +204,12 @@
                                                                 <a (click)="actionClick_PatientDetails(col)" >
                                                                    <i class="fa fa-fw fa-user"></i>
                                                                    Patient Details
+                                                                </a>
+                                                            </li>
+                                                            <li *ngIf="this.databaseName=='GN_Soft_Hear_UP'">
+                                                                <a (click)="viewCaseHistory(col)" >
+                                                                   <i class="fa fa-eye"></i>
+                                                                   View Case History
                                                                 </a>
                                                             </li>
                                                             <li *ngIf="col.Appo_Type == 'PTA'">
@@ -855,7 +867,7 @@
 
             <div class="row" style="margin-top: 2px;">
                 <div class="col-sm-2">
-                    <label class="control-label">Restult <sup *ngIf="databaseName === 'GN_Crystal_Mumbai'" class="text-danger">*</sup></label>
+                    <label class="control-label">Result <sup *ngIf="databaseName === 'GN_Crystal_Mumbai'" class="text-danger">*</sup></label>
                     <select class="form-control"
                         name="Trial_Restult"
                         #Trial_Restult="ngModel"
@@ -1219,7 +1231,7 @@
 
             <div class="row" style="margin-top: 2px;">
                 <div class="col-sm-2">
-                    <label class="control-label">Restult</label>
+                    <label class="control-label">Result</label>
                     <div class="label-t">{{objAppointment.Trial_Restult ? objAppointment.Trial_Restult : '-'}}</div>
                 </div>
 
@@ -1504,3 +1516,289 @@
     </p-footer>
 </p-dialog>
 
+<!-- View case history dialog -->
+<p-dialog
+[header]="'Case History'"
+[appendTo]="'body'"
+[visible]="displayViewCaseHistory"
+[closeOnEscape]="true"
+[closable]="false"
+[modal]="true"
+[responsive]="true"
+[style]="{ width: '90%', minWidth: '200px', minHeight: '400px' }"
+style="text-align: center;"
+[minY]="70"
+[maximizable]="true"
+[baseZIndex]="10000"
+[autoZIndex]="true"
+>
+    <div class="form-group" >
+        <div class="col-sm-3" style="margin-bottom: 20px;">
+            <label class="control-label">Date</label>
+            <div class="label-t">{{ObjCaseHistory.Registration_Date ? (ObjCaseHistory.Registration_Date|date:'dd/MMM/yyyy'):"-"}}</div>
+        </div>
+    </div>
+    <br>
+    <div class="row">
+    <div class="col-sm-12">
+        <div class="panel-group">
+            <div class="panel panel-primary">
+                    <div class="panel-body">
+                        <div class="form-group" style="padding: 1em;">
+                        <h4 style="padding: 0.5em 0em; margin-top:-26px; color: #007ca3;">
+                            <strong>PATIENT INFORMATION</strong>
+                        </h4>
+                            <div class="row">
+                                <div class="col-sm-4">
+                                    <label class="control-label">Mobile No<sup class="text-danger">*</sup></label>
+                                    
+                                    <div class="label-t">{{ObjCaseHistory.Mobile ? ObjCaseHistory.Mobile :"-"}}</div>
+                                </div>
+                                <div class="col-sm-4">
+                                    <label class="control-label">Alternate Mobile No</label>
+                                    <div class="label-t">{{ObjCaseHistory.Mobile_2 ? ObjCaseHistory.Mobile_2 :"-"}}</div>
+                                </div>
+                                <div class="col-sm-4">
+                                    <label class="control-label">WhatsApp No</label>
+                                     <div class="label-t">{{ObjCaseHistory.Mobile_3_WP ? ObjCaseHistory.Mobile_3_WP :"-"}}</div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-sm-4">
+                                    <label class="control-label">Name<sup class="text-danger">*</sup> </label>
+                                    <div class="label-t">{{ObjCaseHistory.Patient_Name ? ObjCaseHistory.Patient_Name :"-"}}</div>
+                                   
+                                    
+                                </div>
+                                <div class="col-sm-4">
+                                    <label class="control-label">Age</label>
+                                    <div class="label-t">{{ObjCaseHistory.Age ? ObjCaseHistory.Age :"-"}}</div>
+                                </div>
+                                <div class="col-sm-4">
+                                    <label class="control-label">Gender<sup class="text-danger">*</sup></label>
+                                    <div class="label-t">{{ObjCaseHistory.Gender ? ObjCaseHistory.Gender :"-"}}</div>
+                                </div>
+                                </div>
+                        <div class="row">
+                            <div class="col-sm-4">
+                                <label class="control-label">Date of Birth </label>
+                                <div class="label-t">{{ObjCaseHistory.Date_Of_Birth ? (ObjCaseHistory.Date_Of_Birth | date:'dd/MMM/yyyy'):"-"}}</div>
+                            </div>
+                            <div class="col-sm-4">
+                                <label class="control-label">Email ID</label>
+                                <div class="label-t">{{ObjCaseHistory.Email ? ObjCaseHistory.Email :"-"}}</div>
+                            </div>
+                            <div class="col-sm-4">
+                                <label class="control-label">Profession<sup class="text-danger"></sup></label>
+                                <div class="label-t">{{ObjCaseHistory.Occupation ? ObjCaseHistory.Occupation :"-"}}</div>
+                                </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-sm-4">
+                                <label class="control-label">Pincode</label>
+                                    <div class="label-t">{{ObjCaseHistory.Pin ? ObjCaseHistory.Pin :"-"}}</div>
+                            </div>
+                            <div class="col-sm-4">
+                                <label class="control-label">Location</label>
+                                <div class="label-t">{{ObjCaseHistory.Location ? ObjCaseHistory.Location :"-"}}</div>
+                            </div>
+                            <div class="col-sm-4">
+                                <label class="control-label">Country</label>
+                                <div class="label-t">{{ObjCaseHistory.Country ? ObjCaseHistory.Country :"-"}}</div>
+                            </div>
+                            </div>
+                            <div class="row">
+                            <div class="col-sm-4">
+                                <label class="control-label">State</label>
+                                <div class="label-t">{{ObjCaseHistory.State ? ObjCaseHistory.State :"-"}}</div>
+                            </div>
+                            <div class="col-sm-4">
+                                <label class="control-label">District</label>
+                                <div class="label-t">{{ObjCaseHistory.District ? ObjCaseHistory.District :"-"}}</div>
+                            </div>
+                            <div class="col-sm-4">
+                                <label class="control-label">Address</label>
+                                <div class="label-t">{{ObjCaseHistory.Address ? ObjCaseHistory.Address :"-"}}</div>
+                            </div>
+                            </div>
+                            <div class="row">
+                            <div class="col-sm-4">
+                                <label class="control-label">Enquiry Source<sup class="text-danger">*</sup></label>
+                                <div class="label-t">{{ObjCaseHistory.Enq_Source_Name ? ObjCaseHistory.Enq_Source_Name :"-"}}</div>
+                            </div>
+                            <div class="col-sm-4">
+                                <label class="control-label">Reference Doctor</label>
+                                <div class="label-t">{{ObjCaseHistory.Enq_Source_Sub_Name ? ObjCaseHistory.Enq_Source_Sub_Name :"-"}}</div>
+                              </div>
+                            <div class="col-sm-4">
+                                <label class="control-label">Consultancy Type<sup class="text-danger">*</sup></label>
+                                <div class="label-t">{{ObjCaseHistory.Consultancy_Type ? ObjCaseHistory.Consultancy_Type :"-"}}</div>
+                            </div>
+                            </div>
+                            <div class="row">
+                            <div class="col-sm-4">
+                                <label class="control-label">Who has accompanied you<sup class="text-danger"></sup></label>
+                                <div class="label-t">{{ObjCaseHistory.Who_has_accompanied_you ? ObjCaseHistory.Who_has_accompanied_you :"-"}}</div>
+                            </div>
+                            </div>
+                        </div>
+                    </div>
+            </div>
+        </div>
+    </div>
+    </div>
+    <br>
+     <div class="row" style="padding: 1em;">
+        <h5 style="
+        padding: 0.5em 1em;
+        background: #c1c1c185;
+        border-top: 5px solid #3c8dbc;
+        border-bottom: 1px solid #c6c6c6;
+        margin-top: -20px;
+        ">
+        <i class="fa fa-user">
+        </i> &nbsp;<strong>Case History:</strong>
+        </h5>
+    </div>
+    
+    <div class="form-group">
+        <div class="col-sm-3">
+            <label class="control-label">Reason for Visit<sup class="text-danger"></sup></label>
+            <div class="label-t">{{ObjCaseHistory.Reason_for_Visit? ObjCaseHistory.Reason_for_Visit :"-"}}</div>
+        </div>
+        <div class="col-sm-3">
+            <label class="control-label">Present complain<sup class="text-danger"></sup></label>
+            <div class="label-t">{{ObjCaseHistory.Present_complain? ObjCaseHistory.Present_complain :"-"}}</div>
+        </div>
+        <div class="col-sm-3">
+            <label class="control-label">Right Ear Tinnitus<sup class="text-danger"></sup></label>
+            <div class="label-t">{{ObjCaseHistory.Right_ear_tinnitus? ObjCaseHistory.Right_ear_tinnitus :"-"}}</div>
+        </div>
+        <div class="col-sm-3">
+            <label class="control-label">Left Ear Tinnitus<sup class="text-danger"></sup></label>
+            <div class="label-t">{{ObjCaseHistory.Left_ear_tinnitus? ObjCaseHistory.Left_ear_tinnitus :"-"}}</div>
+        </div>
+    </div>
+    <div class="form-group">
+        <div class="col-sm-3">
+            <label class="control-label">Right Ear Pain<sup class="text-danger"></sup></label>
+            <div class="label-t">{{ObjCaseHistory.Right_ear_pain? ObjCaseHistory.Right_ear_pain :"-"}}</div>
+        </div>
+        <div class="col-sm-3">
+            <label class="control-label">Left Ear Pain<sup class="text-danger"></sup></label>
+            <div class="label-t">{{ObjCaseHistory.Left_ear_pain? ObjCaseHistory.Left_ear_pain :"-"}}</div>
+        </div>
+        <div class="col-sm-3">
+            <label class="control-label">Right Ear Discharge<sup class="text-danger"></sup></label>
+            <div class="label-t">{{ObjCaseHistory.Right_ear_discharge? ObjCaseHistory.Right_ear_discharge :"-"}}</div>
+        </div>
+        <div class="col-sm-3">
+            <label class="control-label">Left Ear Discharge<sup class="text-danger"></sup></label>
+            <div class="label-t">{{ObjCaseHistory.Left_ear_discharge? ObjCaseHistory.Left_ear_discharge :"-"}}</div>
+        </div>
+    </div>
+    <div class="form-group">
+        <div class="col-sm-3">
+            <label class="control-label">Right Ear Vertigo/Dizziness <sup class="text-danger"></sup></label>
+            <div class="label-t">{{ObjCaseHistory.Right_ear_Vertigo? ObjCaseHistory.Right_ear_Vertigo :"-"}}</div>
+        </div>
+        <div class="col-sm-3">
+            <label class="control-label">Left Ear Vertigo/Dizziness <sup class="text-danger"></sup></label>
+            <div class="label-t">{{ObjCaseHistory.Left_ear_Vertigo? ObjCaseHistory.Left_ear_Vertigo :"-"}}</div>
+        </div>
+        <div class="col-sm-3">
+            <label class="control-label">Right Ear Blocking sensation <sup class="text-danger"></sup></label>
+            <div class="label-t">{{ObjCaseHistory.Right_ear_blocking_sensation? ObjCaseHistory.Right_ear_blocking_sensation :"-"}}</div>
+        </div>
+        <div class="col-sm-3">
+            <label class="control-label">Left Ear Blocking sensation <sup class="text-danger"></sup></label>
+            <div class="label-t">{{ObjCaseHistory.Left_ear_blocking_sensation? ObjCaseHistory.Left_ear_blocking_sensation :"-"}}</div>
+        </div>
+    </div>
+    <div class="form-group">
+        <div class="col-sm-3">
+            <label class="control-label">Exposure to noise <sup class="text-danger"></sup></label>
+            <div class="label-t">{{ObjCaseHistory.Exposure_to_noise? ObjCaseHistory.Exposure_to_noise :"-"}}</div>
+        </div>
+        <div class="col-sm-4">
+            <label class="control-label">Duration of noise exposure in a day (hours) <sup class="text-danger"></sup></label>
+            <div class="label-t">{{ObjCaseHistory.Duration_of_noise_exposure? ObjCaseHistory.Duration_of_noise_exposure :"-"}}</div>
+        </div>
+    </div>
+    <br>
+    <div class="row" style="padding: 1em;">
+        <h5 style="
+        padding: 0.5em 1em;
+        background: #c1c1c185;
+        border-top: 5px solid #3c8dbc;
+        border-bottom: 1px solid #c6c6c6;
+        margin-top: 220px;
+        ">
+        <i class="fa fa-user">
+        </i> &nbsp;<strong>Medical :</strong>
+        </h5>
+    </div>
+    <div class="row">
+        <div class="col-sm-3">
+            <label class="control-label">Referring doctor/ENT <sup class="text-danger"></sup></label>
+            <div class="label-t">{{ObjCaseHistory.Ref_doctor? ObjCaseHistory.Ref_doctor :"-"}}</div>
+        </div>
+        <div class="col-sm-3">
+            <label class="control-label">Ear surgical history <sup class="text-danger"></sup></label>
+            <div class="label-t">{{ObjCaseHistory.Surgical_history? ObjCaseHistory.Surgical_history :"-"}}</div>
+        </div>
+    </div>
+    <br>
+    <div class="row" style="padding: 1em;">
+        <h5 style="
+        padding: 0.5em 1em;
+        background: #c1c1c185;
+        border-top: 5px solid #3c8dbc;
+        border-bottom: 1px solid #c6c6c6;
+        margin-top: 0px;
+        ">
+        <i class="fa fa-user">
+        </i> &nbsp;<strong>Hearing :</strong>
+    </h5>
+    </div>
+    
+    <div class="row">
+        <div class="col-sm-3">
+            <label class="control-label">Better ear <sup class="text-danger"></sup></label>
+            <div class="label-t">{{ObjCaseHistory.Better_ear? ObjCaseHistory.Better_ear :"-"}}</div>
+        </div>
+        <div class="col-sm-3">
+            <label class="control-label">Family history of hearing loss <sup class="text-danger"></sup></label>
+            <div class="label-t">{{ObjCaseHistory.Family_history_of_hearing_loss? ObjCaseHistory.Family_history_of_hearing_loss :"-"}}</div>
+        </div>
+        <div class="col-sm-3">
+            <label class="control-label">Current/previous hearing aid technology <sup class="text-danger"></sup></label>
+            <div class="label-t">{{ObjCaseHistory.Pre_hearing_aid_technology? ObjCaseHistory.Pre_hearing_aid_technology :"-"}}</div>
+        </div>
+        <div class="col-sm-3">
+            <label class="control-label">Current/previous hearing aid type <sup class="text-danger"></sup></label>
+            <div class="label-t">{{ObjCaseHistory.Pre_hearing_aid_type? ObjCaseHistory.Pre_hearing_aid_type :"-"}}</div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-sm-4">
+            <label class="control-label">Hearing aid difficulties <sup class="text-danger"></sup></label>
+            <div class="label-t">{{ObjCaseHistory.Hearing_aid_difficulties? ObjCaseHistory.Hearing_aid_difficulties :"-"}}</div>
+        </div>
+        <div class="col-sm-4">
+            <label class="control-label">Date</label>
+            <div class="label-t">{{ObjCaseHistory.Case_Date? (ObjCaseHistory.Case_Date | date:'dd/MMM/yyyy') :"-"}}</div>
+            </div>
+            <div class="col-sm-4" >
+                <label class="control-label">Audilogist</label>
+                <div class="label-t">{{ObjCaseHistory.Audiologist_Name? (ObjCaseHistory.Audiologist_Name) :"-"}}</div>                          
+            </div>
+    </div>
+    
+                  
+<p-footer>
+    <button class="btn btn-primary" (click)="closeCaseHistory()" >
+      <span class="glyphicon glyphicon-remove"></span>Close
+    </button>
+  </p-footer>
+</p-dialog>

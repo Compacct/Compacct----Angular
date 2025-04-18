@@ -22,13 +22,13 @@ import { CompacctGlobalApiService } from "../../../../shared/compacct.services/c
   providers: [MessageService]
 })
 export class StocktransferComponent implements OnInit {
-  items = [];
-  cols = [];
-  menuList = [];
+  items:any = [];
+  cols:any = [];
+  menuList:any = [];
   buttonname = "Create";
   url = window["config"];
   tabIndexToView = 0;
-  frozenCols = [];
+  frozenCols:any = [];
   stockDocNo: string;
   DocDate: any;
   CNDate: any;
@@ -44,7 +44,7 @@ export class StocktransferComponent implements OnInit {
   SelectedProduct: any;
   SelectedSerialNo: any;
 
-  StockBillList = [];
+  StockBillList:any = [];
 
   StockSearchFormSubmitted = false;
   StockFormSubmitted = false;
@@ -70,22 +70,22 @@ export class StocktransferComponent implements OnInit {
   ObjVoucherCommon: VoucherCommon = new VoucherCommon();
   ObjVoucherTopper: VoucherTopper = new VoucherTopper();
 
-  ProductInfoList = [];
-  ProductInfoListProto = [];
-  ProductInfoListView = [];
+  ProductInfoList:any = [];
+  ProductInfoListProto:any = [];
+  ProductInfoListView:any = [];
 
-  CostCenterList = [];
-  CustmCostCenterList = [];
-  SerialList = [];
-  BatchList = [];
-  GodownLists = [];
-  GodownToList = [];
+  CostCenterList:any = [];
+  CustmCostCenterList:any = [];
+  SerialList:any = [];
+  BatchList:any = [];
+  GodownLists:any = [];
+  GodownToList:any = [];
 
-  ProductsList = [];
-  NativeProductList = [];
+  ProductsList:any = [];
+  NativeProductList:any = [];
 
   cities2: any;
-  multiselectitems = [];
+  multiselectitems:any = [];
   aspxFileName:string;
   databaseName: any;
 
@@ -98,7 +98,7 @@ export class StocktransferComponent implements OnInit {
   AcceptStockModalTitle = undefined;
   AcceptStockModal = false;
   AcceptStockDocNo = undefined;
-  AcceptProductList = [];
+  AcceptProductList:any = [];
   tempQty = undefined;
 
   serialNumberRange:boolean = false 
@@ -120,6 +120,7 @@ export class StocktransferComponent implements OnInit {
       { field: "Doc_Date", header: "Doc Date" },
       { field: "F_Cost_Cen_Name", header: "Issuing Cost Center" },
       { field: "T_Cost_Cen_Name", header: "To Cost Center" },
+      { field: "T_godown_name", header: "To Godown" },
       { field: "Taxable_Amount", header: "Taxable Amount" },
       { field: "IGST_Input_Amt", header: "IGST" },
       { field: "CGST_Input_Amt", header: "CGST" },
@@ -200,6 +201,23 @@ export class StocktransferComponent implements OnInit {
         .subscribe((data: any) => {
           this.databaseName = data;
           console.log(data)
+          if (this.databaseName == 'GN_Crystal_Mumbai' || this.databaseName == 'GN_Global_Coimbatore') {
+            const newCols = [];
+            
+            for (const col of this.cols) {
+              newCols.push(col);
+              
+              if (col.field == 'F_Cost_Cen_Name') {
+                newCols.push({ field: "F_godown_name", header: "Issuing Godown" });
+              }
+              else if (col.field == 'T_Cost_Cen_Name') {
+                newCols.push({ field: "T_godown_name", header: "To Godown" });
+              }
+            }
+            
+            this.cols = newCols;
+          }
+        
         });
   }
   GetCostCenter() {
@@ -1718,17 +1736,25 @@ export class StocktransferComponent implements OnInit {
     }
   }
   // ACCEPT
-  AcceptStockTransfer(obj) {
+  AcceptStockTransfer(obj,ModalTitle?) {
     this.AcceptStockModalTitle = undefined;
     this.AcceptProductList =[];
     this.AcceptStockDocNo = undefined;
     if(obj.Doc_No) {  
      this.AcceptStockDocNo = obj.Doc_No;
-     this.AcceptStockModalTitle = obj.F_Cost_Cen_ID == this.$CompacctAPI.CompacctCookies.Cost_Cen_ID ? 'Edit Product' : obj.T_Cost_Cen_ID == this.$CompacctAPI.CompacctCookies.Cost_Cen_ID ? 'Accept Challan' : '-';
+     this.AcceptStockModalTitle = ModalTitle;
+     if(!ModalTitle){
+      this.AcceptStockModalTitle = obj.F_Cost_Cen_ID == this.$CompacctAPI.CompacctCookies.Cost_Cen_ID ? 'Edit Product' : obj.T_Cost_Cen_ID == this.$CompacctAPI.CompacctCookies.Cost_Cen_ID ? 'Accept Challan' : '-';
+     }
+    
      this.GetAcceptProduct(obj.Doc_No);
      
     }
   }
+
+  
+
+
   GetAcceptProduct(docId) {
     this.AcceptProductList = [];
     if(docId) {

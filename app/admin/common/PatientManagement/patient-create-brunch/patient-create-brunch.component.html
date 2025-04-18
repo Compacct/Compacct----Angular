@@ -123,8 +123,8 @@
                           [ngClass]="{clearance: CreationFormSubmited && Name?.errors?.required}" required>
                     </div>
                     <div>
-                      <select *ngIf="ContactNameList.length && databaseName != 'BSHPL'" name="Name" class="form-control" [(ngModel)]="footFallId"
-                    #Name="ngModel" (change)="NameChange()"
+                      <select *ngIf="ContactNameList.length && databaseName != 'BSHPL'" name="Name" class="form-control" [(ngModel)]="objPatient.Contact_Name"
+                    #Name="ngModel"
                     [ngClass]="{clearance: CreationFormSubmited && Name?.errors?.required}"required>
                     <option [ngValue]="undefined">Select</option>
                     <option *ngFor="let option of ContactNameList" value="{{option.Contact_Name}}">{{option.Prefix}} {{option.Contact_Name}}</option>

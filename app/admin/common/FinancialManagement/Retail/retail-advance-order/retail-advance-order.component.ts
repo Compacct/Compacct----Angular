@@ -47,7 +47,7 @@ export class RetailAdvanceOrderComponent implements OnInit {
   LedgerList: any=[];
   BankTRNtypeList: any=[];
   PaymentTypeList:any=[];
-  BankDate: Date= new Date();
+  BankDate: any= new Date();
   addJournalList: any=[];
   backupTotalAmount: number= 0; 
   JournalDateLabel: any='DATE';
@@ -68,7 +68,7 @@ export class RetailAdvanceOrderComponent implements OnInit {
   displayPaymentPopup: boolean=false;
   PaymentSpinner: boolean=false;
   PaymentFormSubmitted: boolean=false;
-  BankPaymentDate: Date = new Date();
+  BankPaymentDate: any = new Date();
   addPaymentList: any=[];
   backupPatient: any=undefined;
   backupPatientID: any=undefined;
@@ -82,6 +82,7 @@ export class RetailAdvanceOrderComponent implements OnInit {
   objActivityLog = new ActivityLog();
   objProduct = new Product();
   objCommon = new Common();
+  databaseName:any
   constructor(
     private $http: HttpClient,
     private GlobalAPI:CompacctGlobalApiService,
@@ -112,6 +113,7 @@ export class RetailAdvanceOrderComponent implements OnInit {
     this.GetCustomerList();
     this.GetProductList();
     this.GetaspxFileName();
+    this.DataBaseCheck()
   }
 
   TabClick(e){
@@ -146,11 +148,22 @@ export class RetailAdvanceOrderComponent implements OnInit {
     this.objJournal= new Journal();
     this.JournalSpinner=false;
     this.JournalFormSubmitted=false;
-    this.BankDate=new Date();
+    this.BankDate= new Date();
     this.addJournalList=[];
     this.JournalDateLabel='DATE';
     this.JournalNOLabel='NO.';
   }
+
+  DataBaseCheck() {
+    this.$http.get("/Common/Get_Database_Name",
+        {responseType: 'text'})
+        .subscribe((data: any) => {
+          this.databaseName = data;
+          //console.log(data) BSHPL
+        });
+        //this.databaseName = 'BSHPL'
+  }
+
 
   Get_Patient_Subledger_ID(){
     this.$http
@@ -418,7 +431,7 @@ export class RetailAdvanceOrderComponent implements OnInit {
         });
         return
       }
-      if(!this.objProduct.Rate){
+      if(!this.objProduct.Rate && this.databaseName !=='GN_Anand_Chandigarh'){
         this.ProductOrderFormSubmitted = false;
         this.compacctToast.clear();
         this.compacctToast.add({
@@ -429,6 +442,21 @@ export class RetailAdvanceOrderComponent implements OnInit {
         });
         return
       }
+
+      const SameProductFilter = this.addProductList.filter((el:any)=> (el.Product_ID) == this.objProduct.Product_ID);
+      if(SameProductFilter.length){ 
+        this.ProductOrderFormSubmitted = false;
+        this.compacctToast.clear();
+        this.compacctToast.add({
+          key: "compacct-toast",
+          severity: "error",
+          summary: "You Can't choose same Product Name ",
+          detail:" "
+        });
+        return
+
+      }
+
       const tempFilter = this.ProductList.filter((el:any)=> Number(el.Product_ID) === Number(this.objProduct.Product_ID));
 
       this.objProduct.Expected_Delivery_Date=this.DateService.dateConvert(this.Expected_Delivery_Date);
@@ -609,14 +637,14 @@ export class RetailAdvanceOrderComponent implements OnInit {
     
     this.JournalDateLabel='DATE';
     this.JournalNOLabel='NO.';
-    this.BankDate=new Date();
+    this.BankDate=this.objJournal.TRN=='CASH' ? null : new Date();
     this.objJournal.BankDate=undefined;
     this.objJournal.No=undefined;
     this.objJournal.Bank_Name=undefined;
     this.objJournal.Bank_Branch_Name=undefined;
 
     this.objPayment.TRN=undefined;
-    this.BankPaymentDate=new Date();
+    this.BankPaymentDate=this.objJournal.TRN=='CASH' ? null : new Date();
     this.objPayment.BankDate=undefined;
     this.objPayment.No=undefined;
     this.objPayment.Bank_Name=undefined;
@@ -642,13 +670,13 @@ export class RetailAdvanceOrderComponent implements OnInit {
   SelectBankTRNtype(TRNtype: any){
     this.JournalDateLabel='DATE';
     this.JournalNOLabel='NO.';
-    this.BankDate=new Date();
+    this.BankDate=this.objJournal.TRN=='CASH' ? null : new Date();
     this.objJournal.BankDate=undefined;
     this.objJournal.No=undefined;
     this.objJournal.Bank_Name=undefined;
     this.objJournal.Bank_Branch_Name=undefined;
 
-    this.BankPaymentDate=new Date();
+    this.BankPaymentDate=this.objPayment.TRN=='CASH' ? null : new Date();
     this.objPayment.BankDate=undefined;
     this.objPayment.No=undefined;
     this.objPayment.Bank_Name=undefined;

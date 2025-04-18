@@ -14,6 +14,8 @@ import { CompacctCommonApi } from '../../../../shared/compacct.services/common.a
   encapsulation: ViewEncapsulation.None
 })
 export class ChangeBatchNumberComponent implements OnInit {
+  BrandList:any = [];
+  ProductionVoucherNoList:any = [];
   ProductList:any = [];
   OldBatchNoList:any = [];
   Spinner:boolean = false;
@@ -46,13 +48,60 @@ export class ChangeBatchNumberComponent implements OnInit {
       Header: "Change Batch Number",
       Link: "Material Management -> Change Batch Number"
     });
-    this.GetProduct();
+    this.GetBrandBro();
   }
-  GetProduct(){
-    this.ProductList = [];
+  GetBrandBro(){
+    const obj = {
+      "SP_String": "SP_Production_Voucher",
+      "Report_Name_String": "Get - Brand",
+
+    }
+    this.GlobalAPI.getData(obj).subscribe((data:any)=>{
+      this.BrandList = data;
+    })
+  }
+  GetProductionVoucherNo(brandid){
+    this.ProductionVoucherNoList = [];
+    const TempObj = {
+      Brand_ID : brandid
+     }
      const obj = {
       "SP_String": "SP_batch_no_change",
-      "Report_Name_String": "GET_Products"
+      "Report_Name_String": "Get_Production_doc_no",
+      "Json_Param_String": JSON.stringify([TempObj])
+
+    }
+    this.GlobalAPI.getData(obj).subscribe((data:any)=>{
+      if(data.length) {
+        data.forEach(element => {
+          element['label'] = element.Doc_No + ' (' + this.DateService.dateConvert(new Date(element.doc_date)) + ')',
+          element['value'] = element.Doc_No
+        });
+        this.ProductionVoucherNoList = data;
+
+      }
+      else {
+        this.ProductionVoucherNoList = [];
+      }
+      console.log("select ProductionVoucherNoList======",this.ProductionVoucherNoList);
+
+
+    });
+  }
+  GetProduct(pvno){
+    this.ProductList = [];
+    this.ObjChangeBatchNo.Product_ID = undefined;
+    this.ObjChangeBatchNo.Old_Batch_No = undefined;
+    this.ObjChangeBatchNo.Qty = undefined;
+    this.ObjChangeBatchNo.UOM = '';
+    this.ObjChangeBatchNo.New_Batch_No = undefined;
+    const TempObj = {
+      Doc_No : pvno
+     }
+     const obj = {
+      "SP_String": "SP_batch_no_change",
+      "Report_Name_String": "GET_Products",
+      "Json_Param_String": JSON.stringify([TempObj])
 
     }
     this.GlobalAPI.getData(obj).subscribe((data:any)=>{
@@ -75,7 +124,8 @@ export class ChangeBatchNumberComponent implements OnInit {
     this.ObjChangeBatchNo.UOM = '';
     this.ObjChangeBatchNo.New_Batch_No = undefined;
     const TempObj = {
-      Product_ID : this.ObjChangeBatchNo.Product_ID
+      Product_ID : this.ObjChangeBatchNo.Product_ID,
+      Doc_No : this.ObjChangeBatchNo.Production_Voucher_No
      }
      const obj = {
       "SP_String": "SP_batch_no_change",
@@ -134,6 +184,8 @@ export class ChangeBatchNumberComponent implements OnInit {
           Doc_No : "A",
           Doc_Date : this.DateService.dateConvert(new Date(this.CurrentDate)),
           To_Cost_Cen_ID : this.ObjChangeBatchNo.To_Cost_Cen_ID,
+          Brand_ID : this.ObjChangeBatchNo.Brand_ID,
+          Production_Doc_No: this.ObjChangeBatchNo.Production_Voucher_No,
           Product_ID : this.ObjChangeBatchNo.Product_ID,
           Qty: this.ObjChangeBatchNo.Qty,
           UOM: this.ObjChangeBatchNo.UOM,
@@ -216,6 +268,8 @@ export class ChangeBatchNumberComponent implements OnInit {
 }
 class ChangeBatchNo {
   Doc_No: any;
+  Brand_ID: any;
+  Production_Voucher_No: any;
   Product_ID : any;
   Qty : any;
   UOM:string = "";

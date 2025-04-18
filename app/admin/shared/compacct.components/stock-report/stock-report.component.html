@@ -68,7 +68,7 @@
             #browsecostcenter="ngModel"
             (ngModelChange)="GetgodownBrowse(ObjBrowse.Cost_Cen_ID)"
             [styleClass]="StockSearchFormSubmitted && browsecostcenter.errors?.required ? 'clearance': ''"
-            [disabled]="userType != 'A'" 
+            
             >
         </p-dropdown>
         </div>
@@ -324,7 +324,7 @@
                 #clstcostcen="ngModel"
                 (ngModelChange)="GetgodownClStk(clst_Cost_Cen_ID)"
                 [styleClass]="ClosingReportSearchFormSubmitted && clstcostcen.errors?.required ? 'clearance': ''"
-                [disabled]="userType != 'A'" 
+                
                 required>
             </p-dropdown>
             </div>
