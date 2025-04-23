@@ -490,11 +490,11 @@ export class BSHPLAudiologistAppoComponent implements OnInit {
     this.objAppointment.HA_Req_L=undefined;
     if (this.objAppointment.Type_Of_Loss_L == 'SENSORINEURAL' || this.objAppointment.Type_Of_Loss_L == 'MIXED') {
       this.HAYesNoListL = ['YES'];
-      this.objAppointment.HA_Req_L='YES';
     }
     else if(this.objAppointment.Type_Of_Loss_L == 'NORMAL'){
       this.HAYesNoListL = ['NO'];
       this.objAppointment.HA_Req_L='NO';
+      this.TrialDoneOnOFF();
     }
     else {
       this.HAYesNoListL = ['YES', 'NO'];
@@ -505,11 +505,11 @@ export class BSHPLAudiologistAppoComponent implements OnInit {
     this.objAppointment.HA_Req_R=undefined;
     if (this.objAppointment.Type_Of_Loss_R == 'SENSORINEURAL' || this.objAppointment.Type_Of_Loss_R == 'MIXED') {
       this.HAYesNoListR = ['YES'];
-      this.objAppointment.HA_Req_R='YES';
     }
     else if(this.objAppointment.Type_Of_Loss_R == 'NORMAL'){
       this.HAYesNoListR = ['NO'];
       this.objAppointment.HA_Req_R='NO';
+      this.TrialDoneOnOFF()
     }
     else {
       this.HAYesNoListR = ['YES', 'NO'];
