@@ -540,6 +540,7 @@ import { PackageSessionCompleteComponent } from './common/PatientManagement/pack
 import { BlTxnRefDocEntryComponent } from './common/PatientManagement/bl-txn-ref-doc-entry/bl-txn-ref-doc-entry.component';
 import { BlTxnPettyCashVoucherComponent } from './common/SalesAndDistribution/Transaction/bl-txn-petty-cash-voucher/bl-txn-petty-cash-voucher.component';
 import { HearingStockReportNewComponent } from './common/MaterialManagement/Report/hearing-stock-report-new/hearing-stock-report-new.component';
+import { CommonUserActivityService } from "./shared/compacct.services/common-user-activity.service";
 @NgModule({
   declarations: [
     AppLayoutComponent,
@@ -1061,6 +1062,7 @@ import { HearingStockReportNewComponent } from './common/MaterialManagement/Repo
     CompacctAccountJournal,
     DateTimeConvertService,
     DateNepalConvertService,
+    CommonUserActivityService,
     SelectionService,
     {provide: OWL_DATE_TIME_LOCALE, useValue: 'en-IN'},
     SortService,
