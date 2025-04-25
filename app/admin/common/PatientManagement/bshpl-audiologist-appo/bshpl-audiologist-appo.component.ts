@@ -126,7 +126,7 @@ export class BSHPLAudiologistAppoComponent implements OnInit {
     });
     this.items = ["PENDING", "COMPLETED"];
     this.UserID = Number(this.$CompacctAPI.CompacctCookies.User_ID);
-    this.TypeLossList = ['NORMAL', 'CONDUCTIVE', 'SENSORINEURAL', 'MIXED'];
+    this.TypeLossList = ['NORMAL', 'CONDUCTIVE', 'SENSORINEURAL', 'MIXED','SLOPING SENSORINEURAL','SLOPING MIXED'];
     this.YesNoList = ['YES', 'NO'];
     this.HAYesNoListL = ['YES', 'NO'];
     this.HAYesNoListR = ['YES', 'NO'];
@@ -487,8 +487,14 @@ export class BSHPLAudiologistAppoComponent implements OnInit {
   }
 
   HAYesNoL() {
+    this.objAppointment.HA_Req_L=undefined;
     if (this.objAppointment.Type_Of_Loss_L == 'SENSORINEURAL' || this.objAppointment.Type_Of_Loss_L == 'MIXED') {
       this.HAYesNoListL = ['YES'];
+    }
+    else if(this.objAppointment.Type_Of_Loss_L == 'NORMAL'){
+      this.HAYesNoListL = ['NO'];
+      this.objAppointment.HA_Req_L='NO';
+      this.TrialDoneOnOFF();
     }
     else {
       this.HAYesNoListL = ['YES', 'NO'];
@@ -496,8 +502,14 @@ export class BSHPLAudiologistAppoComponent implements OnInit {
   }
 
   HAYesNoR() {
+    this.objAppointment.HA_Req_R=undefined;
     if (this.objAppointment.Type_Of_Loss_R == 'SENSORINEURAL' || this.objAppointment.Type_Of_Loss_R == 'MIXED') {
       this.HAYesNoListR = ['YES'];
+    }
+    else if(this.objAppointment.Type_Of_Loss_R == 'NORMAL'){
+      this.HAYesNoListR = ['NO'];
+      this.objAppointment.HA_Req_R='NO';
+      this.TrialDoneOnOFF()
     }
     else {
       this.HAYesNoListR = ['YES', 'NO'];
