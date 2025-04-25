@@ -539,6 +539,7 @@ import { LeaveAutoUpdateComponent } from './common/HR/leave-auto-update/leave-au
 import { PackageSessionCompleteComponent } from './common/PatientManagement/package-session-complete/package-session-complete.component';
 import { BlTxnRefDocEntryComponent } from './common/PatientManagement/bl-txn-ref-doc-entry/bl-txn-ref-doc-entry.component';
 import { BlTxnPettyCashVoucherComponent } from './common/SalesAndDistribution/Transaction/bl-txn-petty-cash-voucher/bl-txn-petty-cash-voucher.component';
+import { HearingStockReportNewComponent } from './common/MaterialManagement/Report/hearing-stock-report-new/hearing-stock-report-new.component';
 @NgModule({
   declarations: [
     AppLayoutComponent,
@@ -992,7 +993,8 @@ import { BlTxnPettyCashVoucherComponent } from './common/SalesAndDistribution/Tr
     LeaveAutoUpdateComponent,
     PackageSessionCompleteComponent,
     BlTxnRefDocEntryComponent,
-    BlTxnPettyCashVoucherComponent
+    BlTxnPettyCashVoucherComponent,
+    HearingStockReportNewComponent
   ],
   imports: [
     CommonModule,
