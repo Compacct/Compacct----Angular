@@ -2789,6 +2789,13 @@ path: 'Doctors_Appointment_New_Fine_Tuning_Hearing',
       } 
     },
     {
+      path: 'Txn_Audiologist_Appo',
+      component: BSHPLAudiologistAppoComponent,
+      data: {
+          title: 'Audiologist Appo'
+      } 
+    },
+    {
       path: 'Employee_Master_Contractor',
         component: EmployeeMasterContractorComponent,
         data: {

@@ -40,10 +40,10 @@
                                     <label class="control-label">Report By <sup class="text-danger">*</sup></label>
                                     <select class="form-control" name="reportby" #reportby="ngModel" [(ngModel)]="ObjStockReport.Report_By"
                                        [ngClass]="{'clearance': StockReportFormSubmit && reportby?.errors?.required}" required>
-                                        <option value="Vendor_Wise">Vendor Wise</option>
-                                        <option value="Cost_Center_Wise">Cost Center Wise</option>
-                                        <option value="Product_Wise">Product Wise</option>
-                                        <option value="Product_Wise_Summary">Product Wise Summary</option>
+                                        <option value="Vendor Wise">Vendor Wise</option>
+                                        <option value="Cost Center Wise">Cost Center Wise</option>
+                                        <option value="Product Wise">Product Wise</option>
+                                        <option value="Product Wise Summary">Product Wise Summary</option>
                                     </select>
                                 </div>
                                 <div class="col-sm-3">
@@ -194,7 +194,6 @@
                                             <input type="text" pInputText size="50" placeholder="Search" (input)="dt.filterGlobal($event.target.value, 'contains')" class="searchInput form-control">
                                         </div>
                                     </div>
-
                                 </ng-template>
                                 <ng-template pTemplate="header">
                                     <tr>
@@ -202,19 +201,16 @@
                                         <th>Opening Qty</th>
                                         <th>Receive Qty</th>
                                         <th>Issue Qty</th>
-                                        <th>Closing Date</th>
-                                        <th>Reorder level</th>
+                                        <th>Closing Qty</th>
                                     </tr>
                                 </ng-template>
                                 <ng-template pTemplate="body" let-col>
                                     <tr>
                                         <td>{{col.Product_Description}}</td>
-                                        <td>{{col.opening_qty}}</td>
-                                        <td>{{col.receive_qty}}</td>
-                                        <td>{{col.issue_qty}}</td>
-                                        <td>{{col.closing_qty}}</td>
-                                        <td>{{col.reorder_level}}</td>
-
+                                        <td><a class="btn-link" (click)="GetProductDetails(col,'Opening')">{{col.opening_qty}}</a></td>
+                                        <td><a class="btn-link" (click)="GetProductDetails(col,'Receive')">{{col.Rcv_Qty}}</a></td>
+                                        <td><a class="btn-link" (click)="GetProductDetails(col,'Issue')">{{col.Issue_Qty}}</a></td>
+                                        <td><a class="btn-link" (click)="GetProductDetails(col,'Closing')">{{col.closing_qty}}</a></td>
                                     </tr>
                                 </ng-template>
                                 <ng-template pTemplate="paginatorright" let-state>
@@ -228,3 +224,91 @@
         </div>
     </div>
 </div>
+
+<!-- Product Details -->
+<p-dialog
+[header]="remarks + ' Details for ' + productname"
+[appendTo]="'body'"
+[(visible)]="ProDetailsPopup"
+[closeOnEscape]="true"
+[closable]="true"
+[modal]="true"
+[responsive]="true"
+[style]="{ width: '60%', minWidth: '200px' }"
+[minY]="70"
+[maximizable]="true"
+[baseZIndex]="10000"
+>
+<div class="table-responsive no-padding" style="overflow-x: hidden !important;">
+    <p-table [value]="ProDetailsList" [globalFilterFields]='ProDetailsListHeader' [rowHover]="true" [autoLayout]="true" #dt2>
+        <ng-template pTemplate="caption">
+            <div class="row">
+                <div class="col-sm-3 pull-right" style="text-align: right">
+                    <input type="text" pInputText size="50" placeholder="Search" (input)="dt2.filterGlobal($event.target.value, 'contains')" class="searchInput form-control">
+                </div>
+            </div> <br>
+
+        </ng-template>
+        <ng-template pTemplate="header">
+            <tr>
+                <th>Serial No</th>
+                <th>Batch No</th>
+                <th>Count</th>
+            </tr>
+        </ng-template>
+        <ng-template pTemplate="body" let-col let-rowIndex="rowIndex">
+            <tr>
+                <td><a class="btn-link" (click)="GetSerialOrBatchDetails(col.Serial_No)">{{col.Serial_No ? col.Serial_No : '-'}}</a></td>
+                <td><a class="btn-link" (click)="GetSerialOrBatchDetails(col.Batch_No)">{{col.Batch_No ? col.Batch_No : '-'}}</a></td>
+                <td>{{col.count ? col.count : '-'}}</td>
+            </tr>
+        </ng-template>
+    </p-table>
+</div>
+<p-footer>
+    <button type="button" (click)="ProDetailsPopup = false" class="btn btn-default">Close</button>
+</p-footer>
+</p-dialog>
+
+<!-- Serial/Batch No Details -->
+<p-dialog
+[header]="'Serial/Batch No - ' + SerialBatchNo + ' Details'"
+[appendTo]="'body'"
+[(visible)]="SerialOrBatchDetailsPopup"
+[closeOnEscape]="true"
+[closable]="true"
+[modal]="true"
+[responsive]="true"
+[style]="{ width: '80%', minWidth: '200px' }"
+[minY]="70"
+[maximizable]="true"
+[baseZIndex]="10000"
+>
+<div class="table-responsive no-padding" style="overflow-x: hidden !important;">
+    <p-table [value]="SerialOrBatchDetailsList" [globalFilterFields]='SerialOrBatchDetailsListHeader' [rowHover]="true" [autoLayout]="true" #dtt>
+        <ng-template pTemplate="caption">
+            <div class="row">
+                <div class="col-sm-3 pull-right" style="text-align: right">
+                    <input type="text" pInputText size="50" placeholder="Search" (input)="dtt.filterGlobal($event.target.value, 'contains')" class="searchInput form-control">
+                </div>
+            </div> <br>
+
+        </ng-template>
+        <ng-template pTemplate="header">
+            <tr>
+                <th *ngFor="let option of SerialOrBatchDetailsListHeader">{{option.replace('_',' ')}}</th>
+            </tr>
+        </ng-template>
+        <ng-template pTemplate="body" let-col let-rowIndex="rowIndex">
+            <tr>
+                <ng-container *ngFor="let option of SerialOrBatchDetailsListHeader" data->
+                    <td>{{col[option]}}</td>
+                </ng-container>
+            </tr>
+        </ng-template>
+    </p-table>
+</div>
+<p-footer>
+    <button type="button" (click)="SerialOrBatchDetailsPopup = false" class="btn btn-default">Close</button>
+</p-footer>
+</p-dialog>

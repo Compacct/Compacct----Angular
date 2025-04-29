@@ -83,6 +83,11 @@ export class RetailAdvanceOrderComponent implements OnInit {
   objProduct = new Product();
   objCommon = new Common();
   databaseName:any
+  USER_IP:any;
+  City:any;
+  ISP:any;
+  Lat:any;
+  Lon:any;
   constructor(
     private $http: HttpClient,
     private GlobalAPI:CompacctGlobalApiService,
@@ -105,7 +110,8 @@ export class RetailAdvanceOrderComponent implements OnInit {
       {"DATE": "Cheque Date", "MODE": "CHEQUE", "NO": "Cheque No"},
       {"DATE": "NEFT Date", "MODE": "NEFT/RTGS", "NO": "NEFT No"},
       {"DATE": "Authorize Date", "MODE": "WALLET", "NO": "Authorize No"}
-    ];       
+    ];    
+    this.GetIpInfo();   
     this.Get_Patient_Subledger_ID();
     this.Get_Fin_Year_Date();
     this.Get_Allowed_Entry_Days();
@@ -547,7 +553,26 @@ export class RetailAdvanceOrderComponent implements OnInit {
       });
     }
   }
-
+  GetIpInfo() {
+    this.USER_IP = undefined;
+    this.City = undefined;
+    this.ISP = undefined;
+    this.Lat = undefined;
+    this.Lon = undefined;
+    this.$http.get("http://ip-api.com/json").subscribe((data: any) => {
+      if(data){
+        // this.objActivityLog.Activity_Date = this.DateService.dateTimeConvert(new Date());
+        // this.objActivityLog.USER_ID = this.$CompacctAPI.CompacctCookies.User_ID;
+        this.USER_IP = data.query;
+        this.City = data.city;
+        // this.objActivityLog.Country = data.country;
+        this.ISP = data.isp;
+        this.Lat = data.lat;
+        this.Lon = data.lon;
+        // this.objActivityLog.Region_Name = data.regionName;
+      }
+    });
+  }
   Create_User_Activity_Log(Doc_No){
     //console.log('Doc_No',Doc_No);
     this.objActivityLog.DOC_NO=Doc_No;
@@ -556,6 +581,11 @@ export class RetailAdvanceOrderComponent implements OnInit {
     this.objActivityLog.Country=this.$CompacctAPI.CompacctCookies.Country;
     this.objActivityLog.USER_ID= Number(this.$CompacctAPI.CompacctCookies.User_ID);
     this.objActivityLog.Activity_Date=this.DateService.dateTimeConvert(new Date());
+    this.objActivityLog.USER_IP = this.USER_IP;
+    this.objActivityLog.City = this.City;
+    this.objActivityLog.ISP = this.ISP;
+    this.objActivityLog.Lat = this.Lat;
+    this.objActivityLog.Lon = this.Lon;
     //console.log('this.objActivityLog',this.objActivityLog);
 
     this.$http
@@ -1150,6 +1180,11 @@ export class RetailAdvanceOrderComponent implements OnInit {
     this.objActivityLog.Country=this.$CompacctAPI.CompacctCookies.Country;
     this.objActivityLog.USER_ID= Number(this.$CompacctAPI.CompacctCookies.User_ID);
     this.objActivityLog.Activity_Date=this.DateService.dateTimeConvert(new Date());
+    this.objActivityLog.USER_IP = this.USER_IP;
+    this.objActivityLog.City = this.City;
+    this.objActivityLog.ISP = this.ISP;
+    this.objActivityLog.Lat = this.Lat;
+    this.objActivityLog.Lon = this.Lon;
     //console.log('this.objActivityLog',this.objActivityLog);
 
     this.$http

@@ -24,7 +24,7 @@ export class HearingStockReportNewComponent implements OnInit {
   CostCenterList:any = [];
   ProductCategoryList:any = [];
   printSpinner:boolean = false;
-  AsOnDate: any;
+  AsOnDate:any = new Date();
   StockDetailsFormSubmit:boolean = false;
   ObjStockDetails: StockDetails = new StockDetails();
   CostCenterNameList:any = [];
@@ -33,6 +33,15 @@ export class HearingStockReportNewComponent implements OnInit {
   SearchSpinner:boolean = false;
   getStockDetailsList:any = [];
   getStockDetailsListHeader:any = [];
+  ProDetailsPopup:boolean = false;
+  ProDetailsList:any = [];
+  ProDetailsListHeader:any = [];
+  productname:any;
+  remarks:any;
+  SerialOrBatchDetailsPopup:boolean = false;
+  SerialOrBatchDetailsList:any = [];
+  SerialOrBatchDetailsListHeader:any = [];
+  SerialBatchNo:any;
 
   constructor(
     private $http: HttpClient,
@@ -75,7 +84,21 @@ export class HearingStockReportNewComponent implements OnInit {
       this.ProductCategoryList = data ? data : [];
     });
   }
-  GetStockValueReport(valid){}
+  GetStockValueReport(valid){
+    this.StockReportFormSubmit = true;
+    let Report_Type = this.ObjStockReport.Report_Type
+    let Cost_Cen_ID = this.ObjStockReport.Cost_Cen_ID ? this.ObjStockReport.Cost_Cen_ID : 0
+    let Cat_ID = this.ObjStockReport.Product_Category_ID ? this.ObjStockReport.Product_Category_ID : 0
+    let Report_By = this.ObjStockReport.Report_By
+    let AsOnDate = this.DateService.dateConvert(new Date(this.AsOnDate))
+    if(valid){
+      this.StockReportFormSubmit = false;
+      window.open("/Report/Crystal_Files/Stock/Stock/Hearing_Stock_with_value.aspx?Report_Type=" + Report_Type + "&Cost_Cen_ID=" + Cost_Cen_ID +
+        "&Cat_ID=" + Cat_ID + "&Report_By=" + Report_By + "&AsOnDate=" + AsOnDate, 'mywindow', 'fullscreen=yes, scrollbars=auto,width=950,height=500'
+    
+        );
+    }
+  }
   getDateRange(dateRangeObj) {
     if (dateRangeObj.length) {
       this.ObjStockDetails.from_date = dateRangeObj[0];
@@ -112,20 +135,134 @@ export class HearingStockReportNewComponent implements OnInit {
       this.ProductCategoryNameList = data ? data : [];
     });
   }
-  async GetStockDetails(valid = true){
-
-    // const resulit = await this._CommonUserActivity.GetUserActivity('test','testDetalis','test','0011')
-    // console.log(resulit)
+  GetStockDetails(valid){
+    this.StockDetailsFormSubmit = true;
+    this.getStockDetailsList = [];
+    this.getStockDetailsListHeader = [];
+    const start = this.ObjStockDetails.from_date
+      ? this.DateService.dateConvert(new Date(this.ObjStockDetails.from_date))
+      : this.DateService.dateConvert(new Date());
+    const end = this.ObjStockDetails.to_date
+      ? this.DateService.dateConvert(new Date(this.ObjStockDetails.to_date))
+      : this.DateService.dateConvert(new Date());
+    if(valid){
+      this.StockDetailsFormSubmit = false;
+      this.SearchSpinner = true;
+      const tempobj = {
+        start_date : start,
+        end_date : end,
+        CAT_ID : this.ObjStockDetails.Product_Category_ID ? this.ObjStockDetails.Product_Category_ID : 0,
+        Godown_ID : this.ObjStockDetails.Godown_ID ? this.ObjStockDetails.Godown_ID : 0,
+        CostCenter : this.ObjStockDetails.Cost_Cen_ID ? this.ObjStockDetails.Cost_Cen_ID : 0
+      }
+      
+      const obj = {
+        "SP_String": "sp_txn_stock_details",
+        "Report_Name_String": "txn_stock_details",
+        "Json_Param_String": JSON.stringify([tempobj])
+      }
+       this.GlobalAPI.getData(obj).subscribe((data:any)=>{
+         if(data.length) {
+          this.getStockDetailsList = data;
+          this.getStockDetailsListHeader = Object.keys(data[0]);
+          this.SearchSpinner = false;
+         }
+         else {
+          this.SearchSpinner = false;
+         }
+       })
+      //}
+    }
+    
+  }
+  GetProductDetails(dataobj,remark){
+    this.ProDetailsList = [];
+    this.ProDetailsListHeader = [];
+    this.productname = undefined;
+    this.remarks = remark;
+    const start = this.ObjStockDetails.from_date
+      ? this.DateService.dateConvert(new Date(this.ObjStockDetails.from_date))
+      : this.DateService.dateConvert(new Date());
+    const end = this.ObjStockDetails.to_date
+      ? this.DateService.dateConvert(new Date(this.ObjStockDetails.to_date))
+      : this.DateService.dateConvert(new Date());
+    this.productname = dataobj.Product_Description
+    if (dataobj.Product_ID) {
+      const sendobj = {
+        start_date: start,
+        end_date: end,
+        Product_ID : dataobj.Product_ID,
+        CAT_ID: this.ObjStockDetails.Product_Category_ID ? this.ObjStockDetails.Product_Category_ID : 0,
+        Godown_ID: this.ObjStockDetails.Godown_ID ? this.ObjStockDetails.Godown_ID : 0,
+        CostCenter: this.ObjStockDetails.Cost_Cen_ID ? this.ObjStockDetails.Cost_Cen_ID : 0,
+        remark: remark
+      }
+    const obj = {
+      "SP_String": "sp_txn_stock_details",
+      "Report_Name_String": "txn_stock_serial_batch_details",
+      "Json_Param_String": JSON.stringify(sendobj)
+    }
+    this.GlobalAPI.getData(obj).subscribe((data: any) => {
+      if (data.length) {
+        this.ProDetailsList = data;
+        this.ProDetailsListHeader = Object.keys(data[0]);
+        this.ProDetailsPopup = true;
+      } else {
+        this.ProDetailsList = [];
+        this.ProDetailsListHeader = [];
+        this.ProDetailsPopup = false;
+      }
+    });
+    }
+  }
+  GetSerialOrBatchDetails(SerialOrBatchNo){
+    this.SerialOrBatchDetailsList = [];
+    this.SerialOrBatchDetailsListHeader = [];
+    const start = this.ObjStockDetails.from_date
+      ? this.DateService.dateConvert(new Date(this.ObjStockDetails.from_date))
+      : this.DateService.dateConvert(new Date());
+    const end = this.ObjStockDetails.to_date
+      ? this.DateService.dateConvert(new Date(this.ObjStockDetails.to_date))
+      : this.DateService.dateConvert(new Date());
+    if (SerialOrBatchNo) {
+      this.SerialBatchNo = SerialOrBatchNo;
+      const sendobj = {
+        textbox : SerialOrBatchNo,
+        Godown_ID: this.ObjStockDetails.Godown_ID ? this.ObjStockDetails.Godown_ID : 0,
+        CostCenter: this.ObjStockDetails.Cost_Cen_ID ? this.ObjStockDetails.Cost_Cen_ID : 0,
+      }
+    const obj = {
+      "SP_String": "sp_txn_stock_details",
+      "Report_Name_String": "Find Serial No",
+      "Json_Param_String": JSON.stringify(sendobj)
+    }
+    this.GlobalAPI.getData(obj).subscribe((data: any) => {
+      if (data.length) {
+        this.SerialOrBatchDetailsList = data;
+        this.SerialOrBatchDetailsListHeader = Object.keys(data[0]);
+        this.SerialOrBatchDetailsPopup = true;
+      } else {
+        this.SerialOrBatchDetailsList = [];
+        this.SerialOrBatchDetailsListHeader = [];
+        this.SerialOrBatchDetailsPopup = false;
+      }
+    });
+    }
   }
   onReject() {
     this.compacctToast.clear("c");
   }
   onConfirm(){}
 
+  // async GetStockDetails(valid = true){
+  //   const resulit = await this._CommonUserActivity.GetUserActivity('test','testDetalis','test','0011')
+  //   console.log(resulit)
+  // }
+
 }
 class StockReport {
-  Report_Type: string;
-  Report_By: string = "Vendor_Wise";
+  Report_Type: string = "All";
+  Report_By: string = "Vendor Wise";
   Cost_Cen_ID: number;
   Product_Category_ID: number;
   as_on_date:string;
