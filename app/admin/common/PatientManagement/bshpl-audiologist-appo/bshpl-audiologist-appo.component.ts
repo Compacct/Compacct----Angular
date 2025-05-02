@@ -129,19 +129,32 @@ export class BSHPLAudiologistAppoComponent implements OnInit {
     });
     this.items = ["PENDING", "COMPLETED"];
     this.UserID = Number(this.$CompacctAPI.CompacctCookies.User_ID);
-    this.TypeLossList = ['NORMAL', 'CONDUCTIVE', 'SENSORINEURAL', 'MIXED','SLOPING SENSORINEURAL','SLOPING MIXED'];
+    this.getDatabase();
+    // this.TypeLossList = ['NORMAL', 'CONDUCTIVE', 'SENSORINEURAL', 'MIXED','SLOPING SENSORINEURAL','SLOPING MIXED','REVERSE SLOPING SENSORINEURAL'];
     this.YesNoList = ['YES', 'NO'];
     this.HAYesNoListL = ['YES', 'NO'];
     this.HAYesNoListR = ['YES', 'NO'];
     this.Trial_ForList = ['Binaural', 'Monorual'];
     this.TestDoneListAppoNo = ["Ear wax","Active ear discharge","Patient not ready to do test","Enquiry only","Others"];
-    this.getDatabase();
+    
     this.getAlldata();
     this.GetDegreeLossList();
     this.GetProductList();
     this.GetMissedReasonList();
     this.GetTestDoneList();
     this.getResult();
+    this.GetTypeofLost();
+  }
+  getDatabase(){
+    this.$http
+        .get("/Common/Get_Database_Name",
+        {responseType: 'text'})
+        .subscribe((data: any) => {
+          this.databaseName = data;
+          console.log(data)
+          this.getResult();
+          this.GetTypeofLost();
+        });
   }
 
   viewCaseHistory(col:any){
@@ -165,7 +178,18 @@ export class BSHPLAudiologistAppoComponent implements OnInit {
       this.ObjCaseHistory = data[0];
     });
   }
-
+  GetTypeofLost(){
+    this.TypeLossList = [];
+    if(this.databaseName === "GN_Anand_Chandigarh") {
+      this.TypeLossList = ['NORMAL', 'CONDUCTIVE', 'SENSORINEURAL', 'MIXED','SLOPING SENSORINEURAL','SLOPING MIXED','REVERSE SLOPING SENSORINEURAL'];
+    } 
+    else if(this.databaseName === "GN_Crystal_Mumbai"){
+      this.TypeLossList = ['NORMAL', 'CONDUCTIVE', 'SENSORINEURAL', 'MIXED','SLOPING SENSORINEURAL','SLOPING MIXED'];
+    }
+    else {
+      this.TypeLossList = ['NORMAL', 'CONDUCTIVE', 'SENSORINEURAL', 'MIXED'];
+    }
+  }
   
   closeCaseHistory(){
     this.displayViewCaseHistory = false;
@@ -176,16 +200,6 @@ export class BSHPLAudiologistAppoComponent implements OnInit {
     this.tabIndexToView = e.index;
     this.items = ["PENDING", "COMPLETED"];
     this.clearData();
-  }
-  getDatabase(){
-    this.$http
-        .get("/Common/Get_Database_Name",
-        {responseType: 'text'})
-        .subscribe((data: any) => {
-          this.databaseName = data;
-          console.log(data)
-          this.getResult();
-        });
   }
   getResult(){
     let resultoption:any = [];
