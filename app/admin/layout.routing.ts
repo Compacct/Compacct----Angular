@@ -441,6 +441,7 @@ import { LeaveAutoUpdateComponent } from './common/HR/leave-auto-update/leave-au
 import { PackageSessionCompleteComponent } from "./common/PatientManagement/package-session-complete/package-session-complete.component";
 import { BlTxnRefDocEntryComponent } from './common/PatientManagement/bl-txn-ref-doc-entry/bl-txn-ref-doc-entry.component';
 import { BlTxnPettyCashVoucherComponent } from './common/SalesAndDistribution/Transaction/bl-txn-petty-cash-voucher/bl-txn-petty-cash-voucher.component';
+import { HearingStockReportNewComponent } from './common/MaterialManagement/Report/hearing-stock-report-new/hearing-stock-report-new.component';
 const layoutRoutes: Routes = [{
   path: "",
   component: AppLayoutComponent,
@@ -2788,6 +2789,13 @@ path: 'Doctors_Appointment_New_Fine_Tuning_Hearing',
       } 
     },
     {
+      path: 'Txn_Audiologist_Appo',
+      component: BSHPLAudiologistAppoComponent,
+      data: {
+          title: 'Audiologist Appo'
+      } 
+    },
+    {
       path: 'Employee_Master_Contractor',
         component: EmployeeMasterContractorComponent,
         data: {
@@ -3380,6 +3388,13 @@ path: 'Doctors_Appointment_New_Fine_Tuning_Hearing',
       component: BlTxnPettyCashVoucherComponent,
       data: {
         title: 'Petty Cash'
+      }
+    },
+    {
+      path: 'Hearing_Stock_Report_New',
+      component: HearingStockReportNewComponent,
+      data: {
+        title: 'Stock Report'
       }
     },
     /*{

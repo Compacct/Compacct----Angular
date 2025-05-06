@@ -7,6 +7,7 @@ import { CompacctCommonApi } from '../../../shared/compacct.services/common.api.
 import { CompacctHeader } from '../../../shared/compacct.services/common.header.service';
 import { CompacctGlobalApiService } from '../../../shared/compacct.services/compacct.global.api.service';
 import { FileUpload } from 'primeng/primeng';
+import { CommonUserActivityService } from "../../../shared/compacct.services/common-user-activity.service";
 import { log } from 'console';
 @Component({
   selector: 'app-bshpl-audiologist-appo',
@@ -107,6 +108,7 @@ export class BSHPLAudiologistAppoComponent implements OnInit {
   // view case History
   displayViewCaseHistory:boolean = false;
   ObjCaseHistory:any = {};
+  docno:any;
 
   constructor(
     private $http: HttpClient,
@@ -116,7 +118,8 @@ export class BSHPLAudiologistAppoComponent implements OnInit {
     private DateService: DateTimeConvertService,
     public $CompacctAPI: CompacctCommonApi,
     private compacctToast: MessageService,
-    private ngxService: NgxUiLoaderService
+    private ngxService: NgxUiLoaderService,
+    private _CommonUserActivity : CommonUserActivityService
   ) { }
 
   ngOnInit() {
@@ -126,19 +129,32 @@ export class BSHPLAudiologistAppoComponent implements OnInit {
     });
     this.items = ["PENDING", "COMPLETED"];
     this.UserID = Number(this.$CompacctAPI.CompacctCookies.User_ID);
-    this.TypeLossList = ['NORMAL', 'CONDUCTIVE', 'SENSORINEURAL', 'MIXED','SLOPING SENSORINEURAL','SLOPING MIXED'];
+    this.getDatabase();
+    // this.TypeLossList = ['NORMAL', 'CONDUCTIVE', 'SENSORINEURAL', 'MIXED','SLOPING SENSORINEURAL','SLOPING MIXED','REVERSE SLOPING SENSORINEURAL'];
     this.YesNoList = ['YES', 'NO'];
     this.HAYesNoListL = ['YES', 'NO'];
     this.HAYesNoListR = ['YES', 'NO'];
     this.Trial_ForList = ['Binaural', 'Monorual'];
     this.TestDoneListAppoNo = ["Ear wax","Active ear discharge","Patient not ready to do test","Enquiry only","Others"];
-    this.getDatabase();
+    
     this.getAlldata();
     this.GetDegreeLossList();
     this.GetProductList();
     this.GetMissedReasonList();
     this.GetTestDoneList();
     this.getResult();
+    this.GetTypeofLost();
+  }
+  getDatabase(){
+    this.$http
+        .get("/Common/Get_Database_Name",
+        {responseType: 'text'})
+        .subscribe((data: any) => {
+          this.databaseName = data;
+          console.log(data)
+          this.getResult();
+          this.GetTypeofLost();
+        });
   }
 
   viewCaseHistory(col:any){
@@ -162,7 +178,18 @@ export class BSHPLAudiologistAppoComponent implements OnInit {
       this.ObjCaseHistory = data[0];
     });
   }
-
+  GetTypeofLost(){
+    this.TypeLossList = [];
+    if(this.databaseName === "GN_Anand_Chandigarh") {
+      this.TypeLossList = ['NORMAL', 'CONDUCTIVE', 'SENSORINEURAL', 'MIXED','SLOPING SENSORINEURAL','SLOPING MIXED','REVERSE SLOPING SENSORINEURAL'];
+    } 
+    else if(this.databaseName === "GN_Crystal_Mumbai"){
+      this.TypeLossList = ['NORMAL', 'CONDUCTIVE', 'SENSORINEURAL', 'MIXED','SLOPING SENSORINEURAL','SLOPING MIXED'];
+    }
+    else {
+      this.TypeLossList = ['NORMAL', 'CONDUCTIVE', 'SENSORINEURAL', 'MIXED'];
+    }
+  }
   
   closeCaseHistory(){
     this.displayViewCaseHistory = false;
@@ -173,16 +200,6 @@ export class BSHPLAudiologistAppoComponent implements OnInit {
     this.tabIndexToView = e.index;
     this.items = ["PENDING", "COMPLETED"];
     this.clearData();
-  }
-  getDatabase(){
-    this.$http
-        .get("/Common/Get_Database_Name",
-        {responseType: 'text'})
-        .subscribe((data: any) => {
-          this.databaseName = data;
-          console.log(data)
-          this.getResult();
-        });
   }
   getResult(){
     let resultoption:any = [];
@@ -317,7 +334,9 @@ export class BSHPLAudiologistAppoComponent implements OnInit {
 
   actionClick_UpdateAppo(col: any) {
     // console.log("actionClick_UpdateAppo");
+    this.docno = undefined;
     if (col) {
+      this.docno = col.Appo_ID;
       this.objAppointment.Foot_Fall_ID = Number(col.foot_fall_id);
       this.objAppointment.Trial_Date = this.DateService.dateTimeConvert(new Date(col.Appo_Start));
       this.objAppointment.Doctor_ID = Number(col.Doctor_ID);
@@ -389,7 +408,7 @@ export class BSHPLAudiologistAppoComponent implements OnInit {
       return true;
     }
   }
-  SaveAppointment(valid: any) {
+  async SaveAppointment(valid: any) {
     // console.log("this.objAppointment.Trail_Missed_Reason",this.objAppointment.Trail_Missed_Reason);
     this.AppointmentFormSubmitted = true;
     if (valid && this.checkdatabase()) {
@@ -456,11 +475,12 @@ export class BSHPLAudiologistAppoComponent implements OnInit {
         "Json_Param_String": JSON.stringify([this.objAppointment])
       }
       this.ngxService.start();
-      this.GlobalAPI.postData(SaveAppObj).subscribe((data: any) => {
+      this.GlobalAPI.postData(SaveAppObj).subscribe(async(data: any) => {
         this.ngxService.stop();
         // console.log("save data",data);
 
         if (data[0].Column1) {
+          await this.SaveUserActivity();
           this.getAlldata();
           this.clearData();
           this.compacctToast.clear();
@@ -867,7 +887,9 @@ export class BSHPLAudiologistAppoComponent implements OnInit {
   }
 
   actionClick_Programming(col: any) {
+    this.docno = undefined;
     if (col) {
+      this.docno = col.Appo_ID;
       this.displayPopupPro = true;
       this.objProgramming.Appo_Dt = this.DateService.dateTimeConvert(new Date(col.Appo_Start));
     }
@@ -878,7 +900,7 @@ export class BSHPLAudiologistAppoComponent implements OnInit {
     this.objProgramming = new Programming();
   }
 
-  SaveUpdateProgramming(valid: any) {
+  async SaveUpdateProgramming(valid: any) {
     this.ProgrammingFormSubmitted = true;
     if (valid) {
       this.ProSpinner = true;
@@ -894,11 +916,12 @@ export class BSHPLAudiologistAppoComponent implements OnInit {
         "Json_Param_String": JSON.stringify([SaveTempObjPro])
       }
       this.ngxService.start();
-      this.GlobalAPI.postData(SaveObjPro).subscribe((data: any) => {
+      this.GlobalAPI.postData(SaveObjPro).subscribe(async(data: any) => {
         this.ngxService.stop();
         //  console.log("save data",data);
 
         if (data[0].Column1) {
+          await this.SaveUserActivity();
           this.getAlldata();
           this.clearData();
           this.compacctToast.clear();
@@ -1211,12 +1234,14 @@ export class BSHPLAudiologistAppoComponent implements OnInit {
   }
   actionClick_UpdateAppoNo(col: any) {
     // console.log("actionClick_UpdateAppo");
+    this.docno = undefined;
     if (col) {
       this.objAppointmentNo.Foot_Fall_ID = Number(col.foot_fall_id);
       this.objAppointmentNo.Appo_Dt = this.DateService.dateTimeConvert(new Date(col.Appo_Start));
       this.displayPopupUpdateAppoNo = true;
       // this.FileUploadAsset.clear();
       this.objAppointmentNo.Appo_ID = col.Appo_ID;
+      this.docno = col.Appo_ID;
       this.P_NameNo = col.Patient;
       this.PhoneNo = Number(col.Mobile);
       this.AgeNo = Number(col.Age);
@@ -1227,7 +1252,7 @@ export class BSHPLAudiologistAppoComponent implements OnInit {
       this.onReject();
     }
   }
-  SaveAppointmentNo(valid: any) {
+  async SaveAppointmentNo(valid: any) {
     this.AppointmentNoFormSubmitted = true;
     if (valid) {
       this.AppoNoSpinner = true;
@@ -1239,11 +1264,12 @@ export class BSHPLAudiologistAppoComponent implements OnInit {
         "Json_Param_String": JSON.stringify([this.objAppointmentNo])
       }
       this.ngxService.start();
-      this.GlobalAPI.postData(SaveAppObj).subscribe((data: any) => {
+      this.GlobalAPI.postData(SaveAppObj).subscribe(async (data: any) => {
         this.ngxService.stop();
         // console.log("save data",data);
 
         if (data[0].Column1) {
+          await this.SaveUserActivity();
           this.getAlldata();
           this.clearDataAppoNo();
           this.compacctToast.clear();
@@ -1323,6 +1349,10 @@ export class BSHPLAudiologistAppoComponent implements OnInit {
   closedisplayViewTestPOP() {
     this.displayViewTestPOP = false;
     this.ObjTestDetails = new TestDetails();
+  }
+  async SaveUserActivity(){
+    const result = await this._CommonUserActivity.GetUserActivity('Update','Audiologist Appo',this.docno,'0')
+    console.log(result)
   }
 }
 
