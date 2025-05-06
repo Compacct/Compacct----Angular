@@ -205,7 +205,11 @@ export class BSHPLAudiologistAppoComponent implements OnInit {
     let resultoption:any = [];
     if(this.databaseName === "GN_Crystal_Mumbai") {
       resultoption = ['ADVANCE PAID', 'FITTED', 'MISSED', 'ON TRIAL'];
-    } else {
+    }
+    else if(this.databaseName === "GN_Anand_Chandigarh") {
+      resultoption = ['ADVANCE PAID', 'FITTED', 'MISSED', 'TRIAL ONGOING', 'IN PROCESS'];
+    }
+    else {
       resultoption = ['ADVANCE PAID', 'FITTED', 'MISSED'];
     }
     this.TrialRestultList = resultoption;

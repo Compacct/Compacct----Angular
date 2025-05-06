@@ -883,7 +883,7 @@
                     </select>
                 </div>
 
-                <div class="col-sm-3" *ngIf="objAppointment.Trial_Restult == 'MISSED'">
+                <div class="col-sm-3" *ngIf="(objAppointment.Trial_Restult == 'MISSED')">
                     <label class="control-label">Reason <sup *ngIf="databaseName === 'GN_Crystal_Mumbai'" class="text-danger">*</sup></label>
                     <p-multiSelect 
                         [options]="MissedReasonList"
@@ -902,7 +902,12 @@
                     <input class="form-control" name="Price" #Price="ngModel" [(ngModel)]="objAppointment.Final_Price_After_Disc" CompacctDigitonly="true" [ngClass]="{'clearance':AppointmentFormSubmitted && Price?.errors?.required}" required>
 
                 </div>
-                <div class="col-sm-2" *ngIf="(objAppointment.Trial_Restult === 'ON TRIAL') && (databaseName === 'GN_Crystal_Mumbai')">
+                <div class="col-sm-3" *ngIf="(databaseName === 'GN_Anand_Chandigarh')">
+                    <label class="control-label">Final Price Offered After Discount <sup class="text-danger"></sup></label>
+                    <input class="form-control" name="Price" #Price="ngModel" [(ngModel)]="objAppointment.Final_Price_After_Disc" CompacctDigitonly="true" [ngClass]="{'clearance':AppointmentFormSubmitted && Price?.errors?.required}">
+
+                </div>
+                <div class="col-sm-2" *ngIf="(objAppointment.Trial_Restult === 'ON TRIAL' || objAppointment.Trial_Restult === 'TRIAL ONGOING') && (databaseName === 'GN_Crystal_Mumbai' || databaseName === 'GN_Anand_Chandigarh')">
                     <label class="control-label">For Days <sup class="text-danger"></sup></label>
                     <div class="input-group">  
                         <input class="form-control" name="fordays" #fordays="ngModel"
@@ -1244,8 +1249,12 @@
                     <label class="control-label">Final Price Offered After Discount <sup *ngIf="databaseName === 'GN_Crystal_Mumbai'" class="text-danger">*</sup></label>
                     <div class="label-t">{{objAppointment.Final_Price_After_Disc ? objAppointment.Final_Price_After_Disc : '-'}}</div>
                 </div>
+                <div class="col-sm-3" *ngIf="(databaseName === 'GN_Anand_Chandigarh')">
+                    <label class="control-label">Final Price Offered After Discount</label>
+                    <div class="label-t">{{objAppointment.Final_Price_After_Disc ? objAppointment.Final_Price_After_Disc : '-'}}</div>
+                </div>
 
-                <div class="col-sm-2" *ngIf="(objAppointment.Trial_Restult === 'ON TRIAL') && (databaseName === 'GN_Crystal_Mumbai')">
+                <div class="col-sm-2" *ngIf="(objAppointment.Trial_Restult === 'ON TRIAL' || objAppointment.Trial_Restult === 'TRIAL ONGOING') && (databaseName === 'GN_Crystal_Mumbai' || databaseName === 'GN_Anand_Chandigarh')">
                     <label class="control-label">For Days <sup class="text-danger">*</sup></label>
                     <div class="input-group">  
                         <div class="label-t">{{objAppointment.Trial_days ? objAppointment.Trial_days : '-'}}</div>
