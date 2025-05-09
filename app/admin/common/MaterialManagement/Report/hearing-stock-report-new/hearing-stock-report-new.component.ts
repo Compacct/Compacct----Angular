@@ -36,6 +36,7 @@ export class HearingStockReportNewComponent implements OnInit {
   ProDetailsPopup:boolean = false;
   ProDetailsList:any = [];
   ProDetailsListHeader:any = [];
+  product_id:any;
   productname:any;
   remarks:any;
   SerialOrBatchDetailsPopup:boolean = false;
@@ -178,6 +179,7 @@ export class HearingStockReportNewComponent implements OnInit {
   GetProductDetails(dataobj,remark){
     this.ProDetailsList = [];
     this.ProDetailsListHeader = [];
+    this.product_id = undefined; 
     this.productname = undefined;
     this.remarks = remark;
     const start = this.ObjStockDetails.from_date
@@ -186,6 +188,7 @@ export class HearingStockReportNewComponent implements OnInit {
     const end = this.ObjStockDetails.to_date
       ? this.DateService.dateConvert(new Date(this.ObjStockDetails.to_date))
       : this.DateService.dateConvert(new Date());
+    this.product_id = dataobj.Product_ID;
     this.productname = dataobj.Product_Description
     if (dataobj.Product_ID) {
       const sendobj = {
@@ -230,6 +233,7 @@ export class HearingStockReportNewComponent implements OnInit {
         textbox : SerialOrBatchNo,
         Godown_ID: this.ObjStockDetails.Godown_ID ? this.ObjStockDetails.Godown_ID : 0,
         CostCenter: this.ObjStockDetails.Cost_Cen_ID ? this.ObjStockDetails.Cost_Cen_ID : 0,
+        Product_ID: this.product_id
       }
     const obj = {
       "SP_String": "sp_txn_stock_details",
