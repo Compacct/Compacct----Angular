@@ -71,6 +71,7 @@
 									<th style="text-align: center" nowrap>Leave Balance</th>
 									<th style="text-align: center" nowrap>Leave Days</th>
 									<th style="text-align: center" nowrap>Leave Next Opening</th>
+									<th style="text-align: center" nowrap>Remarks</th>
 								</tr>
 							</ng-template>
 							<ng-template pTemplate="body" let-col let-rowIndex="rowIndex">
@@ -97,6 +98,15 @@
 											name="Leave_Next_Opening"
 											CompacctDigitonly="true"
 											[(ngModel)]="col.next_year_opening" 
+											[class.red-border]="checkValidity(col)"/>
+									</td>
+									<td style="text-align: center" nowrap>
+										<input
+											type="text"
+											class="form-control"
+											placeholder="Remarks"
+											name="remarks"
+											[(ngModel)]="col.Remarks" 
 											[class.red-border]="checkValidity(col)"/>
 									</td>
 								</tr>
