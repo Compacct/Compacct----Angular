@@ -442,6 +442,7 @@ import { PackageSessionCompleteComponent } from "./common/PatientManagement/pack
 import { BlTxnRefDocEntryComponent } from './common/PatientManagement/bl-txn-ref-doc-entry/bl-txn-ref-doc-entry.component';
 import { BlTxnPettyCashVoucherComponent } from './common/SalesAndDistribution/Transaction/bl-txn-petty-cash-voucher/bl-txn-petty-cash-voucher.component';
 import { HearingStockReportNewComponent } from './common/MaterialManagement/Report/hearing-stock-report-new/hearing-stock-report-new.component';
+import { BLTxnPurchaseBillFromGRNComponent } from './common/FinancialManagement/Transaction/Purchase/bl-txn-purchase-bill-from-grn/bl-txn-purchase-bill-from-grn.component';
 const layoutRoutes: Routes = [{
   path: "",
   component: AppLayoutComponent,
@@ -3395,6 +3396,12 @@ path: 'Doctors_Appointment_New_Fine_Tuning_Hearing',
       component: HearingStockReportNewComponent,
       data: {
         title: 'Stock Report'
+      }
+    }, {
+      path: 'BL_Txn_Purchase_Bill_from_GRN',
+      component: BLTxnPurchaseBillFromGRNComponent,
+      data: {
+        title: 'Purchase Bill from Purchase GRN'
       }
     },
     /*{

@@ -541,6 +541,7 @@ import { BlTxnRefDocEntryComponent } from './common/PatientManagement/bl-txn-ref
 import { BlTxnPettyCashVoucherComponent } from './common/SalesAndDistribution/Transaction/bl-txn-petty-cash-voucher/bl-txn-petty-cash-voucher.component';
 import { HearingStockReportNewComponent } from './common/MaterialManagement/Report/hearing-stock-report-new/hearing-stock-report-new.component';
 import { CommonUserActivityService } from "./shared/compacct.services/common-user-activity.service";
+import { BLTxnPurchaseBillFromGRNComponent } from './common/FinancialManagement/Transaction/Purchase/bl-txn-purchase-bill-from-grn/bl-txn-purchase-bill-from-grn.component';
 @NgModule({
   declarations: [
     AppLayoutComponent,
@@ -995,7 +996,8 @@ import { CommonUserActivityService } from "./shared/compacct.services/common-use
     PackageSessionCompleteComponent,
     BlTxnRefDocEntryComponent,
     BlTxnPettyCashVoucherComponent,
-    HearingStockReportNewComponent
+    HearingStockReportNewComponent,
+    BLTxnPurchaseBillFromGRNComponent
   ],
   imports: [
     CommonModule,
