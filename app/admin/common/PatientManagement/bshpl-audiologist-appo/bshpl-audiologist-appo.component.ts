@@ -48,7 +48,9 @@ export class BSHPLAudiologistAppoComponent implements OnInit {
   ProductTrialLeft: any = undefined;
   ProductTrialRight: any = undefined;
   ProductSelectLeft: any = undefined;
+  Rate_After_Discount_Left: any = undefined;
   ProductSelectRight: any = undefined;
+  Rate_After_Discount_Right: any = undefined;
   PTLFormSubmitted: boolean = false;
   PTRFormSubmitted: boolean = false;
   PSLFormSubmitted: boolean = false;
@@ -454,6 +456,7 @@ export class BSHPLAudiologistAppoComponent implements OnInit {
           Entry_ID: 0,
           Product_ID: item.Product_ID,
           Product_Description: item.Product_Description,
+          Rate_After_Discount: item.Rate_After_Discount_Left,
           Ear_Side: item.Ear_Side
         })
       }
@@ -462,6 +465,7 @@ export class BSHPLAudiologistAppoComponent implements OnInit {
           Entry_ID: 0,
           Product_ID: item.Product_ID,
           Product_Description: item.Product_Description,
+          Rate_After_Discount: item.Rate_After_Discount_Right,
           Ear_Side: item.Ear_Side
         })
       }
@@ -668,9 +672,11 @@ export class BSHPLAudiologistAppoComponent implements OnInit {
         Entry_ID: 0,
         Product_ID: this.ProductSelectLeft,
         Product_Description: GetProduct_Description[0].Product_Description,
+        Rate_After_Discount_Left: Number(this.Rate_After_Discount_Left),
         Ear_Side: 'L'
       })
       this.ProductSelectLeft = undefined;
+      this.Rate_After_Discount_Left = undefined;
       this.PSLFormSubmitted = false;
     }
     //  console.log("PSLList",this.PSLList);
@@ -686,9 +692,11 @@ export class BSHPLAudiologistAppoComponent implements OnInit {
         Entry_ID: 0,
         Product_ID: this.ProductSelectRight,
         Product_Description: GetProduct_Description[0].Product_Description,
+        Rate_After_Discount_Right: Number(this.Rate_After_Discount_Right),
         Ear_Side: 'R'
       })
       this.ProductSelectRight = undefined;
+      this.Rate_After_Discount_Right = undefined;
       this.PSRFormSubmitted = false;
     }
     //  console.log("PSRList",this.PSRList);
@@ -750,6 +758,20 @@ export class BSHPLAudiologistAppoComponent implements OnInit {
         this.ProductList = [];
       }
     });
+  }
+  GetRateLeft(proid){
+    this.Rate_After_Discount_Left = undefined;
+    if(proid){
+      var prodetails = this.ProductList.filter(el=> el.Product_ID === proid)
+      this.Rate_After_Discount_Left = prodetails[0].rate;
+    }
+  }
+  GetRateRight(proid){
+    this.Rate_After_Discount_Right = undefined;
+    if(proid){
+      var prodetails = this.ProductList.filter(el=> el.Product_ID === proid)
+      this.Rate_After_Discount_Right = prodetails[0].rate;
+    }
   }
 
   GetTestDoneList() {
@@ -1105,6 +1127,7 @@ export class BSHPLAudiologistAppoComponent implements OnInit {
                 this.PSLList.push({
                   Product_ID: item.Product_ID,
                   Product_Description: item.Product_Description,
+                  Rate_After_Discount: item.Rate_After_Discount,
                   Ear_Side: item.Ear_Side
                 })
               }
@@ -1112,6 +1135,7 @@ export class BSHPLAudiologistAppoComponent implements OnInit {
                 this.PSRList.push({
                   Product_ID: item.Product_ID,
                   Product_Description: item.Product_Description,
+                  Rate_After_Discount: item.Rate_After_Discount,
                   Ear_Side: item.Ear_Side
                 })
               }
