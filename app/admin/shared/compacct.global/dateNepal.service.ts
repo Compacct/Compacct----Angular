@@ -57,7 +57,7 @@ export class DateNepalConvertService {
    
   }
   GetNepaliCurrentDateNew(){
-    return NepaliFunctions.GetCurrentBsDate().day+'/'+NepaliFunctions.GetCurrentBsDate().month+'/'+NepaliFunctions.GetCurrentBsDate().year;
+    return NepaliFunctions.BS.GetCurrentDate().day+'/'+NepaliFunctions.BS.GetCurrentDate().month+'/'+NepaliFunctions.BS.GetCurrentDate().year;
   }
   getDateObj = string => (([day, month, year]) => ({ day, month, year }))(string.split('/'));
 }
