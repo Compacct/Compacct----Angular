@@ -91,13 +91,13 @@
                                                                    View Case History
                                                                 </a>
                                                             </li>
-                                                            <li *ngIf="databaseName != 'GN_Crystal_Mumbai'">
+                                                            <li *ngIf="(databaseName != 'GN_Crystal_Mumbai') && (databaseName != 'GN_Anand_Chandigarh')">
                                                                 <a (click)="actionClick_UpdateAppo(col)">
                                                                     <i class="fa fa-repeat"></i>
                                                                     Update Appointment
                                                                 </a>
                                                             </li>
-                                                            <li *ngIf="databaseName === 'GN_Crystal_Mumbai'">
+                                                            <li *ngIf="(databaseName === 'GN_Crystal_Mumbai') || (databaseName === 'GN_Anand_Chandigarh')">
                                                                 <a (click)="UpdateAppo(col)">
                                                                     <i class="fa fa-repeat"></i>
                                                                     Update Appointment
@@ -224,7 +224,7 @@
                                                                     View Reprogramming & Other HL not known Tests 
                                                                 </a>
                                                             </li>
-                                                            <li *ngIf="databaseName === 'GN_Crystal_Mumbai'">
+                                                            <li *ngIf="(databaseName === 'GN_Crystal_Mumbai') || (databaseName === 'GN_Anand_Chandigarh')">
                                                                 <a (click)="ViewTestDetails(col)">
                                                                     <i class="fa fa-eye"></i>
                                                                     View Test Details 

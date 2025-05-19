@@ -137,7 +137,7 @@ export class BSHPLAudiologistAppoComponent implements OnInit {
     this.HAYesNoListL = ['YES', 'NO'];
     this.HAYesNoListR = ['YES', 'NO'];
     this.Trial_ForList = ['Binaural', 'Monorual'];
-    this.TestDoneListAppoNo = ["Ear wax","Active ear discharge","Patient not ready to do test","Enquiry only","Others"];
+    this.TestDoneListAppoNo = ["Ear wax","Active ear discharge","Patient not ready to do test","Enquiry only","Fitted","Others"];
     
     this.getAlldata();
     this.GetDegreeLossList();
