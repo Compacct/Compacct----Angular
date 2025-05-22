@@ -443,6 +443,7 @@ import { BlTxnRefDocEntryComponent } from './common/PatientManagement/bl-txn-ref
 import { BlTxnPettyCashVoucherComponent } from './common/SalesAndDistribution/Transaction/bl-txn-petty-cash-voucher/bl-txn-petty-cash-voucher.component';
 import { HearingStockReportNewComponent } from './common/MaterialManagement/Report/hearing-stock-report-new/hearing-stock-report-new.component';
 import { BLTxnPurchaseBillFromGRNComponent } from './common/FinancialManagement/Transaction/Purchase/bl-txn-purchase-bill-from-grn/bl-txn-purchase-bill-from-grn.component';
+import { BlTxnPurchaseGrnComponent } from './common/MaterialManagement/Inward/bl-txn-purchase-grn/bl-txn-purchase-grn.component';
 const layoutRoutes: Routes = [{
   path: "",
   component: AppLayoutComponent,
@@ -3397,11 +3398,19 @@ path: 'Doctors_Appointment_New_Fine_Tuning_Hearing',
       data: {
         title: 'Stock Report'
       }
-    }, {
+    }, 
+    {
       path: 'BL_Txn_Purchase_Bill_from_GRN',
       component: BLTxnPurchaseBillFromGRNComponent,
       data: {
         title: 'Purchase Bill from Purchase GRN'
+      }
+    },
+    {
+      path: 'Bl_Txn_Purchase_GRN',
+      component: BlTxnPurchaseGrnComponent,
+      data: {
+        title: 'GRN'
       }
     },
     /*{
