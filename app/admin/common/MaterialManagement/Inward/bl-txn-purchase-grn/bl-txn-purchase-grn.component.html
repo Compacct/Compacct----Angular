@@ -1,1 +1,704 @@
-<p>bl-txn-purchase-grn works!</p>
+<p-toast key="compacct-toast" baseZIndex="99999"> </p-toast>
+<p-toast position="center" key="c" (onClose)="onReject()" [modal]="true" [autoZIndex]="true">
+    <ng-template let-message pTemplate="message">
+        <div style="text-align: center">
+            <i class="pi pi-exclamation-triangle" style="font-size: 3em"></i>
+            <h3>{{message.summary}}</h3>
+            <p>{{message.detail}}</p>
+        </div>
+
+        <div class="ui-g ui-fluid">
+          <div class="ui-g-6">
+            <button type="button" pButton (click)="onConfirm()" label="Yes" class="ui-button-success"></button>
+        </div>
+          <div class="ui-g-6">
+              <button type="button" pButton (click)="onReject()" label="No" class="ui-button-secondary"></button>
+          </div>
+      </div>
+
+    </ng-template>
+</p-toast>
+
+<div class="row">
+    <div class="col-xs-12">
+        <div class="box box-primary">
+            <div class="form-horizontal">
+                <div class="box-body">
+                    <p-tabView [activeIndex]="tabIndexToView" (onChange)="TabClick($event)">
+                        <p-tabPanel headerStyleClass="compacct-tabs" [header]="items[0]" leftIcon="glyphicon glyphicon-list-alt">
+                            <form name="SearchForm" #SearchForm="ngForm" novalidate>
+                                <div class="form-group">
+                                    <div class="col-sm-3">
+                                        <label class="control-label">Date</label>
+                                            <app-compacct-daterangepicker (DaterangeObj)="getDateRange($event)" [HardCodeDateOpt]="initDate">
+                                            </app-compacct-daterangepicker>
+                                    </div>
+                                    <div class="col-sm-3">
+                                        <label class="control-label">CostCenter Name</label>
+                                            <select class="form-control" name="browsecostcenter" #browsecostcenter="ngModel" [(ngModel)]="ObjBrowseSearch.Cost_Cen_ID" 
+                                              [ngClass]="{'clearance': SearchGrnFormSubmitted && browsecostcenter?.errors?.required}" >
+                                                <option  [ngValue]="undefined">Select</option>
+                                                <option  *ngFor="let option of CostCenterList" value="{{option.Cost_Cen_ID}}">
+                                                 {{option.Cost_Cen_Name}}
+                                                </option>
+                                            </select>
+                                    </div>
+                                    <div class="col-sm-2">
+                                        <div class="col-sm-3">
+                                            <button class="btn btn-primary custombutton" data-toggle="modal" (click)="getSerarch()" id="load" [disabled]="seachSpinner">
+                                                <p-progressSpinner *ngIf="seachSpinner" [style]="{width: '15px', height: '15px'}" strokeWidth="8"  animationDuration=".5s"></p-progressSpinner>
+                                                <span *ngIf="!seachSpinner" class="glyphicon glyphicon-search"></span>&nbsp;Search
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="form-group" *ngIf='BackupSearchedlist.length' style="padding:15px">
+
+                                    <fieldset class="col-md-12">
+                                        <legend>Filter</legend>
+
+                                        <div class="form-group">
+                                            <div class="col-sm-3">
+                                                <label class="control-label">Sub Ledger <span class="text-danger"></span></label>
+                                                <p-multiSelect [options]="DistSubLedger" [(ngModel)]="SelectedDistSubLedger" itemSize="30" (onChange)='FilterDist()' [styleClass]="'compacct-multiselect'" name="Sub_Ledger_Name"></p-multiSelect>
+                                            </div>
+                                            <div class="col-sm-3">
+                                                <label class="control-label">Inward Type <span class="text-danger"></span></label>
+                                                <p-multiSelect [options]="DistInwardType" [(ngModel)]="SelectedInwardType" itemSize="30" (onChange)='FilterDist()' [styleClass]="'compacct-multiselect'" name="Txn_Type"></p-multiSelect>
+                                            </div>
+                                        </div>
+
+                                    </fieldset>
+                                </div>
+                            </form>
+                            <div class="no-padding">
+                                <p-table #dt [value]="getAllDataList" 
+                                    [globalFilterFields]="getAllDataListHeaders" 
+                                    [paginator]="getAllDataList.length ? true:false" 
+                                    [rows]="10" [rowHover]="true" [autoLayout]="true"
+                                    sortMode="multiple"
+                                    [rowsPerPageOptions]="[10,20,30]"
+                                    [rowHover]="true">
+                                        <ng-template pTemplate="caption">
+                                            <div class="row">
+                                                <div class="col-sm-3 pull-right" style="text-align: right;">
+                                                    <input type="text" pInputText size="50" placeholder="Search" (input)="dt.filterGlobal($event.target.value, 'contains')" class="searchInput form-control">
+                                                </div>
+                                            </div>
+                                        </ng-template>
+                                        <ng-template pTemplate="header">
+                                            <tr>
+                                                <th style="width:5em">Action</th>
+                                                <th>Doc No</th>
+                                                <th>Doc Date</th>
+                                                <th>SubLedger</th>
+                                                <th>CostCenter</th>
+                                                <th>CN No. / Challan No.</th>
+                                                <th>CN Date / Challan Date</th>
+                                                <th>Inward Type</th>
+                                                <th>Bill No</th>
+                                            </tr>
+                                        </ng-template>
+                                        <ng-template pTemplate="body" let-col>
+                                            <tr>
+
+                                                <td>
+                                                    <div class="dropdown">
+                                                        <button class="btn btn-default btn-sm tableButton dropdown-toggle" type="button" data-toggle="dropdown" style="height:27px">
+                                                                                    <i class="fa fa-fw fa-bars"></i>
+                                                                                    <span class="caret"></span>
+                                                                                </button>
+                                                        <ul class="dropdown-menu">
+                                                            <li *ngIf="Permission === 'Y'">
+                                                                <a (click)="EditPurchaseGRN(col.Doc_No)">
+                                                                    <i class="fa fa-fw fa-pencil"></i> Edit
+                                                                </a>
+                                                            </li>
+                                                            <li>
+                                                                <a (click)="ViewPurchaseGRN(col.Doc_No)">
+                                                                    <i class="fa fa-fw fa-eye"></i> View
+                                                                </a>
+                                                            </li>
+                                                            <li>
+                                                                <a (click)="Print(col.Doc_No)">
+                                                                   <i class="fa fa-fw fa-print"></i> Print Bill
+                                                                </a>
+                                                            </li>
+                                                            <li *ngIf="Permission === 'Y'">
+                                                                <a (click)="purchaseBillDelete(col.Doc_No)">
+                                                                    <i class="fa fa-fw fa-trash"></i> Delete
+                                                                </a>
+                                                            </li>
+                                                        </ul>
+                                                    </div>
+                                                </td>
+                                                <td>{{col.Doc_No}}</td>
+                                                <td>{{col.Doc_Date | date:'dd/MM/yyyy'}}</td>
+                                                <td>{{col.Sub_Ledger_Name}}</td>
+                                                <td>{{col.Cost_Cen_Name}}</td>
+                                                <td>{{col.CN_No}}</td>
+                                                <td>{{col.CN_Date | date:'dd/MM/yyyy'}}</td>
+                                                <td>{{col.Txn_Type}}</td>
+                                                <td>{{col.Bill_No ? col.Bill_No : ''}}</td>
+                                            </tr>
+                                        </ng-template>
+                                        <ng-template pTemplate="paginatorright" let-state>
+                                            Showing {{state.first+1}} of {{(state.first+1) + state.rows}} of {{state.totalRecords}}
+                                        </ng-template>
+                                </p-table>
+                            </div>
+                        </p-tabPanel>
+                        <p-tabPanel headerStyleClass="compacct-tabs" [header]="items[1]" leftIcon="glyphicon glyphicon-floppy-save">
+                            <form name="PurchaseGrnForm" #PurchaseGrnForm="ngForm" novalidate>
+                                <h5><strong>Vendor Details</strong></h5>
+                                    <div class="form-group">
+                                        <div class="col-sm-6">
+                                            <label>Vendor<span class="text-danger">*</span></label>
+                                            <p-dropdown [options]="SubLedgerList" name="vendor" 
+                                            [(ngModel)]="ObjSubLedger.Sub_Ledger_ID" 
+                                            [showClear]="true" 
+                                            [emptyFilterMessage]="' No Vendor Found'" 
+                                            (onChange)="SubledgerChange(ObjSubLedger.Sub_Ledger_ID)"
+                                            [filter]="true" 
+                                            filterBy="label,value.name" 
+                                            [resetFilterOnHide]="true" 
+                                            [placeholder]="'Select Vendor'"
+                                            [virtualScroll]="true" 
+                                            itemSize="30"
+                                            #vendor="ngModel" 
+                                            [required]="true"
+                                            [ngClass]="{'clearance':PurchaseGrnFormSubmitted && vendor?.errors?.required}" 
+                                            required
+                                            [disabled]="ViewButtonDisabled" >
+                                            </p-dropdown>
+                                        </div>
+                                        <div class="col-sm-3">
+                                            <label class="control-label">Billing Name </label>
+                                            <input class="form-control" 
+                                            name="billingname" 
+                                            #billingname="ngModel"
+                                            [(ngModel)]="ObjSubLedger.Sub_Ledger_Billing_Name" 
+                                            placeholder="Billing Name" 
+                                            [disabled]="true" 
+                                            [ngClass]="{'clearance':PurchaseGrnFormSubmitted && billingname?.errors?.required}" >
+                                        </div>
+                                        <div  class="col-sm-3">
+                                            <label class="control-label">Email</label>
+                                            <input class="form-control" 
+                                            name="email" 
+                                            type="text" 
+                                            #email="ngModel" 
+                                            [(ngModel)]="ObjSubLedger.Sub_Ledger_Email"
+                                            [ngClass]="{'clearance': PurchaseGrnFormSubmitted && email?.errors?.required}"
+                                            [disabled]="true"
+                                            placeholder="Email" />
+                                        </div>
+                                    </div>
+                                    <div class="form-group">
+                                        <div class="col-sm-3">
+                                            <label class="control-label">Contact No</label>
+                                            <input class="form-control" 
+                                            name="Mobile" 
+                                            #Mobile="ngModel" 
+                                            [(ngModel)]="ObjSubLedger.Sub_Ledger_Mobile_No"
+                                            [ngClass]="{'clearance': PurchaseGrnFormSubmitted && Mobile?.errors?.required}"
+                                            [disabled]="true"
+                                            placeholder="Mobile" />
+                                        </div>
+                                        <div class="col-sm-3">
+                                            <label class="control-label">Address<span class="text-danger"></span></label>
+                                            <input type="text"   
+                                            class="form-control"
+                                            name="SubLedgerAddress1"
+                                            #SubLedgerAddress1="ngModel" 
+                                            [(ngModel)]="ObjSubLedger.Sub_Ledger_Address_1"
+                                            [ngClass]="{'clearance': PurchaseGrnFormSubmitted && SubLedgerAddress1?.errors?.required}"
+                                            required
+                                            [disabled]="true"
+                                            placeholder="Address">
+                                        </div>
+                                        <div class="col-sm-3">
+                                            <label class="control-label">Land Mark<span class="text-danger"></span></label>
+                                            <input type="text"   
+                                            class="form-control"
+                                            name="SubLedgerLandMark"
+                                            #SubLedgerLandMark="ngModel" 
+                                            [(ngModel)]="ObjSubLedger.Sub_Ledger_Land_Mark"
+                                            [ngClass]="{'clearance': PurchaseGrnFormSubmitted && SubLedgerLandMark?.errors?.required}"
+                                            required
+                                            [disabled]="true"
+                                            placeholder="Land Mark">
+                                        </div>
+                                        <div class="col-sm-3">
+                                            <label class="control-label">PIN</label>
+                                            <input class="form-control" 
+                                            name="pin" 
+                                            #pin="ngModel" 
+                                            [(ngModel)]="ObjSubLedger.Sub_Ledger_Pin"
+                                            [ngClass]="{'clearance': PurchaseGrnFormSubmitted && pin?.errors?.required}"
+                                            [disabled]="true"
+                                            placeholder="PIN" />
+                                        </div>
+                                    </div>
+                                    <div class="form-group">
+                                        <div  class="col-sm-3">
+                                            <label class="control-label">District</label>
+                                                <input class="form-control" 
+                                                    type="text"  
+                                                    name="District"
+                                                    #District="ngModel" 
+                                                    [(ngModel)]="ObjSubLedger.Sub_Ledger_District"
+                                                    [ngClass]="{'clearance': PurchaseGrnFormSubmitted && District?.errors?.required}"
+                                                    [disabled]="true"
+                                                    placeholder="District">
+                                        </div>
+                                        <div class="col-sm-3">
+                                            <label class="control-label">State<span class="text-danger">*</span></label>
+                                                <select class="form-control"
+                                                    name="subledgerstate"
+                                                    #subledgerstate="ngModel" 
+                                                    [(ngModel)]="ObjSubLedger.Sub_Ledger_State"
+                                                    [ngClass]="{'clearance': PurchaseGrnFormSubmitted && subledgerstate?.errors?.required}"
+                                                    required
+                                                    [disabled]="true">
+                                                <option  [ngValue]="undefined">Select</option>
+                                                <option *ngFor="let option of states" value="{{option.State}}">{{option.State}}</option>
+                                            </select>
+                                        </div>
+                                        <div  class="col-sm-3">
+                                            <label class="control-label">Country</label>
+                                            <input class="form-control" 
+                                                type="text" 
+                                                name="Country"
+                                                #Country="ngModel" 
+                                                [(ngModel)]="ObjSubLedger.Sub_Ledger_Country"
+                                                [ngClass]="{'clearance': PurchaseGrnFormSubmitted && Country?.errors?.required}"
+                                                [disabled]="true"
+                                                placeholder="Country">
+                                        </div>
+                                        <div  class="col-sm-3">
+                                            <label class="control-label">PAN No</label>
+                                            <input class="form-control" 
+                                                type="text"  
+                                                name="PAN"
+                                                #PAN="ngModel" 
+                                                [(ngModel)]="ObjSubLedger.Sub_Ledger_PAN_No"
+                                                [ngClass]="{'clearance': PurchaseGrnFormSubmitted && PAN?.errors?.required}"
+                                                [disabled]="true"
+                                                placeholder="PAN No">
+                                        </div>
+                                    </div>
+                                    <div class="form-group">
+                                        <div  class="col-sm-3">
+                                            <label class="control-label">TIN No</label>
+                                            <input class="form-control" 
+                                            type="text" 
+                                            name="tinno"
+                                            #tinno="ngModel" 
+                                            [(ngModel)]="ObjSubLedger.Sub_Ledger_TIN_No"
+                                            [ngClass]="{'clearance': PurchaseGrnFormSubmitted && tinno?.errors?.required}"
+                                            [disabled]="true"
+                                            placeholder="TIN No">
+                                        </div>
+                                        <div  class="col-sm-3">
+                                            <label class="control-label">CST No</label>
+                                            <input class="form-control" 
+                                            type="text" 
+                                            name="cstno"
+                                            #cstno="ngModel" 
+                                            [(ngModel)]="ObjSubLedger.Sub_Ledger_CST_No"
+                                            [ngClass]="{'clearance': PurchaseGrnFormSubmitted && cstno?.errors?.required}"
+                                            [disabled]="true"
+                                            placeholder="CST No">
+                                        </div>
+                                        <div  class="col-sm-3">
+                                            <label class="control-label">Srv. Tax</label>
+                                            <input class="form-control" 
+                                            type="text" 
+                                            name="srvtax"
+                                            #srvtax="ngModel" 
+                                            [(ngModel)]="ObjSubLedger.Sub_Ledger_SERV_REG_NO"
+                                            [ngClass]="{'clearance': PurchaseGrnFormSubmitted && srvtax?.errors?.required}"
+                                            [disabled]="true"
+                                            placeholder="Service Tax Reg. No">
+                                        </div>
+                                        <div  class="col-sm-3">
+                                            <label class="control-label">CIN</label>
+                                            <input class="form-control" 
+                                            type="text" 
+                                            name="CIN"
+                                            #CIN="ngModel" 
+                                            [(ngModel)]="ObjSubLedger.Sub_Ledger_CIN_No"
+                                            [ngClass]="{'clearance': PurchaseGrnFormSubmitted && CIN?.errors?.required}"
+                                            [disabled]="true"
+                                            placeholder="CIN">
+                                        </div>
+                                    </div>
+                                    <div class="form-group">
+                                        <div class="col-sm-3">
+                                            <label class="control-label" >Excise No</label>
+                                            <input type="text"   
+                                                class="form-control"
+                                                name="exciseno"
+                                                #exciseno="ngModel" 
+                                                [(ngModel)]="ObjSubLedger.Sub_Ledger_EXID_NO"
+                                                [ngClass]="{'clearance': PurchaseGrnFormSubmitted && exciseno?.errors?.required}"
+                                                required
+                                                [disabled]="true"
+                                                placeholder="Excise No">
+                                        </div>
+                                    </div>
+                                    <hr class="box boxboxDivide-primary" />
+                                    <h5><strong> Received On and Other Details </strong></h5>
+                                    <div class="form-group">
+                                        <div class="col-sm-3">
+                                            <label>Received On<span class="text-danger">*</span></label>
+                                                <select class="form-control" 
+                                                    name="CostCentTrn"
+                                                    #CostCentTrn="ngModel" 
+                                                    [(ngModel)]="ObjCostCenter.Cost_Cen_ID"
+                                                    (change)="CostCenterChange(ObjCostCenter.Cost_Cen_ID)"
+                                                    [ngClass]="{'clearance': PurchaseGrnFormSubmitted && CostCentTrn?.errors?.required}"
+                                                    [disabled]="$CompacctAPI.CompacctCookies.User_Type != 'A' || ViewButtonDisabled"
+                                                    required>
+                                                    <option *ngFor=" let option of CostCenterList " value="{{option.Cost_Cen_ID}}" >
+                                                        {{option.Cost_Cen_Name}}
+                                                    </option>
+                                                </select>
+                                        </div>
+                                        <div class="col-sm-3">
+                                            <label class="control-label">Address</label>
+                                                <input class="form-control" 
+                                                    name="address1" 
+                                                    #address1="ngModel"
+                                                    [(ngModel)]="ObjCostCenter.Cost_Cen_Address1" 
+                                                    [disabled]="true" 
+                                                    [ngClass]="{'clearance':PurchaseGrnFormSubmitted && address1?.errors?.required}" 
+                                                    placeholder="Address">
+                                        </div>
+                                        <div class="col-sm-3">
+                                            <label class="control-label">Address</label>
+                                                <input class="form-control" 
+                                                    name="address2" 
+                                                    #address2="ngModel"
+                                                    [(ngModel)]="ObjCostCenter.Cost_Cen_Address2" 
+                                                    [disabled]="true" 
+                                                    [ngClass]="{'clearance':PurchaseGrnFormSubmitted && address2?.errors?.required}" 
+                                                    placeholder="Address">
+                                        </div>
+                                        <div  class="col-sm-3">
+                                            <label class="control-label">Location</label>
+                                                <input class="form-control" 
+                                                    name="CostCenLocation"
+                                                    #CostCenLocation="ngModel" 
+                                                    [(ngModel)]="ObjCostCenter.Cost_Cen_Location"
+                                                    placeholder="Location"
+                                                    [disabled]="true" 
+                                                    placeholder="Location">
+                                        </div>
+                                    </div>
+                                    <div class="form-group">
+                                        <div  class="col-sm-3">
+                                            <label class="control-label">PIN</label>
+                                            <input class="form-control" 
+                                            name="CostCenPIN"
+                                            #CostCenPIN="ngModel" 
+                                            [(ngModel)]="ObjCostCenter.Cost_Cen_PIN" 
+                                            [disabled]="true"
+                                            placeholder="PIN">
+                                        </div>
+                                        <div  class="col-sm-3">
+                                            <label class="control-label">District</label>
+                                            <input class="form-control" 
+                                            name="CostCenDistrict"
+                                            #CostCenDistrict="ngModel" 
+                                            [(ngModel)]="ObjCostCenter.Cost_Cen_District" 
+                                            [disabled]="true"
+                                            placeholder="District"  >
+                                        </div>
+                                        <div class="col-sm-3">
+                                            <label class="control-label">State</label>
+                                            <input class="form-control" 
+                                            name="CostCenState" 
+                                            #CostCenState="ngModel"
+                                            [(ngModel)]="ObjCostCenter.Cost_Cen_State" 
+                                            [disabled]="true" 
+                                            [ngClass]="{'clearance':PurchaseGrnFormSubmitted && CostCenState?.errors?.required}" 
+                                            placeholder="State">
+                                        </div>
+                                        <div class="col-sm-3">
+                                            <label class="control-label">Country</label>
+                                            <input class="form-control" 
+                                            name="CostCenCountry" 
+                                            #CostCenCountry="ngModel"
+                                            [(ngModel)]="ObjCostCenter.Cost_Cen_Country" 
+                                            [disabled]="true" 
+                                            placeholder="Country" >
+                                        </div>
+                                    </div>
+                                    <div class="form-group">
+                                        <div  class="col-sm-3">
+                                            <label class="control-label">Mobile</label>
+                                            <input class="form-control" 
+                                            name="CostCenMobile"
+                                            #CostCenMobile="ngModel" 
+                                            [(ngModel)]="ObjCostCenter.Cost_Cen_Mobile"
+                                            placeholder="Mobile"
+                                            [disabled]="true" 
+                                            placeholder="Mobile">
+                                        </div>
+                                        <div  class="col-sm-3">
+                                            <label class="control-label">Phone</label>
+                                            <input class="form-control" 
+                                            name="CostCenPhone"
+                                            #CostCenPhone="ngModel" 
+                                            [(ngModel)]="ObjCostCenter.Cost_Cen_Phone" 
+                                            [disabled]="true"
+                                            placeholder="Phone"  >
+                                        </div>
+                                        <div  class="col-sm-3">
+                                            <label class="control-label">Email</label>
+                                            <input class="form-control" 
+                                            name="CostCenEmail"
+                                            #CostCenEmail="ngModel" 
+                                            [(ngModel)]="ObjCostCenter.Cost_Cen_Email1" 
+                                            [disabled]="true"
+                                            placeholder="Email"  >
+                                        </div>
+                                        <div  class="col-sm-3">
+                                            <label class="control-label">VAT CST</label>
+                                            <input class="form-control" 
+                                            name="vatcst"
+                                            #vatcst="ngModel" 
+                                            [(ngModel)]="ObjCostCenter.Cost_Cen_VAT_CST" 
+                                            [disabled]="true"
+                                            placeholder="VAT CST"  >
+                                        </div>
+                                    </div>
+                                    <div class="form-group">
+                                        <div  class="col-sm-3">
+                                            <label class="control-label">CST No</label>
+                                            <input class="form-control" 
+                                            type="text" 
+                                            name="costcentercstno"
+                                            #costcentercstno="ngModel" 
+                                            [(ngModel)]="ObjCostCenter.Cost_Cen_CST_NO"
+                                            [disabled]="true"
+                                            placeholder="CST No">
+                                        </div>
+                                        <div  class="col-sm-3">
+                                            <label class="control-label">Service Tax No.</label>
+                                            <input class="form-control" 
+                                            type="text" 
+                                            name="srvtaxno"
+                                            #srvtaxno="ngModel" 
+                                            [(ngModel)]="ObjCostCenter.Cost_Cen_SRV_TAX_NO"
+                                            [disabled]="true"
+                                            placeholder="Service Tax No">
+                                        </div>
+                                    </div>
+                                    <hr class="box boxboxDivide-primary" />
+                                    <div class="form-group">
+                                        <div class="col-sm-3">
+                                            <label>	Doc. Date<sup class="text-danger">*</sup></label>
+                                            <div class="input-group date">
+                                                <div class="input-group-addon">
+                                                <i class="fa fa-calendar"></i>
+                                            </div>
+                                            <ejs-datepicker [format]="'dd/MMM/yyyy'" [(value)]='DocDate' [enabled]="!ViewButtonDisabled"></ejs-datepicker>
+                                            </div>
+                                        </div>
+                                        <div class="col-sm-3">
+                                            <label>CN No / Challan No<sup class="text-danger"></sup></label>  
+                                            <input class="form-control" 
+                                            name="CNNo" 
+                                            #CNNo="ngModel"
+                                            [(ngModel)]="ObjOther.CN_No" 
+                                            placeholder="CN No"
+                                            [disabled]="ViewButtonDisabled">
+                                        </div>
+                                        <div class="col-sm-3">
+                                            <label>CN Date / Challan Date<sup class="text-danger" *ngIf="ObjOther.CN_No">*</sup></label>
+                                            <div class="input-group date">
+                                                <div class="input-group-addon">
+                                                <i class="fa fa-calendar"></i>
+                                            </div>
+                                            <ejs-datepicker name="cnchallandate" #cnchallandate="ngModel" [format]="'dd/MMM/yyyy'" [(ngModel)]='cnnDate' [enabled]="!ViewButtonDisabled"
+                                               [ngClass]="{clearance: PurchaseGrnFormSubmitted && cnchallandate.errors?.required }" [required]="ObjOther.CN_No ? true : false">
+                                            </ejs-datepicker>
+                                            </div>
+                                        </div>
+                                        <div class="col-sm-3">
+                                            <label class="control-label">Inward Type <sup class="text-danger">*</sup></label>
+                                                <select class="form-control" name="inwardtype" #inwardtype="ngModel" [(ngModel)]="ObjOther.Type_ID" 
+                                                   [ngClass]="{'clearance': PurchaseGrnFormSubmitted && inwardtype?.errors?.required}" required [disabled]="ViewButtonDisabled">
+                                                    <option  [ngValue]="undefined">Select</option>
+                                                    <option  *ngFor="let option of InwardTypeList" value="{{option.Type_ID}}">
+                                                    {{option.Txn_Type}}
+                                                    </option>
+                                                </select>
+                                        </div>
+                                    </div>
+                                    <hr class="box boxboxDivide-primary" />
+                                    <form #ProductForm="ngForm" novalidate>
+                                        <div class="form-group">
+                                            <div Class='col-sm-4'>
+                                                <label class="control-label">Product Details&nbsp;<span class="text-danger">*</span></label>
+                                                    <p-dropdown
+                                                    [options]="ProductList"
+                                                    name="product"
+                                                    [(ngModel)]="ObjProductInfo.Product_ID"
+                                                    [showClear]="true"
+                                                    [emptyFilterMessage]="' No Product Found'"
+                                                    (onChange)="ProductChange(ObjProductInfo.Product_ID)"
+                                                    [filter]="true"
+                                                    filterBy="label,value.name"
+                                                    [resetFilterOnHide]="true"
+                                                    [placeholder]="'Select Product'"
+                                                    [virtualScroll]="true"
+                                                    itemSize="30"
+                                                    #product="ngModel"
+                                                    [styleClass]="ProductInfoSubmitted && product.errors?.required ? 'clearance' : ''"
+                                                    [required]="true">
+                                                    </p-dropdown>
+                                            </div>
+                                            <div class="col-sm-3">
+                                                <label class="control-label">Batch No.<sup class="text-danger">*</sup></label>
+                                                    <input class="form-control"
+                                                    name="batchno"
+                                                    #batchno="ngModel"
+                                                    [(ngModel)]="ObjProductInfo.Batch_Number"
+                                                    [required]="true"
+                                                    [ngClass]="{clearance:ProductInfoSubmitted && batchno?.errors?.required}"
+                                                    [disabled]="Product_Serial"
+                                                    placeholder="Batch No.">
+                                            </div>
+                                            <div class="col-sm-3">
+                                                <label class="control-label">Serial No.<sup class="text-danger">*</sup></label>
+                                                    <input class="form-control"
+                                                    name="serialno"
+                                                    #serialno="ngModel"
+                                                    [(ngModel)]="ObjProductInfo.Serial_No"
+                                                    [required]="true"
+                                                    [ngClass]="{clearance:ProductInfoSubmitted && serialno?.errors?.required}"
+                                                    [disabled]="!Product_Serial"
+                                                    placeholder="Serial No.">
+                                            </div>
+                                            <div class="col-sm-2">
+                                                <label class="control-label">Qty<sup class="text-danger">*</sup></label>
+                                                    <input class="form-control" 
+                                                        name="qty" #qty="ngModel" 
+                                                        [(ngModel)]="ObjProductInfo.Qty" (ngModelChange)="CalCulateTotalAmt()"
+                                                        [ngClass]="{clearance:ProductInfoSubmitted && qty?.errors?.required}" [disabled]="Maintain_Serial_No" [required]="true"
+                                                        CompacctDigitonly="true" placeholder="Qty"/>
+                                            </div>
+                                        </div>
+                                        <div class="form-group">
+                                            <div class="col-sm-3">
+                                                <label class="control-label">Unit<sup class="text-danger">*</sup></label>
+                                                    <input class="form-control"
+                                                    name="uom"
+                                                    #uom="ngModel"
+                                                    [(ngModel)]="ObjProductInfo.UOM"
+                                                    [required]="true"
+                                                    [ngClass]="{clearance:ProductInfoSubmitted && uom?.errors?.required}"
+                                                    placeholder="UOM"/>
+                                            </div>
+                                            <div class="col-sm-3">
+                                                <label class="control-label">MRP<sup class="text-danger"></sup></label>
+                                                    <input class="form-control" name="mrp" type="text"
+                                                        [ngClass]="{clearance:ProductInfoSubmitted && rate?.errors?.required}"
+                                                        #mrp="ngModel"
+                                                        [(ngModel)]="ObjProductInfo.MRP"
+                                                        CompacctDigitonly="true"
+                                                        placeholder="MRP"/>
+                                            </div>
+                                            <div class="col-sm-3">
+                                                <label class="control-label">Rate<sup class="text-danger">*</sup></label>
+                                                    <input class="form-control" name="rate" type="text"
+                                                        [ngClass]="{clearance:ProductInfoSubmitted && rate?.errors?.required}"
+                                                        #rate="ngModel"
+                                                        [(ngModel)]="ObjProductInfo.Rate"
+                                                        (ngModelChange)="CalCulateTotalAmt()"
+                                                        CompacctDigitonly="true"
+                                                        [required]="true"
+                                                        placeholder="Rate"/>
+                                            </div>
+                                            <div class="col-sm-3">
+                                                <label class="control-label">Total Amount<sup class="text-danger">*</sup></label>
+                                                    <input class="form-control" name="tolamt" #tolamt="ngModel" [(ngModel)]="ObjProductInfo.Amount" 
+                                                    [disabled]="true" CompacctDigitonly="true" placeholder="Total Amount"/>
+                                            </div>
+                                            <div class="col-sm-3">
+                                                <label class="control-label">Stock Point<sup class="text-danger">*</sup></label>
+                                                    <select class="form-control" name="godown" #godown="ngModel" 
+                                                      [(ngModel)]="ObjProductInfo.godown_id"
+                                                      [ngClass]="{clearance:ProductInfoSubmitted && godown?.errors?.required}" required>
+                                                      <option  [ngValue]="undefined">Select</option>
+                                                      <option *ngFor = "let option of GodownList" [value] ="option.godown_id">
+                                                        {{option.godown_name}}
+                                                      </option>
+                                                    </select>
+                                            </div>
+                                        </div>
+                                        <div class="form-group">
+                                            <div class="col-sm-3 pull-right">
+                                                <button id="row-Add" class="btn btn-primary custombutton pull-right"
+                                                        (click)="AddProductInfo(ProductForm.form.valid)">
+                                                    <span class="glyphicon glyphicon-plus"></span>&nbsp;Add
+                                                </button>
+                                            </div>
+                                        </div>
+                                    </form>
+                                    <br>
+                                    <div class="table-responsive no-padding">
+                                        <table class="table table-bordered">
+                                            <thead style="background-color:#3c8dbc;color:white;">
+                                                <tr>
+                                                    <th nowrap class="text-center" style="vertical-align:middle">Sl.No.</th>
+                                                    <th nowrap class="text-center" style="vertical-align:middle">Product Details</th>
+                                                    <th nowrap class="text-center" style="vertical-align:middle">Batch No</th>
+                                                    <th nowrap class="text-center" style="vertical-align:middle">Serial No</th>
+                                                    <!-- <th nowrap class="text-center" style="vertical-align:middle">Expiry Date</th> -->
+                                                    <th nowrap class="text-center" style="vertical-align:middle">Qty</th>
+                                                    <th nowrap class="text-center" style="vertical-align:middle">Unit</th>
+                                                    <th nowrap class="text-center" style="vertical-align:middle">MRP</th>
+                                                    <th nowrap class="text-center" style="vertical-align:middle">Rate</th>
+                                                    <th nowrap class="text-center" style="vertical-align:middle">Total Amt</th>
+                                                    <th nowrap class="text-center" style="vertical-align:middle">Stock Point</th>
+                                                    <th nowrap class="text-center" style="vertical-align:middle">Delete</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                <tr *ngFor="let obj of AddProductDetails ; let ind = index;">
+                                                    <td>{{ ind + 1 }}</td>
+                                                    <td>{{obj.Product_Name}}</td>
+                                                    <td>{{obj.Batch_Number ? obj.Batch_Number : '-'}}</td>
+                                                    <td>{{obj.Serial_No ? obj.Serial_No : '-'}}</td>
+                                                    <!-- <td>{{obj.Expiry_Date ? obj.Expiry_Date : '-'}}</td> -->
+                                                    <td>{{obj.Qty}}</td>
+                                                    <td>{{obj.UOM}}</td>
+                                                    <td>{{obj.MRP}}</td>
+                                                    <td>{{obj.Challan_Rate}}</td>
+                                                    <td>{{obj.Amount}}</td>
+                                                    <td>{{obj.godown_name ? obj.godown_name : '-'}}</td>
+                                                    <td><button (click)="CheckProEdit(ind,obj)" class="btn danger"><i class="fa fa-trash"></i></button></td>
+                                                </tr>
+                                            </tbody>
+                                        </table>
+                                    </div>
+                            </form>
+                            <hr class="box boxboxDivide-primary ng-scope">
+                            <div class="box-footer">
+                                <button *ngIf="!ViewButtonDisabled" class="btn btn-primary pull-right" (click)="SavePurchaseGRN(PurchaseGrnForm.form.valid)" id="load" [disabled]="Spinner">
+                                    <p-progressSpinner *ngIf="Spinner" [style]="{width: '15px', height: '15px'}" strokeWidth="8"  animationDuration=".5s"></p-progressSpinner>
+                                    <span *ngIf="!Spinner" class="glyphicon glyphicon-save"></span>{{buttonname}}
+                                </button>
+                            </div>
+                        </p-tabPanel>
+                    </p-tabView>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
