@@ -121,7 +121,7 @@
                                                             </li>
                                                             <li>
                                                                 <a (click)="Print(col.Doc_No)">
-                                                                   <i class="fa fa-fw fa-print"></i> Print Bill
+                                                                   <i class="fa fa-fw fa-print"></i> Print
                                                                 </a>
                                                             </li>
                                                             <li *ngIf="Permission === 'Y'">
@@ -589,7 +589,7 @@
                                                     <input class="form-control" 
                                                         name="qty" #qty="ngModel" 
                                                         [(ngModel)]="ObjProductInfo.Qty" (ngModelChange)="CalCulateTotalAmt()"
-                                                        [ngClass]="{clearance:ProductInfoSubmitted && qty?.errors?.required}" [disabled]="Maintain_Serial_No" [required]="true"
+                                                        [ngClass]="{clearance:ProductInfoSubmitted && qty?.errors?.required}" [required]="true"
                                                         CompacctDigitonly="true" placeholder="Qty"/>
                                             </div>
                                         </div>

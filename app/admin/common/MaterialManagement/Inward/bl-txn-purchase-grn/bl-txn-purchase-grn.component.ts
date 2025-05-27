@@ -68,7 +68,7 @@ export class BlTxnPurchaseGrnComponent implements OnInit {
     private compacctToast: MessageService,
     private ngxService: NgxUiLoaderService,
     private route: ActivatedRoute,
-    private CommonUserActivity: CommonUserActivityService
+    private _CommonUserActivity : CommonUserActivityService
   ) { }
 
   ngOnInit() {
@@ -150,8 +150,24 @@ export class BlTxnPurchaseGrnComponent implements OnInit {
     });
   }
   CostCenterChange(CostCenID) {
-    // this.ObjPurchaseBill.Cost_Cen_ID = CostCenID;
-    this.ObjCostCenter = this.CostCenterList.filter((el: any) => el.Cost_Cen_ID == CostCenID)[0];
+    // this.ObjCostCenter.Cost_Cen_ID = undefined;
+    const ObjCostCenter = this.CostCenterList.filter((el: any) => el.Cost_Cen_ID == CostCenID)[0];
+    // this.ObjCostCenter = ObjCostCenter;
+    this.ObjCostCenter.Cost_Cen_ID = ObjCostCenter.Cost_Cen_ID;
+    this.ObjCostCenter.Cost_Cen_Name = ObjCostCenter.Cost_Cen_Name ? ObjCostCenter.Cost_Cen_Name : '';
+    this.ObjCostCenter.Cost_Cen_Address1 = ObjCostCenter.Cost_Cen_Address1 ? ObjCostCenter.Cost_Cen_Address1 : '';
+    this.ObjCostCenter.Cost_Cen_Address2 = ObjCostCenter.Cost_Cen_Address2 ? ObjCostCenter.Cost_Cen_Address2 : '';
+    this.ObjCostCenter.Cost_Cen_Location = ObjCostCenter.Cost_Cen_Location ? ObjCostCenter.Cost_Cen_Location : '';
+    this.ObjCostCenter.Cost_Cen_PIN = ObjCostCenter.Cost_Cen_PIN ? ObjCostCenter.Cost_Cen_PIN : '';
+    this.ObjCostCenter.Cost_Cen_District = ObjCostCenter.Cost_Cen_District ? ObjCostCenter.Cost_Cen_District : '';
+    this.ObjCostCenter.Cost_Cen_State = ObjCostCenter.Cost_Cen_State ? ObjCostCenter.Cost_Cen_State : '';
+    this.ObjCostCenter.Cost_Cen_Country = ObjCostCenter.Cost_Cen_Country ? ObjCostCenter.Cost_Cen_Country : '';
+    this.ObjCostCenter.Cost_Cen_Mobile = ObjCostCenter.Cost_Cen_Mobile ? ObjCostCenter.Cost_Cen_Mobile : '';
+    this.ObjCostCenter.Cost_Cen_Phone = ObjCostCenter.Cost_Cen_Phone ? ObjCostCenter.Cost_Cen_Phone : '';
+    this.ObjCostCenter.Cost_Cen_Email1 = ObjCostCenter.Cost_Cen_Email1 ? ObjCostCenter.Cost_Cen_Email1 : '';
+    this.ObjCostCenter.Cost_Cen_VAT_CST = ObjCostCenter.Cost_Cen_VAT_CST ? ObjCostCenter.Cost_Cen_VAT_CST : '';
+    this.ObjCostCenter.Cost_Cen_CST_NO = ObjCostCenter.Cost_Cen_CST_NO ? ObjCostCenter.Cost_Cen_CST_NO : '';
+    this.ObjCostCenter.Cost_Cen_SRV_TAX_NO = ObjCostCenter.Cost_Cen_SRV_TAX_NO ? ObjCostCenter.Cost_Cen_SRV_TAX_NO : '';
     this.GetGodown();
   }
   GetState() {
@@ -278,10 +294,22 @@ export class BlTxnPurchaseGrnComponent implements OnInit {
       this.ObjProductInfo = new ProductInfo();
       this.ObjProductInfo.godown_id = this.GodownList.length === 1 ? this.GodownList[0].godown_id : '';
       this.ProductInfoSubmitted = false;
+      this.GetTotalNetAmount();
     }
+  }
+  GetTotalNetAmount(){
+    this.ObjOther.Bill_Gross_Amt = 0;
+    this.ObjOther.Bill_Net_Amt = 0;
+    var totalAmount = 0;
+    this.AddProductDetails.forEach(item => {
+      totalAmount = totalAmount + Number(item.Amount);
+    });
+    this.ObjOther.Bill_Gross_Amt = (totalAmount).toFixed(2);
+    this.ObjOther.Bill_Net_Amt = (totalAmount).toFixed(2);
   }
   delete(index) {
     this.AddProductDetails.splice(index,1);
+      this.GetTotalNetAmount();
   }
   DataForSavePurchaseGRN(){
     if(this.AddProductDetails.length) {
@@ -324,6 +352,8 @@ export class BlTxnPurchaseGrnComponent implements OnInit {
         var tempID = data[0].Column1;
         this.Spinner = false;
       if(data[0].Column1){
+        const message = this.buttonname === 'Create' ? "Create" : "Update";
+        await this.SaveUserActivity(message,data[0].Column1);
         const mgs = this.buttonname === 'Create' ? "Created" : "Updated";
         this.Spinner = false;
         // this.ngxService.stop();
@@ -464,6 +494,7 @@ export class BlTxnPurchaseGrnComponent implements OnInit {
       this.cnnDate =  data[0].CN_Date? new Date(data[0].CN_Date) : null;
       this.ObjOther.Type_ID = data[0].Type_ID;
       this.AddProductDetails = data[0].L_element;
+      this.GetTotalNetAmount();
     })
   }
   CheckProEdit(data,index){
@@ -517,8 +548,9 @@ export class BlTxnPurchaseGrnComponent implements OnInit {
         "Report_Name_String": "Delete_Bl_Txn_Purchase_GRN",
         "Json_Param_String": JSON.stringify([sendobj])
       }
-      this.GlobalAPI.getData(obj).subscribe((data:any)=>{
+      this.GlobalAPI.getData(obj).subscribe(async (data:any)=>{
           if (data[0].Column1 == "Done") {
+            await this.SaveUserActivity('Delete',this.docNumber);
             this.compacctToast.clear();
             this.compacctToast.add({
               key: "compacct-toast",
@@ -537,11 +569,15 @@ export class BlTxnPurchaseGrnComponent implements OnInit {
   Print(DocNo) {
     if (DocNo) {
       if(DocNo){
-      //  const url = `/Report/Print/MICL/sale_bill_print.html?Doc_No=${DocNo}`;
-      //   window.open(url,"Print",  'fullscreen=yes, scrollbars=auto,width=950,height=500');
+       const url = `/Report/Crystal_Files/Finance/SaleBill/Purchase_GRN.html?Doc_No=${DocNo}`;
+        window.open(url,"Print",  'fullscreen=yes, scrollbars=auto,width=950,height=500');
       
       }
     }
+  }
+  async SaveUserActivity(msg,docno){
+    const result = await this._CommonUserActivity.GetUserActivity(msg,'Purchase GRN',docno,'0')
+    console.log(result)
   }
 
 
@@ -606,16 +642,9 @@ class Other {
   Type_ID: any;
   User_ID: any;
   Fin_Year_ID: any;
+  Bill_Gross_Amt: any;
+  Bill_Net_Amt: any;
   L_element: any;
-
-  // Billed = "Y";
-  // Currency_Symbol: any;
-  // Warranty_Terms: any;
-  // Entry_Date: any;
-  // Currency_ID: any;
-  // Project_ID: any;
-  // Order_No: any;
-  // Order_Date: any;
 }
 class ProductInfo {
   Product_ID: any;
@@ -629,35 +658,4 @@ class ProductInfo {
   Amount: any; 
   godown_id: any;
   godown_name: any;
-
-  // Discount_Type: any;
-  // Discount: any;
-  // Discount_Type_Amount: any;
-  // Taxable_Amount: any;
-  // CGST_Rate: any;
-  // CGST_Amount: any;
-  // SGST_Rate: any;
-  // SGST_Amount: any;
-  // IGST_Rate: any;
-  // IGST_Amount: any;
-  // Cat_ID: any;
-  // Cat_Name: any;
-  // godown_id: any;
-  // godown_name: any;
-  // Ledger_ID: any;
-  // Excise_Tax: any;
-  // Excise_Tax_Percentage: any;
-  // CGST_Input_Ledger_ID: any;
-  // SGST_Input_Ledger_Id: any;
-  // IGST_Input_Ledger_ID: any;
-  // Discount_Ledger_ID: any;
-  // Product_Expiry: any;
-  // Expiry_Date: any;
-  // purchaseChallan: any;
-  // Bill_Gross_Amt: any;
-  // Bill_Net_Amt: any;
-  // Billed: any;
-  // Bill_No: any;
-  // Bill_Date: any;
-  // Challan_Line_No: any;
 }
