@@ -543,6 +543,7 @@ import { HearingStockReportNewComponent } from './common/MaterialManagement/Repo
 import { CommonUserActivityService } from "./shared/compacct.services/common-user-activity.service";
 import { BLTxnPurchaseBillFromGRNComponent } from './common/FinancialManagement/Transaction/Purchase/bl-txn-purchase-bill-from-grn/bl-txn-purchase-bill-from-grn.component';
 import { BlTxnPurchaseGrnComponent } from './common/MaterialManagement/Inward/bl-txn-purchase-grn/bl-txn-purchase-grn.component';
+import { PatientInformationComponent } from './common/PatientManagement/patient-information/patient-information.component';
 @NgModule({
   declarations: [
     AppLayoutComponent,
@@ -999,7 +1000,8 @@ import { BlTxnPurchaseGrnComponent } from './common/MaterialManagement/Inward/bl
     BlTxnPettyCashVoucherComponent,
     HearingStockReportNewComponent,
     BLTxnPurchaseBillFromGRNComponent,
-    BlTxnPurchaseGrnComponent
+    BlTxnPurchaseGrnComponent,
+    PatientInformationComponent
   ],
   imports: [
     CommonModule,
