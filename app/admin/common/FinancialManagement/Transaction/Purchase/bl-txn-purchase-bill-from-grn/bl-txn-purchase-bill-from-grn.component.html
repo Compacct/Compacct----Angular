@@ -486,7 +486,6 @@
                                 name="Currency"
                                 #Currency="ngModel" 
                                [(ngModel)]="ObjOther.Currency_ID"
-                               (change)="CurrencyChange(ObjOther.Currency_ID)"
                                >
                                <option  [ngValue]="undefined">Select</option>
                                  <option *ngFor="let option of CurrencyList" value="{{option.Currency_ID}}">{{option.Currency_Symbol}}</option>

@@ -51,6 +51,16 @@ export class CrmReportV2Component implements OnInit {
   BackupDoctorsIncentiveList:any = [];
   DoctorsIncentiveListHeader: any= [];
 
+  ObjDoctorsIncentiveForTesting : DoctorsIncentiveForTesting = new DoctorsIncentiveForTesting();
+  tab5seachSpinner:boolean = false;
+  DoctorsIncentiveForTestList: any= [];
+  BackupDoctorsIncentiveForTestList:any = [];
+  DoctorsIncentiveForTestListHeader: any= [];
+  DoctorIForTestDetailsPopup:boolean = false;
+  DoctorName:any;
+  DoctorIForTestList:any = [];
+  DoctorIForTestListHeader:any = [];
+
   constructor(
     private GlobalAPI:CompacctGlobalApiService,
     private compacctToast:MessageService,
@@ -66,11 +76,11 @@ export class CrmReportV2Component implements OnInit {
       Header: "Report",
       Link: "Report"
     });
-    this.items = ["AUDIOLOGIST TRIAL", "PATIENT REGISTRATION", "AUDIOLOGIST INCENTIVE", "DOCTORS CONSULTATION"];
+    this.items = ["AUDIOLOGIST TRIAL", "PATIENT REGISTRATION", "AUDIOLOGIST INCENTIVE", "DOCTORS CONSULTATION", "DOCTOR INCENTIVE FOR TESTING"];
   }
   TabClick(e){
     this.tabIndexToView = e.index;
-    this.items = ["AUDIOLOGIST TRIAL", "PATIENT REGISTRATION", "AUDIOLOGIST INCENTIVE", "DOCTORS CONSULTATION"];
+    this.items = ["AUDIOLOGIST TRIAL", "PATIENT REGISTRATION", "AUDIOLOGIST INCENTIVE", "DOCTORS CONSULTATION", "DOCTOR INCENTIVE FOR TESTING"];
   }
   getDateRange(dateRangeObj) {
     if (dateRangeObj.length) {
@@ -401,6 +411,124 @@ export class CrmReportV2Component implements OnInit {
   }
 
   }
+  getDateRangeDoctorForTesting(dateRangeObj) {
+    if (dateRangeObj.length) {
+      this.ObjDoctorsIncentiveForTesting.From_Date = dateRangeObj[0];
+      this.ObjDoctorsIncentiveForTesting.To_Date = dateRangeObj[1];
+    }
+  }
+  GetDoctorsIncentiveForTesting() {
+    this.DoctorsIncentiveForTestList = [];
+    this.BackupDoctorsIncentiveForTestList = [];
+    this.DoctorsIncentiveForTestListHeader = [];
+    const start = this.ObjDoctorsIncentiveForTesting.From_Date
+      ? this.DateService.dateConvert(new Date(this.ObjDoctorsIncentiveForTesting.From_Date))
+      : this.DateService.dateConvert(new Date());
+    const end = this.ObjDoctorsIncentiveForTesting.To_Date
+      ? this.DateService.dateConvert(new Date(this.ObjDoctorsIncentiveForTesting.To_Date))
+      : this.DateService.dateConvert(new Date());
+      this.tab5seachSpinner = true;
+  if (start && end) {
+    const tempobj = {
+      Start_Date : start,
+      End_Date : end
+    }
+    const obj = {
+      "SP_String": "SP_CRM_Report",
+      "Report_Name_String": "Doctor_Incentive_for_testing_new",
+      "Json_Param_String": JSON.stringify([tempobj])
+    }
+    this.GlobalAPI.getData(obj).subscribe((data: any) => {
+      // console.log('data daata',data);
+      if(data.length){
+      this.DoctorsIncentiveForTestList = data;
+      this.BackupDoctorsIncentiveForTestList = data;
+      this.DoctorsIncentiveForTestListHeader = Object.keys(data[0]);
+      this.tab5seachSpinner = false;
+    }
+    else {
+      this.tab5seachSpinner = false;
+    }
+    });
+  }
+
+  }
+  ExportToExcelDoctorIncentiveForTest(){
+    const start = this.ObjDoctorsIncentiveForTesting.From_Date
+      ? this.DateService.dateConvert(new Date(this.ObjDoctorsIncentiveForTesting.From_Date))
+      : this.DateService.dateConvert(new Date());
+    const end = this.ObjDoctorsIncentiveForTesting.To_Date
+      ? this.DateService.dateConvert(new Date(this.ObjDoctorsIncentiveForTesting.To_Date))
+      : this.DateService.dateConvert(new Date());
+     let tempobj = {}
+     let newDoctorIncentiveList:any = [];
+     this.BackupDoctorsIncentiveForTestList.forEach(element => {
+      const newDoctorIncentiveObj = {
+        ['Doctor Name']: element.doctor_name,
+        ['Taxable Amount']: element.Taxable_Amount,
+        ['Incentive Amount']: element.Incentive_Amt
+      }
+     newDoctorIncentiveList.push(newDoctorIncentiveObj);
+     });
+  if (start && end) {
+   tempobj = {
+    From_Date: start,
+    To_Date: end,
+  }
+  }
+    this.excelservice.ExcelDoctorInsentiveForTest(newDoctorIncentiveList,tempobj);
+  }
+  GetDoctorForTestDetails(data){
+    this.DoctorIForTestList = [];
+    this.DoctorIForTestListHeader = [];
+    this.DoctorName = undefined;
+    const start = this.ObjDoctorsIncentiveForTesting.From_Date
+      ? this.DateService.dateConvert(new Date(this.ObjDoctorsIncentiveForTesting.From_Date))
+      : this.DateService.dateConvert(new Date());
+    const end = this.ObjDoctorsIncentiveForTesting.To_Date
+      ? this.DateService.dateConvert(new Date(this.ObjDoctorsIncentiveForTesting.To_Date))
+      : this.DateService.dateConvert(new Date());
+    if (data.Enq_Source_Sub_ID) {
+      this.DoctorName = data.doctor_name;
+      const sendobj = {
+        Start_Date : start,
+        End_Date : end,
+        Enq_Source_Sub_ID: data.Enq_Source_Sub_ID
+      }
+    const obj = {
+      "SP_String": "SP_CRM_Report",
+      "Report_Name_String": "Doctor_Incentive_for_testing_details",
+      "Json_Param_String": JSON.stringify(sendobj)
+    }
+    this.GlobalAPI.getData(obj).subscribe((data: any) => {
+      if (data.length) {
+        this.DoctorIForTestList = data;
+        this.DoctorIForTestListHeader = Object.keys(data[0]);
+        this.DoctorIForTestDetailsPopup = true;
+      } else {
+        this.DoctorIForTestList = [];
+        this.DoctorIForTestListHeader = [];
+        this.DoctorIForTestDetailsPopup = false;
+      }
+    });
+    }
+  }
+  ExportToExcelDoctorIForTestingDetails(){
+    const start = this.ObjDoctorsIncentiveForTesting.From_Date
+      ? this.DateService.dateConvert(new Date(this.ObjDoctorsIncentiveForTesting.From_Date))
+      : this.DateService.dateConvert(new Date());
+    const end = this.ObjDoctorsIncentiveForTesting.To_Date
+      ? this.DateService.dateConvert(new Date(this.ObjDoctorsIncentiveForTesting.To_Date))
+      : this.DateService.dateConvert(new Date());
+     let tempobj = {}
+  if (start && end) {
+   tempobj = {
+    From_Date: start,
+    To_Date: end,
+  }
+  }
+    this.excelservice.ExcelDoctorIForTestingDetails(this.DoctorIForTestList,tempobj);
+  }
 
 
   onReject(){}
@@ -421,6 +549,10 @@ class DoctorsIncentive {
   To_Date: any;
 }
 class AudiologistIncentive {
+  From_Date: any;
+  To_Date: any;
+}
+class DoctorsIncentiveForTesting {
   From_Date: any;
   To_Date: any;
 }

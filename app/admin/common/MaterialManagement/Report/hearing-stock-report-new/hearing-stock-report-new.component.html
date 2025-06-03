@@ -234,7 +234,7 @@
 [closable]="true"
 [modal]="true"
 [responsive]="true"
-[style]="{ width: '60%', minWidth: '200px' }"
+[style]="{ width: '50%', minWidth: '200px' }"
 [minY]="70"
 [maximizable]="true"
 [baseZIndex]="10000"
@@ -251,15 +251,15 @@
         </ng-template>
         <ng-template pTemplate="header">
             <tr>
-                <th>Serial No</th>
-                <th>Batch No</th>
+                <th>Serial/Batch No</th>
+                <!-- <th>Batch No</th> -->
                 <th>Count</th>
             </tr>
         </ng-template>
         <ng-template pTemplate="body" let-col let-rowIndex="rowIndex">
             <tr>
-                <td><a class="btn-link" (click)="GetSerialOrBatchDetails(col.Serial_No)">{{col.Serial_No ? col.Serial_No : '-'}}</a></td>
-                <td><a class="btn-link" (click)="GetSerialOrBatchDetails(col.Batch_No)">{{col.Batch_No ? col.Batch_No : '-'}}</a></td>
+                <td><a class="btn-link" (click)="GetSerialOrBatchDetails(col.Serial_Batch_No)">{{col.Serial_Batch_No ? col.Serial_Batch_No : '-'}}</a></td>
+                <!-- <td><a class="btn-link" (click)="GetSerialOrBatchDetails(col.Batch_No)">{{col.Batch_No ? col.Batch_No : '-'}}</a></td> -->
                 <td>{{col.count ? col.count : '-'}}</td>
             </tr>
         </ng-template>

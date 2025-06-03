@@ -4135,5 +4135,169 @@ export class ExportExcelService {
     fs.saveAs(blob, ExcelDetails.FileName+'.xlsx');
   })
 
-}
+ }
+
+ ExcelDoctorInsentiveForTest(excelData:any, daterange:any) {
+  const workbook = new Workbook();
+  let worksheet = workbook.addWorksheet("Doctor_Incentive_For_Testing");
+
+  const header =  Object.keys(excelData[0]);
+  const data:any = [];
+  excelData.forEach((ele:any) => {
+    data.push(Object.values(ele))
+  });
+
+  let headerRow1 = worksheet.addRow(["Doctor Incentive For Testing "+"( " + `${daterange.From_Date} - ${daterange.To_Date}` + " )"]);
+  headerRow1.eachCell((cell, number) => {
+    cell.alignment = { vertical: 'middle', horizontal: 'center' };
+    cell.fill = {
+      type: 'pattern',
+      pattern: 'solid',
+      fgColor: { argb: '3c8dbc' },
+      bgColor: { argb: '' }
+    }
+    cell.font = {
+      bold: true,
+      color: { argb: 'FFFFFF' },
+      size: 12
+    }
+    cell.border = {
+      top: { style: 'thin' },
+      left: { style: 'thin' },
+      bottom: { style: 'thin' },
+      right: { style: 'thin' },
+    };
+  });
+  worksheet.mergeCells('A1', 'C1')
+
+  let headerRow2 = worksheet.addRow(header);
+
+  headerRow2.eachCell((cell, number) => {
+      // All other columns
+      cell.alignment = { vertical: 'middle', horizontal: 'center' };
+      cell.fill = {
+        type: 'pattern',
+        pattern: 'solid',
+        fgColor: { argb: '3c8dbc' }, // Default color for other columns
+      };
+      cell.font = {
+        color: { argb: 'ffffff' },
+      };
+    
+    cell.border = {
+      top: { style: 'thin' },
+      left: { style: 'thin' },
+      bottom: { style: 'thin' },
+      right: { style: 'thin' },
+    };
+  });
+
+  // Add Data and Conditional Formatting
+  data.forEach(d => {
+       worksheet.addRow(d);
+  });
+
+    worksheet.getColumn('A').width = 30
+    worksheet.getColumn('B').width = 20
+    worksheet.getColumn('C').width = 20
+  // Generate & Save Excel File
+  workbook.xlsx.writeBuffer().then((data: any) => {
+  const blob = new Blob([data], {
+    type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+  });
+  fs.saveAs(blob, 'Doctor_Incentive_For_Testing.xlsx');
+  });
+ }
+ ExcelDoctorIForTestingDetails(excelData:any, daterange:any) {
+  const workbook = new Workbook();
+  let worksheet = workbook.addWorksheet("Testing_Details");
+
+  const header =  Object.keys(excelData[0]);
+  const data:any = [];
+  excelData.forEach((ele:any) => {
+    data.push(Object.values(ele))
+  });
+
+  let headerRow1 = worksheet.addRow(["Testing Details "+"( " + `${daterange.From_Date} - ${daterange.To_Date}` + " )"]);
+  headerRow1.eachCell((cell, number) => {
+    cell.alignment = { vertical: 'middle', horizontal: 'center' };
+    cell.fill = {
+      type: 'pattern',
+      pattern: 'solid',
+      fgColor: { argb: '3c8dbc' },
+      bgColor: { argb: '' }
+    }
+    cell.font = {
+      bold: true,
+      color: { argb: 'FFFFFF' },
+      size: 12
+    }
+    cell.border = {
+      top: { style: 'thin' },
+      left: { style: 'thin' },
+      bottom: { style: 'thin' },
+      right: { style: 'thin' },
+    };
+  });
+  worksheet.mergeCells('A1', this.colName(header.length - 1) + '1')
+
+  let headerRow2 = worksheet.addRow(header);
+  
+  headerRow2.eachCell((cell, number) => {
+      // All other columns
+      cell.alignment = { vertical: 'middle', horizontal: 'center' };
+      cell.fill = {
+        type: 'pattern',
+        pattern: 'solid',
+        fgColor: { argb: '3c8dbc' }, // Default color for other columns
+      };
+      cell.font = {
+        color: { argb: 'ffffff' },
+      };
+    
+    cell.border = {
+      top: { style: 'thin' },
+      left: { style: 'thin' },
+      bottom: { style: 'thin' },
+      right: { style: 'thin' },
+    };
+  });
+
+  // Add Data and Conditional Formatting
+  // Add Data Rows
+const allRows = [header, ...data]; // Combine headers and data for width calc
+allRows.forEach(row => worksheet.addRow(row));
+
+// Dynamically set column widths
+header.forEach((col, colIndex) => {
+  let maxLength = col.length;
+
+  allRows.forEach(row => {
+    const cellValue = row[colIndex];
+    if (cellValue) {
+      const cellStr = String(cellValue);
+      if (cellStr.length > maxLength) {
+        maxLength = cellStr.length;
+      }
+    }
+  });
+
+  // Add padding to width
+  worksheet.getColumn(colIndex + 1).width = maxLength + 3;
+});
+
+  // data.forEach(d => {
+  //      worksheet.addRow(d);
+  //      worksheet.getColumn('A').width = 30
+  // });
+
+  // Generate & Save Excel File
+  workbook.xlsx.writeBuffer().then((data: any) => {
+  const blob = new Blob([data], {
+    type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+  });
+  fs.saveAs(blob, 'Testing_Details.xlsx');
+  });
+ }
+
 }

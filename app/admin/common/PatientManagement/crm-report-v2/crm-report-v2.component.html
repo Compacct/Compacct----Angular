@@ -270,12 +270,12 @@
                                     <p-table [value]="DoctorsIncentiveList" [paginator]="DoctorsIncentiveList.length ? true : false"
                                         [rows]="100" [rowHover]="true" [autoLayout]="true" sortMode="multiple"
                                         [rowsPerPageOptions]="[100,200,300]"
-                                        [globalFilterFields]="DoctorsIncentiveListHeader" [rowHover]="true" #dtt>
+                                        [globalFilterFields]="DoctorsIncentiveListHeader" [rowHover]="true" #dtt4>
                                         <ng-template pTemplate="caption">
                                             <div class="row">
                                                 <div class="col-sm-3 pull-right">
                                                     <input type="text" pInputText size="50" placeholder="Search"
-                                                        (input)="dtt.filterGlobal($event.target.value, 'contains')"
+                                                        (input)="dtt4.filterGlobal($event.target.value, 'contains')"
                                                         class="searchInput form-control">
                                                 </div>
                                             </div>
@@ -290,6 +290,65 @@
                                                 <td nowrap *ngFor="let option of DoctorsIncentiveListHeader; let i = index" >
                                                     {{col[option]}} 
                                                 </td>
+                                            </tr>
+                                        </ng-template>
+                                        <ng-template pTemplate="paginatorright" let-state>
+                                            Showing {{state.first+1}} of {{(state.first+1) + state.rows}} of
+                                            {{state.totalRecords}}
+                                        </ng-template>
+                                    </p-table>
+                                
+                            </div>
+                    </p-tabPanel>
+                    <p-tabPanel headerStyleClass="compacct-tabs" [header]="items[4]" leftIcon="glyphicon glyphicon-list-alt">
+                        <form name="DoctorForm" #DoctorForm="ngForm" novalidate>
+                            <div class="form-group">
+                                <div class="col-sm-4">
+                                    <label class="control-label">Period</label>
+                                     <app-compacct-daterangepicker (DaterangeObj)="getDateRangeDoctorForTesting($event)" >
+                                    </app-compacct-daterangepicker>
+                                </div>
+                                <div class="col-sm-1">
+                                        <button class="btn btn-primary custombutton" data-toggle="modal" (click)="GetDoctorsIncentiveForTesting()" id="load" [disabled]="tab4seachSpinner">
+                                      <p-progressSpinner *ngIf="tab4seachSpinner" [style]="{width: '15px', height: '15px'}" strokeWidth="8"  animationDuration=".5s"></p-progressSpinner>
+                                      <span *ngIf="!tab4seachSpinner" class="glyphicon glyphicon-search"></span>&nbsp;Search
+                                   </button>
+                                </div>
+                                <div class="col-sm-2">
+                                    <button class="btn btn-success custombutton" (click)="ExportToExcelDoctorIncentiveForTest()"
+                                      [disabled] = "!DoctorsIncentiveForTestList.length">
+                                       <span  class="glyphicon glyphicon-save"></span> Export to excel
+                                    </button>
+                                </div>
+                            </div>
+                        </form>
+                            <div class="clearfix"></div>
+                            <div class="table-responsive no-padding" *ngIf="DoctorsIncentiveForTestList.length">
+                                    <p-table [value]="DoctorsIncentiveForTestList" [paginator]="DoctorsIncentiveForTestList.length ? true : false"
+                                        [rows]="100" [rowHover]="true" [autoLayout]="true" sortMode="multiple"
+                                        [rowsPerPageOptions]="[100,200,300]"
+                                        [globalFilterFields]="DoctorsIncentiveForTestListHeader" [rowHover]="true" #dtt5>
+                                        <ng-template pTemplate="caption">
+                                            <div class="row">
+                                                <div class="col-sm-3 pull-right">
+                                                    <input type="text" pInputText size="50" placeholder="Search"
+                                                        (input)="dtt5.filterGlobal($event.target.value, 'contains')"
+                                                        class="searchInput form-control">
+                                                </div>
+                                            </div>
+                                        </ng-template>
+                                        <ng-template pTemplate="header">
+                                            <tr>
+                                                <th nowrap>Doctor Name</th>
+                                                <th nowrap>Taxable Amount</th>
+                                                <th nowrap>Incentive Amount</th>
+                                            </tr>
+                                        </ng-template>
+                                        <ng-template pTemplate="body" let-col let-rowIndex="rowIndex">
+                                            <tr>
+                                                <td><a class="btn-link" (click)="GetDoctorForTestDetails(col)">{{col.doctor_name}}</a></td>
+                                                <td> {{col.Taxable_Amount}}</td>
+                                                <td> {{col.Incentive_Amt}}</td>
                                             </tr>
                                         </ng-template>
                                         <ng-template pTemplate="paginatorright" let-state>
@@ -369,6 +428,50 @@
     CANCEL
     </button>
 
+</p-footer>
+</p-dialog>
+
+<!-- Doctor Incentive For Test Details -->
+<p-dialog
+[header]="'Testing Details - ' + DoctorName"
+[appendTo]="'body'"
+[(visible)]="DoctorIForTestDetailsPopup"
+[closeOnEscape]="true"
+[closable]="true"
+[modal]="true"
+[responsive]="true"
+[style]="{ width: '85%', minWidth: '230px' }"
+[minY]="70"
+[maximizable]="true"
+[baseZIndex]="10000"
+>
+<div class="table-responsive no-padding" style="overflow-x: hidden !important;">
+    <p-table [value]="DoctorIForTestList" [globalFilterFields]='DoctorIForTestListHeader' [rowHover]="true" [autoLayout]="true" #dtts>
+        <ng-template pTemplate="caption">
+            <div class="row">
+                <div class="col-sm-3 pull-right" style="text-align: right">
+                    <input type="text" pInputText size="50" placeholder="Search" (input)="dtts.filterGlobal($event.target.value, 'contains')" class="searchInput form-control">
+                </div>
+            </div> <br>
+
+        </ng-template>
+        <ng-template pTemplate="header">
+            <tr>
+                <th *ngFor="let option of DoctorIForTestListHeader">{{option.replace('_',' ')}}</th>
+            </tr>
+        </ng-template>
+        <ng-template pTemplate="body" let-col let-rowIndex="rowIndex">
+            <tr>
+                <ng-container *ngFor="let option of DoctorIForTestListHeader" data->
+                    <td>{{col[option]}}</td>
+                </ng-container>
+            </tr>
+        </ng-template>
+    </p-table>
+</div>
+<p-footer>
+    <button type="button" class="btn btn-success" (click)="ExportToExcelDoctorIForTestingDetails()">Export to Excel</button>
+    <button type="button" (click)="DoctorIForTestDetailsPopup = false" class="btn btn-default">Close</button>
 </p-footer>
 </p-dialog>
 

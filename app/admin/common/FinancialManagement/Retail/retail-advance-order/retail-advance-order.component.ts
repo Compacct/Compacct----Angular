@@ -611,7 +611,7 @@ export class RetailAdvanceOrderComponent implements OnInit {
           if(msg == 'Save'){
             this.displayJournalPopup=true;
             this.objJournal.Amount=this.backupTotalAmount.toFixed(2);
-            this.journalCal(0);
+            this.journalCal();
             this.Get_Notification();
           }
         }
@@ -724,7 +724,12 @@ export class RetailAdvanceOrderComponent implements OnInit {
     //console.log('this.JournalNOLabel',this.JournalNOLabel);
   }
 
-  journalCal(Received_value){
+  journalCal(){
+    this.Received = undefined;
+    let Received_value = 0;
+    this.addJournalList.forEach(element => {
+      Received_value = Received_value + Number(element.Amount);
+    });
     this.Received= Number(Received_value).toFixed(2); 
     this.Total=Number(this.backupTotalAmount).toFixed(2);
     this.Due=Number(Number(this.Total)-Number(this.Received)).toFixed(2); 
@@ -778,11 +783,12 @@ export class RetailAdvanceOrderComponent implements OnInit {
 
       this.TotalReceived = this.TotalReceived + Number(this.objJournal.Amount); 
       //console.log('TotalReceived',this.TotalReceived);
-      this.journalCal(this.TotalReceived);
+      // this.journalCal(this.TotalReceived);
       
       this.objJournal.BankDate=this.DateService.dateConvert(this.BankDate);
       this.addJournalList.push(this.objJournal);
       //console.log('addJournalList',this.addJournalList);
+      this.journalCal();
       this.objJournal = new Journal();
       this.BankTRNtypeList=[];
       this.objJournal.Amount= Number(0).toFixed(2);
@@ -793,6 +799,7 @@ export class RetailAdvanceOrderComponent implements OnInit {
 
   DeleteJournal(index){
     this.addJournalList.splice(index, 1);
+    this.journalCal();
   }
 
   PrintJournal(){
