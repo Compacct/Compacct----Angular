@@ -136,7 +136,7 @@
                                                                 [placeholder]="'Select Cost Center'"
                                                                 [virtualScroll]="true"
                                                                 itemSize="30"
-                                                                (onChange)="GetGodown(ObjStockReport.Cost_Cen_ID)"
+                                                                (onChange)="GetGodown(ObjStockDetails.Cost_Cen_ID)"
                                                                 #costcentername="ngModel"
                                                                 [styleClass]="StockDetailsFormSubmit && costcentername.errors?.required? 'clearance': ''"
                                                                 [required]="true">

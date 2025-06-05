@@ -212,9 +212,10 @@ export class BlTxnPurchaseGrnComponent implements OnInit {
     this.ObjProductInfo.UOM = '';
       if(proid){
         const productobj = this.ProductList.filter((el: any) => el.Product_ID == proid)[0];
-
+        // console.log(productobj)
         this.ObjProductInfo.Product_Name = productobj.Product_Name;
         this.Product_Serial = productobj.Product_Serial;
+        this.ObjProductInfo.Qty = this.Product_Serial ? 1 : undefined;
         this.ObjProductInfo.UOM = productobj.UOM;
       }
   }
@@ -291,7 +292,13 @@ export class BlTxnPurchaseGrnComponent implements OnInit {
   
     };
       this.AddProductDetails.push(productObj);
-      this.ObjProductInfo = new ProductInfo();
+      // this.ObjProductInfo = new ProductInfo();
+      this.ObjProductInfo.Batch_Number = undefined;
+      this.ObjProductInfo.Serial_No = undefined;
+      this.ObjProductInfo.Qty = this.Product_Serial ? 1 : undefined;
+      this.ObjProductInfo.MRP = undefined;
+      this.ObjProductInfo.Rate = undefined;
+      this.ObjProductInfo.Amount = undefined;
       this.ObjProductInfo.godown_id = this.GodownList.length === 1 ? this.GodownList[0].godown_id : '';
       this.ProductInfoSubmitted = false;
       this.GetTotalNetAmount();
