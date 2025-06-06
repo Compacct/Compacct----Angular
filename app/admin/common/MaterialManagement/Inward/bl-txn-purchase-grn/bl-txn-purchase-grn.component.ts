@@ -99,6 +99,7 @@ export class BlTxnPurchaseGrnComponent implements OnInit {
     this.ObjCostCenter = new CostCenter();
     this.ObjOther = new Other();
     this.ObjProductInfo = new ProductInfo();
+    this.ProductInfoSubmitted = false;
     this.Spinner = false
     this.ObjCostCenter.Cost_Cen_ID = this.$CompacctAPI.CompacctCookies.Cost_Cen_ID;
     this.CostCenterChange(this.ObjCostCenter.Cost_Cen_ID)
@@ -273,10 +274,26 @@ export class BlTxnPurchaseGrnComponent implements OnInit {
     return false;
   }
   }
+  CheckSameProductSerialNoExit(){
+    const sameproduct = this.AddProductDetails.filter(item=> (item.Product_ID === this.ObjProductInfo.Product_ID) && (item.Serial_No === this.ObjProductInfo.Serial_No));
+    if(sameproduct.length) {
+      this.compacctToast.clear();
+      this.compacctToast.add({
+        key: "compacct-toast",
+        severity: "error",
+        summary: "Warn Message",
+        detail: "Serial Number Exist."
+      });
+      return false;
+    } 
+    else {
+      return true;
+    }
+  }
   async AddProductInfo(valid){
     this.ProductInfoSubmitted = true;
     var stockpoint = this.GodownList.filter(item=> Number(item.godown_id) === Number(this.ObjProductInfo.godown_id))
-    if(valid && await this.CheckSerialNo()) {
+    if(valid && await this.CheckSerialNo() && this.CheckSameProductSerialNoExit()) {
     var productObj = {
       Product_ID : this.ObjProductInfo.Product_ID,
       Product_Name : this.ObjProductInfo.Product_Name,
@@ -296,9 +313,6 @@ export class BlTxnPurchaseGrnComponent implements OnInit {
       this.ObjProductInfo.Batch_Number = undefined;
       this.ObjProductInfo.Serial_No = undefined;
       this.ObjProductInfo.Qty = this.Product_Serial ? 1 : undefined;
-      this.ObjProductInfo.MRP = undefined;
-      this.ObjProductInfo.Rate = undefined;
-      this.ObjProductInfo.Amount = undefined;
       this.ObjProductInfo.godown_id = this.GodownList.length === 1 ? this.GodownList[0].godown_id : '';
       this.ProductInfoSubmitted = false;
       this.GetTotalNetAmount();
@@ -380,6 +394,16 @@ export class BlTxnPurchaseGrnComponent implements OnInit {
         this.clearData();
         this.getSerarch();
      }
+      else{
+        this.Spinner = false;
+        this.compacctToast.clear();
+        this.compacctToast.add({
+          key: "compacct-toast",
+          severity: "error",
+          summary: "Warn Message",
+          detail: "Error Occured "
+        });
+      }
     })
     }
     else {

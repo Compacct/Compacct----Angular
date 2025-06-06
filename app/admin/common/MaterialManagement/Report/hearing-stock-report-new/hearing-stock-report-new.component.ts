@@ -10,6 +10,7 @@ import { CommonUserActivityService } from "../../../../shared/compacct.services/
 import { CompacctGlobalApiService } from "../../../../shared/compacct.services/compacct.global.api.service";
 import { DateTimeConvertService } from "../../../../shared/compacct.global/dateTime.service"
 import * as XLSX from 'xlsx';
+import { ExportExcelService } from '../../../../shared/compacct.services/export-excel.service';
 
 @Component({
   selector: 'app-hearing-stock-report-new',
@@ -19,6 +20,8 @@ import * as XLSX from 'xlsx';
   encapsulation: ViewEncapsulation.None
 })
 export class HearingStockReportNewComponent implements OnInit {
+  tabIndexToView = 0;
+  items:any = [];
   StockReportFormSubmit:boolean = false;
   ObjStockReport: StockReport = new StockReport();
   CostCenterList:any = [];
@@ -43,6 +46,12 @@ export class HearingStockReportNewComponent implements OnInit {
   SerialOrBatchDetailsList:any = [];
   SerialOrBatchDetailsListHeader:any = [];
   SerialBatchNo:any;
+  ObjStockRegister: StockRegister = new StockRegister();
+  StockRegisterFormSubmit:boolean = false;
+  CostCenterNameStockRegList:any = [];
+  GodownregList:any = [];
+  getStockRegisterList:any = [];
+  StockRegSpinner:boolean = false;
 
   constructor(
     private $http: HttpClient,
@@ -52,7 +61,8 @@ export class HearingStockReportNewComponent implements OnInit {
     private DateService: DateTimeConvertService,
     public $CompacctAPI: CompacctCommonApi,
     private compacctToast: MessageService,
-    private _CommonUserActivity : CommonUserActivityService
+    private _CommonUserActivity : CommonUserActivityService,
+    private excelservice: ExportExcelService
   ) { }
 
   ngOnInit() {
@@ -60,12 +70,17 @@ export class HearingStockReportNewComponent implements OnInit {
       Header: "Stock Report",
       Link: " Material Management -> Report -> Stock Report"
     });
-    this.GetCostCenter();
-    this.GetProductCategory();
-    this.GetCostCenterName();
-    this.GetProductCategoryStockDetails();
+     this.items = ["STOCK REPORT", "STOCK REGISTER"];
+     this.GetCostCenter();
+     this.GetProductCategory();
+     this.GetCostCenterName();
+     this.GetProductCategoryStockDetails();
+     this.GetCostCenterNameStockReg();
   }
-
+  TabClick(e){
+     this.tabIndexToView = e.index;
+     this.items = ["STOCK REPORT", "STOCK REGISTER"];
+  }
   GetCostCenter() {
     this.$CompacctAPI.getCostCenter().subscribe((res: any) => { 
       const data =  res ? JSON.parse(res) : [];
@@ -258,6 +273,158 @@ export class HearingStockReportNewComponent implements OnInit {
   }
   onConfirm(){}
 
+  getDateRangeStockRegister(dateRangeObj) {
+    if (dateRangeObj.length) {
+      this.ObjStockRegister.from_date = dateRangeObj[0];
+      this.ObjStockRegister.to_date = dateRangeObj[1];
+    }
+  }
+  GetCostCenterNameStockReg() {
+    this.CostCenterNameStockRegList = [];
+    this.$CompacctAPI.getCostCenter().subscribe((res: any) => { 
+      const data =  res ? JSON.parse(res) : [];
+      data.forEach(e=>{
+        e['label'] = e.Cost_Cen_Name;
+        e['value'] = e.Cost_Cen_ID;
+      });
+      this.CostCenterNameStockRegList = data.length ? data : [];   
+      this.ObjStockRegister.Cost_Cen_ID = this.$CompacctAPI.CompacctCookies.Cost_Cen_ID;
+      this.GetGodownStockReg(this.ObjStockRegister.Cost_Cen_ID);
+    });
+  }
+  GetGodownStockReg(costCenID){
+    this.GodownregList = [];
+    if (costCenID) {
+      this.$http.post("/Common/Get_Godown_list", { 'Cost_Cent_ID': costCenID }).subscribe((data: any) => {
+        this.GodownregList = data ? JSON.parse(data) : [];
+        this.ObjStockRegister.Godown_ID = this.GodownregList.length === 1 ? this.GodownregList[0].godown_id : undefined;
+      });
+  }
+  }
+  GetStockRegister(valid){
+    this.StockRegisterFormSubmit = true;
+    this.getStockRegisterList = [];
+    const start = this.ObjStockRegister.from_date
+      ? this.DateService.dateConvert(new Date(this.ObjStockRegister.from_date))
+      : this.DateService.dateConvert(new Date());
+    const end = this.ObjStockRegister.to_date
+      ? this.DateService.dateConvert(new Date(this.ObjStockRegister.to_date))
+      : this.DateService.dateConvert(new Date());
+    if(valid){
+      this.StockRegisterFormSubmit = false;
+      this.StockRegSpinner = true;
+      const tempobj = {
+        start_date : start,
+        end_date : end,
+        Godown_ID : this.ObjStockRegister.Godown_ID ? this.ObjStockRegister.Godown_ID : 0,
+        CostCenter : this.ObjStockRegister.Cost_Cen_ID ? this.ObjStockRegister.Cost_Cen_ID : 0
+      }
+      
+      const obj = {
+        "SP_String": "sp_txn_stock_details",
+        "Report_Name_String": "txn_stock_details",
+        "Json_Param_String": JSON.stringify([tempobj])
+      }
+       this.GlobalAPI.getData(obj).subscribe((data:any)=>{
+         if(data.length) {
+          this.getStockRegisterList = data;
+          this.StockRegSpinner = false;
+          // this.excelservice.exporttoExcelSales(this.getStockRegisterList,tempobj);
+         }
+         else {
+          this.StockRegSpinner = false;
+         }
+       })
+      //}
+    }
+    
+  }
+  ExportToExcelData(valid){
+    const data = [
+      {
+        "Company": "WIDEX",
+        "PRODUCT/COMPANY/SINo-.": "MOMENT MRR2D-440-DEMO",
+        "MRP": "Demo",
+        "Serial No.": "123",
+        "Opening Stock": "0",
+        "Rcd from H.O/BRANCHES": "",
+        "MRN of Patient": "",
+        "Direct Purchase from company": "1",
+        "Sold to patient": "1",
+        "Returned to Company": "",
+        "Tfd to Ho/Other Centers": "",
+        "CLOSING BALANCE": "0",
+        "Trial Out": "",
+        "Trial In": "",
+        "Trial Out/ Loaner": "",
+        "PHYSICAL BALANCE": "0",
+        "Sale Comment": "",
+        "Demo / Standby Comment": ""
+      },
+      {
+        "Company": "WIDEX",
+        "PRODUCT/COMPANY/SINo-.": "MOMENT MRR2D-440-DEMO",
+        "MRP": "Demo",
+        "Serial No.": "123",
+        "Opening Stock": "0",
+        "Rcd from H.O/BRANCHES": "",
+        "MRN of Patient": "",
+        "Direct Purchase from company": "1",
+        "Sold to patient": "1",
+        "Returned to Company": "",
+        "Tfd to Ho/Other Centers": "",
+        "CLOSING BALANCE": "0",
+        "Trial Out": "",
+        "Trial In": "",
+        "Trial Out/ Loaner": "",
+        "PHYSICAL BALANCE": "0",
+        "Sale Comment": "",
+        "Demo / Standby Comment": ""
+      },
+      {
+        "Company": "GN RESOUND",
+        "PRODUCT/COMPANY/SINo-.": "EN588-DW DEMO",
+        "MRP": "Demo",
+        "Serial No.": "456",
+        "Opening Stock": "0",
+        "Rcd from H.O/BRANCHES": "",
+        "MRN of Patient": "",
+        "Direct Purchase from company": "1",
+        "Sold to patient": "1",
+        "Returned to Company": "",
+        "Tfd to Ho/Other Centers": "",
+        "CLOSING BALANCE": "0",
+        "Trial Out": "",
+        "Trial In": "",
+        "Trial Out/ Loaner": "",
+        "PHYSICAL BALANCE": "0",
+        "Sale Comment": "",
+        "Demo / Standby Comment": ""
+      },
+      {
+        "Company": "GN RESOUND",
+        "PRODUCT/COMPANY/SINo-.": "EN588-DW DEMO",
+        "MRP": "Demo",
+        "Serial No.": "456",
+        "Opening Stock": "0",
+        "Rcd from H.O/BRANCHES": "",
+        "MRN of Patient": "",
+        "Direct Purchase from company": "1",
+        "Sold to patient": "1",
+        "Returned to Company": "",
+        "Tfd to Ho/Other Centers": "",
+        "CLOSING BALANCE": "0",
+        "Trial Out": "",
+        "Trial In": "",
+        "Trial Out/ Loaner": "",
+        "PHYSICAL BALANCE": "0",
+        "Sale Comment": "",
+        "Demo / Standby Comment": ""
+      }
+    ]
+    this.excelservice.ExportToExcelSaleRegister(data);
+  }
+
   // async GetStockDetails(valid = true){
   //   const resulit = await this._CommonUserActivity.GetUserActivity('test','testDetalis','test','0011')
   //   console.log(resulit)
@@ -272,6 +439,13 @@ class StockReport {
   as_on_date:string;
 }
 class StockDetails {
+  from_date:string;
+  to_date:string;
+  Cost_Cen_ID: string;
+  Godown_ID: string;
+  Product_Category_ID: string;
+}
+class StockRegister {
   from_date:string;
   to_date:string;
   Cost_Cen_ID: string;
