@@ -308,7 +308,7 @@ export class BLTxnPurchaseBillFromGRNComponent implements OnInit {
               )
             : this.DateService.dateConvert(new Date())
         )
-        .set("Cost_Cen_ID", this.ObjBrowseSearch.Cost_Cen_ID);
+        .set("Cost_Cen_ID", this.ObjBrowseSearch.Cost_Cen_ID ? this.ObjBrowseSearch.Cost_Cen_ID : 0);
 
       this.$http
         .get(this.url.apiGetAllDataPurchaseBill, { params: httpParams })
@@ -571,7 +571,7 @@ export class BLTxnPurchaseBillFromGRNComponent implements OnInit {
 
       this.accountJournalCreateUpdateApi = this.ObjOther.Doc_No
         ? this.url.apiUpdateSaleBillAccountJournal
-        : this.url.apiCreateSaleBillAccountJournal;
+        : '/ACC_Txn_Acc_Journal/Create_ACC_Txn_Acc_Journal_WO_NO_Ajax_pbill_only';
       this.termCreateUpdateApi = this.ObjOther.Doc_No
         ? this.url.apiUpdateTerm
         : this.url.apiCreateTerm;

@@ -161,7 +161,7 @@ export class CrmLeadOpportunitiesComponent implements OnInit {
             'day': new Date(engDate).getDate()
         }
         const NepaliDateObj = NepaliFunctions.AD2BS(EngDateObj);
-        const FormattedNepaliDate = NepaliFunctions.ConvertDateFormat(NepaliDateObj, "DD/MM/YYYY");
+        const FormattedNepaliDate = NepaliFunctions.ConvertToDateFormat(NepaliDateObj, "DD/MM/YYYY");
         return FormattedNepaliDate;
     } else {
         return '-';
