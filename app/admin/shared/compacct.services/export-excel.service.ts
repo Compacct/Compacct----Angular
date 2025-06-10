@@ -4301,96 +4301,152 @@ header.forEach((col, colIndex) => {
  }
  ExportToExcelSaleRegister(excelData: any[]) {
   const workbook = new Workbook();
-  const worksheet = workbook.addWorksheet("Stock_Report");
+  const worksheet = workbook.addWorksheet('Stock_Register');
 
-  if (!excelData.length) return;
+  const dataWithoutFirstRow = excelData;
 
-  // Step 1: Group data by Company
-  const grouped = excelData.reduce((acc: { [key: string]: any[] }, item) => {
-    const company = item.Company;
+  const grouped: { [key: string]: any[] } = dataWithoutFirstRow.reduce((acc, row) => {
+    const company = row['Company_Name'];
     if (!acc[company]) acc[company] = [];
-    acc[company].push(item);
+    acc[company].push(row);
     return acc;
   }, {});
 
-  let currentRow = 1;
+  const allHeaders = Object.keys(dataWithoutFirstRow[0]);
+  const headers1 = allHeaders.filter(h => h !== 'Company_Name');
+  const headers = headers1.map(h => h.replace(/_/g, ' '));
 
-  // Step 2: Write data group-wise
-  for (const companyName of Object.keys(grouped)) {
-    const items = grouped[companyName];
-    const headers = Object.keys(items[0]);
+  // HEADER TOP ROW: define merged titles
+  const headerTopRow = worksheet.getRow(1);
 
-    // Company Header Row (merged & styled)
-    worksheet.mergeCells(currentRow, 1, currentRow, headers.length);
-    const companyCell = worksheet.getCell(currentRow, 1);
-    companyCell.value = companyName;
-    companyCell.font = { bold: true, size: 14 };
-    companyCell.alignment = { vertical: 'middle', horizontal: 'center' };
-    companyCell.fill = {
-      type: 'pattern',
-      pattern: 'solid',
-      fgColor: { argb: 'FFD700' } // Gold color
-    };
-    currentRow++;
+  // Define column spans and titles
+  const mergeGroups = [
+    { title: '', span: 5 },
+    { title: 'IN', span: 4 },
+    { title: 'OUT', span: 3 },
+    { title: '', span: 1 },
+    { title: 'TRIAL LOANER', span: 4 },
+    { title: '', span: headers.length - 17 } // Remaining columns
+  ];
 
-    // Column Header Row
-    const headerRow = worksheet.getRow(currentRow);
-    headers.forEach((header, i) => {
-      const cell = headerRow.getCell(i + 1);
-      cell.value = header;
-      cell.font = { bold: true, color: { argb: 'FFFFFF' } };
+  let currentCol = 1;
+  for (const group of mergeGroups) {
+    if (group.span > 0) {
+      worksheet.mergeCells(1, currentCol, 1, currentCol + group.span - 1);
+      const cell = headerTopRow.getCell(currentCol);
+      cell.value = group.title;
       cell.alignment = { vertical: 'middle', horizontal: 'center' };
+      cell.font = { bold: true, size: 13 };
       cell.fill = {
         type: 'pattern',
         pattern: 'solid',
-        fgColor: { argb: '3c8dbc' },
+        fgColor: { argb: 'e0e0e0' }
       };
       cell.border = {
         top: { style: 'thin' },
         left: { style: 'thin' },
         bottom: { style: 'thin' },
-        right: { style: 'thin' },
+        right: { style: 'thin' }
       };
-    });
-    currentRow++;
-
-    // Data Rows
-    items.forEach(item => {
-      const values = Object.values(item);
-      worksheet.addRow(values);
-      currentRow++;
-    });
-
-    currentRow++; // Extra space between companies
+      currentCol += group.span;
+    }
   }
 
-  // Step 3: Auto column widths
-  const firstGroup = Object.values(grouped)[0];
-  const sampleHeaders = Object.keys(firstGroup[0]);
+  // HEADER ROW (second row now)
+  const headerRow = worksheet.getRow(2);
+  headers.forEach((header, i) => {
+    const cell = headerRow.getCell(i + 1);
+    cell.value = header;
+    cell.font = { bold: true, size: 12, color: { argb: '000000' } };
+    cell.alignment = {
+      vertical: 'middle',
+      wrapText: true,
+      horizontal: i === 0 ? 'left' : 'center',
+      textRotation: i === 0 ? 0 : 90
+    };
 
-  sampleHeaders.forEach((header, i) => {
+    let fillColor = 'd8d1d8';
+    if (i < 4) fillColor = 'd8d1d8';
+    else if (i < 7) fillColor = 'f1e6e6';
+    else if (i < 10) fillColor = 'd6e1f2';
+
+    cell.fill = {
+      type: 'pattern',
+      pattern: 'solid',
+      fgColor: { argb: fillColor }
+    };
+
+    cell.border = {
+      top: { style: 'thin' },
+      left: { style: 'thin' },
+      bottom: { style: 'thin' },
+      right: { style: 'thin' }
+    };
+  });
+
+  headerRow.height = 110;
+
+  let currentRow = 3;
+
+  // Group-wise data rows
+  for (const [company, rows] of Object.entries(grouped)) {
+    const companyRow = worksheet.getRow(currentRow);
+    const companyCell = companyRow.getCell(1);
+    companyCell.value = company;
+    companyCell.font = { bold: true };
+    companyCell.alignment = { horizontal: 'left' };
+    companyCell.fill = {
+      type: 'pattern',
+      pattern: 'solid',
+      fgColor: { argb: 'fad831' }
+    };
+    companyCell.border = {
+      top: { style: 'thin' },
+      left: { style: 'thin' },
+      bottom: { style: 'thin' },
+      right: { style: 'thin' }
+    };
+    currentRow++;
+
+    for (const rowData of rows) {
+      const dataRow = worksheet.getRow(currentRow);
+      headers1.forEach((header, i) => {
+        const cell = dataRow.getCell(i + 1);
+        cell.value = rowData[header] != null ? rowData[header] : '';
+        cell.border = {
+          top: { style: 'thin' },
+          left: { style: 'thin' },
+          bottom: { style: 'thin' },
+          right: { style: 'thin' }
+        };
+      });
+      currentRow++;
+    }
+  }
+
+  // Auto-width
+  headers1.forEach((header, index) => {
     let maxLength = header.length;
-
     for (const rows of Object.values(grouped)) {
-      rows.forEach(row => {
+      for (const row of rows) {
         const val = row[header];
         if (val && val.toString().length > maxLength) {
           maxLength = val.toString().length;
         }
-      });
+      }
     }
-
-    worksheet.getColumn(i + 1).width = maxLength + 5;
+    worksheet.getColumn(index + 1).width = maxLength + 3;
   });
 
-  // Step 4: Save file
+  // Save as Excel
   workbook.xlsx.writeBuffer().then((data: any) => {
     const blob = new Blob([data], {
       type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
     });
-    fs.saveAs(blob, 'Stock_Report_Grouped.xlsx');
+    fs.saveAs(blob, 'Stock_Register.xlsx');
   });
-}
+ }
+
 
 
 }

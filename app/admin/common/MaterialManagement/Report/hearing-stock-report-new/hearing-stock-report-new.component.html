@@ -220,7 +220,7 @@
                             </p-table>
                         </div>
                         </p-tabPanel>
-                        <!-- <p-tabPanel headerStyleClass="compacct-tabs" [header]="items[1]" leftIcon="glyphicon glyphicon-list-alt">
+                        <p-tabPanel headerStyleClass="compacct-tabs" [header]="items[1]" leftIcon="glyphicon glyphicon-list-alt">
                             <form name="StockRegisterForm" #StockRegisterForm="ngForm" novalidate>
                                 <div class="form-group">
                                     <div class="col-sm-3">
@@ -257,14 +257,14 @@
                                             </select>
                                     </div>
                                     <div class="col-sm-2">
-                                        <button class="btn btn-success" style="margin-top: 28px;" data-toggle="modal" (click)="ExportToExcelData(StockRegisterForm.form.valid)"  [disabled]="StockRegSpinner">
+                                        <button class="btn btn-success" style="margin-top: 28px;" data-toggle="modal" (click)="GetStockRegister(StockRegisterForm.form.valid)"  [disabled]="StockRegSpinner">
                                             <p-progressSpinner *ngIf="StockRegSpinner" [style]="{width: '15px', height: '15px'}" strokeWidth="8"  animationDuration=".5s"></p-progressSpinner>
                                                 <span *ngIf="!StockRegSpinner" class="glyphicon glyphicon-download"></span>&nbsp;Export to excel
                                         </button>
                                     </div>
                                 </div>
                             </form>
-                        </p-tabPanel> -->
+                        </p-tabPanel>
                     </p-tabView>
                 </div>
             </div>

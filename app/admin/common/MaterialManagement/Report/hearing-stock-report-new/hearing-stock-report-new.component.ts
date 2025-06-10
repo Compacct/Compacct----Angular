@@ -316,23 +316,30 @@ export class HearingStockReportNewComponent implements OnInit {
       const tempobj = {
         start_date : start,
         end_date : end,
-        Godown_ID : this.ObjStockRegister.Godown_ID ? this.ObjStockRegister.Godown_ID : 0,
-        CostCenter : this.ObjStockRegister.Cost_Cen_ID ? this.ObjStockRegister.Cost_Cen_ID : 0
+        CostCenter : this.ObjStockRegister.Cost_Cen_ID ? this.ObjStockRegister.Cost_Cen_ID : 0,
+        Godown_ID : this.ObjStockRegister.Godown_ID ? this.ObjStockRegister.Godown_ID : 0
       }
       
       const obj = {
         "SP_String": "sp_txn_stock_details",
-        "Report_Name_String": "txn_stock_details",
+        "Report_Name_String": "txn_stock_register",
         "Json_Param_String": JSON.stringify([tempobj])
       }
        this.GlobalAPI.getData(obj).subscribe((data:any)=>{
          if(data.length) {
           this.getStockRegisterList = data;
           this.StockRegSpinner = false;
-          // this.excelservice.exporttoExcelSales(this.getStockRegisterList,tempobj);
+          this.excelservice.ExportToExcelSaleRegister(this.getStockRegisterList);
          }
          else {
           this.StockRegSpinner = false;
+          this.compacctToast.clear();
+          this.compacctToast.add({
+            key: "compacct-toast",
+            severity: "error",
+            summary: "Warn Message",
+            detail: "No data found."
+          });
          }
        })
       //}
