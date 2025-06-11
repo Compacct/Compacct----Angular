@@ -4321,12 +4321,12 @@ header.forEach((col, colIndex) => {
 
   // Define column spans and titles
   const mergeGroups = [
-    { title: '', span: 5 },
-    { title: 'IN', span: 4 },
-    { title: 'OUT', span: 3 },
-    { title: '', span: 1 },
-    { title: 'TRIAL LOANER', span: 4 },
-    { title: '', span: headers.length - 17 } // Remaining columns
+    { title: '', span: 5, fgColor: 'e0e0e0' },
+    { title: 'INWARD', span: 4, fgColor: 'afffc2' },
+    { title: 'OUTWARD', span: 3, fgColor: 'ff9e9e' },
+    { title: '', span: 1, fgColor: 'e0e0e0' },
+    { title: 'TRIAL LOANER', span: 4, fgColor: '5e84ff' },
+    { title: '', span: headers.length - 17, fgColor: 'e0e0e0'} // Remaining columns
   ];
 
   let currentCol = 1;
@@ -4340,7 +4340,7 @@ header.forEach((col, colIndex) => {
       cell.fill = {
         type: 'pattern',
         pattern: 'solid',
-        fgColor: { argb: 'e0e0e0' }
+        fgColor: { argb: group.fgColor }
       };
       cell.border = {
         top: { style: 'thin' },
@@ -4366,9 +4366,11 @@ header.forEach((col, colIndex) => {
     };
 
     let fillColor = 'd8d1d8';
-    if (i < 4) fillColor = 'd8d1d8';
-    else if (i < 7) fillColor = 'f1e6e6';
-    else if (i < 10) fillColor = 'd6e1f2';
+    if (i < 5) fillColor = 'd8d1d8';
+    else if (i < 9) fillColor = 'afffc2';
+    else if (i < 12) fillColor = 'ff9e9e';
+    else if (i < 13) fillColor = 'd8d1d8';
+    else if (i < 17) fillColor = '5e84ff';
 
     cell.fill = {
       type: 'pattern',
@@ -4385,6 +4387,12 @@ header.forEach((col, colIndex) => {
   });
 
   headerRow.height = 110;
+
+  if (excelData.length) {
+      worksheet.views = [
+        { state: 'frozen', ySplit: 2 }
+      ];
+    }
 
   let currentRow = 3;
 

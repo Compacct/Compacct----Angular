@@ -73,8 +73,8 @@ export class BlTxnPurchaseGrnComponent implements OnInit {
 
   ngOnInit() {
     this.Header.pushHeader({
-      Header: "Purchase GRN",
-      Link: " Material Management -> Inward -> Purchase GRN",
+      Header: "Material Inward Challan",
+      Link: " Material Management -> Inward -> Material Inward Challan",
     });
     this.Permission = this.$CompacctAPI.CompacctCookies.Del_Right;
     this.GetCostCenter();
@@ -211,6 +211,9 @@ export class BlTxnPurchaseGrnComponent implements OnInit {
     this.ObjProductInfo.Product_Name = '';
     this.Product_Serial = '';
     this.ObjProductInfo.UOM = '';
+    this.ObjProductInfo.MRP = undefined;
+    this.ObjProductInfo.Rate = undefined;
+    this.ObjProductInfo.Amount = undefined;
       if(proid){
         const productobj = this.ProductList.filter((el: any) => el.Product_ID == proid)[0];
         // console.log(productobj)
@@ -310,9 +313,14 @@ export class BlTxnPurchaseGrnComponent implements OnInit {
     };
       this.AddProductDetails.push(productObj);
       // this.ObjProductInfo = new ProductInfo();
+      this.ObjProductInfo.Product_ID = this.Product_Serial ? this.ObjProductInfo.Product_ID : undefined;
       this.ObjProductInfo.Batch_Number = undefined;
       this.ObjProductInfo.Serial_No = undefined;
       this.ObjProductInfo.Qty = this.Product_Serial ? 1 : undefined;
+      this.ObjProductInfo.UOM = this.Product_Serial ? this.ObjProductInfo.UOM : undefined;
+      this.ObjProductInfo.MRP = this.Product_Serial ? this.ObjProductInfo.MRP : undefined;;
+      this.ObjProductInfo.Rate = this.Product_Serial ? this.ObjProductInfo.Rate : undefined;;
+      this.ObjProductInfo.Amount = this.Product_Serial ? this.ObjProductInfo.Amount : undefined;;
       this.ObjProductInfo.godown_id = this.GodownList.length === 1 ? this.GodownList[0].godown_id : '';
       this.ProductInfoSubmitted = false;
       this.GetTotalNetAmount();
