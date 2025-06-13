@@ -445,6 +445,8 @@ import { HearingStockReportNewComponent } from './common/MaterialManagement/Repo
 import { BLTxnPurchaseBillFromGRNComponent } from './common/FinancialManagement/Transaction/Purchase/bl-txn-purchase-bill-from-grn/bl-txn-purchase-bill-from-grn.component';
 import { BlTxnPurchaseGrnComponent } from './common/MaterialManagement/Inward/bl-txn-purchase-grn/bl-txn-purchase-grn.component';
 import { PatientInformationComponent } from './common/PatientManagement/patient-information/patient-information.component';
+import { DoctorsPatientsReportComponent } from './common/PatientManagement/doctors-patients-report/doctors-patients-report.component';
+
 const layoutRoutes: Routes = [{
   path: "",
   component: AppLayoutComponent,
@@ -3419,6 +3421,13 @@ path: 'Doctors_Appointment_New_Fine_Tuning_Hearing',
       component: PatientInformationComponent,
       data: {
         title: 'Patient Information'
+      }
+    },
+    {
+      path: 'Doctors_Patients_Report',
+      component: DoctorsPatientsReportComponent,
+      data: {
+        title: 'Doctors Report'
       }
     },
     /*{
