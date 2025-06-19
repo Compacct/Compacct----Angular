@@ -4455,6 +4455,640 @@ header.forEach((col, colIndex) => {
   });
  }
 
+ ExportExcelDrRefDetails(excelData:any) {
+  const workbook = new Workbook();
+  const worksheet = workbook.addWorksheet(excelData.sheetName);
+
+  const dataWithoutFirstRow = excelData.data;
+
+  const grouped: { [key: string]: any[] } = dataWithoutFirstRow.reduce((acc, row) => {
+    const doctor = row['Ent_Doctor'];
+    if (!acc[doctor]) acc[doctor] = [];
+    acc[doctor].push(row);
+    return acc;
+  }, {});
+
+  const allHeaders = Object.keys(dataWithoutFirstRow[0]);
+  const headers1 = allHeaders.filter(h => h !== 'Ent_Doctor');
+  const headers = headers1.map(h => h.replace(/_/g, ' '));
+
+  // Row 1 - Top Header
+  let topHeaderRow = worksheet.getRow(1);
+  topHeaderRow.getCell(1).value = excelData.TopHeader;
+  topHeaderRow.height = 20;
+  worksheet.mergeCells(1, 1, 1, headers.length);
+  topHeaderRow.getCell(1).alignment = { vertical: 'middle', horizontal: 'center' };
+  topHeaderRow.getCell(1).fill = {
+    type: 'pattern',
+    pattern: 'solid',
+    fgColor: { argb: 'c5d2da' }
+  };
+  topHeaderRow.getCell(1).font = {
+    bold: true,
+    color: { argb: '000' },
+    size: 12
+  };
+  topHeaderRow.getCell(1).border = {
+    top: { style: 'thin' },
+    left: { style: 'thin' },
+    bottom: { style: 'thin' },
+    right: { style: 'thin' }
+  };
+
+  // Freeze Top 3 Rows (TopHeader + Merged Group Row + Header)
+  worksheet.views = [{ state: 'frozen', ySplit: 1 }];
+
+  worksheet.addRow([]);
+  worksheet.addRow([]);
+
+  let currentRow = 4;
+
+  // Create grouped header + column header template rows for reuse
+  const createGroupHeaders = () => {
+    // Grouped Header Row
+    const mergeGroups = [
+      { title: '', span: 4, fgColor: 'e0e0e0' },
+      { title: 'Hearing Aids Dispensed', span: 3, fgColor: 'e0e0e0' },
+      { title: '', span: headers.length - 7, fgColor: 'e0e0e0' }
+    ];
+    const headerRow1 = worksheet.getRow(currentRow++);
+    let colStart = 1;
+
+    for (const group of mergeGroups) {
+      if (group.span > 0) {
+        worksheet.mergeCells(currentRow - 1, colStart, currentRow - 1, colStart + group.span - 1);
+        const cell = headerRow1.getCell(colStart);
+        cell.value = group.title;
+        cell.alignment = { vertical: 'middle', horizontal: 'center' };
+        cell.font = { bold: true };
+        cell.fill = {
+          type: 'pattern',
+          pattern: 'solid',
+          fgColor: { argb: group.fgColor }
+        };
+        cell.border = {
+          top: { style: 'thin' },
+          left: { style: 'thin' },
+          bottom: { style: 'thin' },
+          right: { style: 'thin' }
+        };
+        colStart += group.span;
+      }
+    }
+
+    // Column Header Row
+    const headerRow2 = worksheet.getRow(currentRow++);
+    headers.forEach((h, i) => {
+      const cell = headerRow2.getCell(i + 1);
+      cell.value = h;
+      cell.alignment = { vertical: 'middle', horizontal: 'center' };
+      cell.fill = {
+        type: 'pattern',
+        pattern: 'solid',
+        fgColor: { argb: '' },
+      };
+      cell.font = {
+        color: { argb: '000' },
+        bold: true
+      };
+      cell.border = {
+        top: { style: 'thin' },
+        left: { style: 'thin' },
+        bottom: { style: 'thin' },
+        right: { style: 'thin' },
+      };
+    });
+  };
+
+  // Grouped Data by Doctor
+  for (const [doctorName, rows] of Object.entries(grouped)) {
+    // Doctor name row
+    const docRow = worksheet.getRow(currentRow++);
+    const docCell = docRow.getCell(1);
+    docCell.value = 'Doctor Name:     ' + doctorName;
+    docCell.font = { bold: true };
+    docCell.alignment = { horizontal: 'left' };
+    docCell.fill = {
+      type: 'pattern',
+      pattern: 'solid',
+      fgColor: { argb: '' }
+    };
+    docCell.border = {
+      top: { style: 'thin' },
+      left: { style: 'thin' },
+      bottom: { style: 'thin' },
+      right: { style: 'thin' }
+    };
+    worksheet.mergeCells(currentRow - 1, 1, currentRow - 1, headers.length);
+
+    // Grouped headers under each doctor
+    createGroupHeaders();
+
+    let totals = {
+      "Total_Mrp": 0,
+      "Discount_Issued": 0,
+      "Net_Amount": 0,
+      "Diagnostics_Charges_Paid": 0,
+    };
+
+    // Doctor's data rows
+    for (const rowData of rows) {
+      const dataRow = worksheet.getRow(currentRow++);
+      headers1.forEach((header, i) => {
+        const cell = dataRow.getCell(i + 1);
+        cell.value = rowData[header] ? rowData[header] : '-';
+        let aligntext: 'left' | 'right' = 'left'
+        if (['Total_Mrp', 'Discount_Issued', 'Net_Amount', 'Diagnostics_Charges_Paid'].includes(header)) {
+          aligntext = 'right';
+        }
+        cell.alignment = { vertical: 'middle', horizontal: aligntext };
+        cell.border = {
+          top: { style: 'thin' },
+          left: { style: 'thin' },
+          bottom: { style: 'thin' },
+          right: { style: 'thin' }
+        };
+      });
+      // Add to totals
+      totals["Total_Mrp"] += rowData["Total_Mrp"] || 0;
+      totals["Discount_Issued"] += rowData["Discount_Issued"] || 0;
+      totals["Net_Amount"] += rowData["Net_Amount"] || 0;
+      totals["Diagnostics_Charges_Paid"] += rowData["Diagnostics_Charges_Paid"] || 0;
+    }
+
+    // Add totals row for the doctor
+    const totalRow = worksheet.getRow(currentRow++);
+    totalRow.getCell(1).value = 'TOTAL';
+    totalRow.getCell(1).font = { bold: true };
+    totalRow.getCell(1).alignment = { horizontal: 'right' };
+    totalRow.getCell(1).border = {
+      top: { style: 'thin' },
+      left: { style: 'thin' },
+      bottom: { style: 'thin' },
+      right: { style: 'thin' }
+    };
+    // Merge first four columns for the total label
+    worksheet.mergeCells(currentRow - 1, 1, currentRow - 1, 4);
+
+    // Fill the totals in the correct columns (aligned under the correct header)
+    const colIndexMap = {
+      "Total_Mrp": 5,
+      "Discount_Issued": 6,
+      "Net_Amount": 7,
+      "Diagnostics_Charges_Paid": 8,
+    };
+
+    // Set the total values in their respective columns
+    Object.keys(totals).forEach((field, index) => {
+      totalRow.getCell(colIndexMap[field]).value = totals[field];
+      totalRow.getCell(colIndexMap[field]).border = {
+      top: { style: 'thin' },
+      left: { style: 'thin' },
+      bottom: { style: 'thin' },
+      right: { style: 'thin' }
+    };
+    });
+
+  }
+
+  // Auto column widths
+  headers1.forEach((header, index) => {
+    let maxLength = header.length;
+    for (const rows of Object.values(grouped)) {
+      for (const row of rows) {
+        const val = row[header];
+        if (val && val.toString().length > maxLength) {
+          maxLength = val.toString().length;
+        }
+      }
+    }
+    worksheet.getColumn(index + 1).width = maxLength + 3;
+  });
+
+  // Export as Excel file
+  workbook.xlsx.writeBuffer().then((data: any) => {
+    const blob = new Blob([data], {
+      type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+    });
+    fs.saveAs(blob, 'Dr_Ref_Details.xlsx');
+  });
+ }
+ ExportExcelDrRefCalculation(excelData:any) {
+  const workbook = new Workbook();
+  const worksheet = workbook.addWorksheet(excelData.sheetName);
+
+  const dataWithoutFirstRow = excelData.data;
+
+  const grouped: { [key: string]: any[] } = dataWithoutFirstRow.reduce((acc, row) => {
+    const doctor = row['Ent_Doctor'];
+    if (!acc[doctor]) acc[doctor] = [];
+    acc[doctor].push(row);
+    return acc;
+  }, {});
+
+  const allHeaders = Object.keys(dataWithoutFirstRow[0]);
+  const headers1 = allHeaders.filter(h => h !== 'Ent_Doctor');
+  const headers = headers1.map(h => h.replace(/_/g, ' '));
+
+  // Row 1 - Top Header
+  let topHeaderRow = worksheet.getRow(1);
+  topHeaderRow.getCell(1).value = excelData.TopHeader;
+  topHeaderRow.height = 20;
+  worksheet.mergeCells(1, 1, 1, headers.length);
+  topHeaderRow.getCell(1).alignment = { vertical: 'middle', horizontal: 'center' };
+  topHeaderRow.getCell(1).fill = {
+    type: 'pattern',
+    pattern: 'solid',
+    fgColor: { argb: 'c5d2da' }
+  };
+  topHeaderRow.getCell(1).font = {
+    bold: true,
+    color: { argb: '000' },
+    size: 12
+  };
+  topHeaderRow.getCell(1).border = {
+    top: { style: 'thin' },
+    left: { style: 'thin' },
+    bottom: { style: 'thin' },
+    right: { style: 'thin' }
+  };
+
+  // Freeze Top 3 Rows (TopHeader + Merged Group Row + Header)
+  worksheet.views = [{ state: 'frozen', ySplit: 1 }];
+
+  worksheet.addRow([]);
+  worksheet.addRow([]);
+
+  let currentRow = 4;
+
+  // Create grouped header + column header template rows for reuse
+  const createGroupHeaders = () => {
+    // Grouped Header Row
+    const mergeGroups = [
+      { title: '', span: 4, fgColor: 'e0e0e0' },
+      { title: 'Hearing Aids Dispensed', span: 3, fgColor: 'e0e0e0' },
+      { title: '', span: headers.length - 7, fgColor: 'e0e0e0' }
+    ];
+    const headerRow1 = worksheet.getRow(currentRow++);
+    let colStart = 1;
+
+    for (const group of mergeGroups) {
+      if (group.span > 0) {
+        worksheet.mergeCells(currentRow - 1, colStart, currentRow - 1, colStart + group.span - 1);
+        const cell = headerRow1.getCell(colStart);
+        cell.value = group.title;
+        cell.alignment = { vertical: 'middle', horizontal: 'center' };
+        cell.font = { bold: true, size: 13 };
+        cell.fill = {
+          type: 'pattern',
+          pattern: 'solid',
+          fgColor: { argb: group.fgColor }
+        };
+        cell.border = {
+          top: { style: 'thin' },
+          left: { style: 'thin' },
+          bottom: { style: 'thin' },
+          right: { style: 'thin' }
+        };
+        colStart += group.span;
+      }
+    }
+
+    // Column Header Row
+    const headerRow2 = worksheet.getRow(currentRow++);
+    headers.forEach((h, i) => {
+      const cell = headerRow2.getCell(i + 1);
+      cell.value = h;
+      cell.alignment = { vertical: 'middle', horizontal: 'center' };
+      cell.fill = {
+        type: 'pattern',
+        pattern: 'solid',
+        fgColor: { argb: '' },
+      };
+      cell.font = {
+        color: { argb: '000' },
+        bold: true
+      };
+      cell.border = {
+        top: { style: 'thin' },
+        left: { style: 'thin' },
+        bottom: { style: 'thin' },
+        right: { style: 'thin' },
+      };
+    });
+  };
+
+  // Grouped Data by Doctor
+  for (const [doctorName, rows] of Object.entries(grouped)) {
+    // Doctor name row
+    const docRow = worksheet.getRow(currentRow++);
+    const docCell = docRow.getCell(1);
+    docCell.value = 'Doctor Name:     ' + doctorName;
+    docCell.font = { bold: true };
+    docCell.alignment = { horizontal: 'left' };
+    docCell.fill = {
+      type: 'pattern',
+      pattern: 'solid',
+      fgColor: { argb: '' }
+    };
+    docCell.border = {
+      top: { style: 'thin' },
+      left: { style: 'thin' },
+      bottom: { style: 'thin' },
+      right: { style: 'thin' }
+    };
+    worksheet.mergeCells(currentRow - 1, 1, currentRow - 1, headers.length);
+
+    // Grouped headers under each doctor
+    createGroupHeaders();
+
+    let totals = {
+      "Total_Mrp": 0,
+      "Discount_Issued": 0,
+      "Net_Amount": 0,
+      "Diagnostics_Charges_Paid": 0,
+      "Doctor_Incentive": 0,
+    };
+
+    // Doctor's data rows
+    for (const rowData of rows) {
+      const dataRow = worksheet.getRow(currentRow++);
+      headers1.forEach((header, i) => {
+        const cell = dataRow.getCell(i + 1);
+        cell.value = rowData[header] ? rowData[header] : '';
+        cell.border = {
+          top: { style: 'thin' },
+          left: { style: 'thin' },
+          bottom: { style: 'thin' },
+          right: { style: 'thin' }
+        };
+      });
+      // Add to totals
+      totals["Total_Mrp"] += rowData["Total_Mrp"] || 0;
+      totals["Discount_Issued"] += rowData["Discount_Issued"] || 0;
+      totals["Net_Amount"] += rowData["Net_Amount"] || 0;
+      totals["Diagnostics_Charges_Paid"] += rowData["Diagnostics_Charges_Paid"] || 0;
+      totals["Doctor_Incentive"] += rowData["Doctor_Incentive"] || 0;
+    }
+
+    // Add totals row for the doctor
+    const totalRow = worksheet.getRow(currentRow++);
+    totalRow.getCell(1).value = 'TOTAL';
+    totalRow.getCell(1).font = { bold: true };
+    totalRow.getCell(1).alignment = { horizontal: 'right' };
+    totalRow.getCell(1).border = {
+      top: { style: 'thin' },
+      left: { style: 'thin' },
+      bottom: { style: 'thin' },
+      right: { style: 'thin' }
+    };
+    // Merge first four columns for the total label
+    worksheet.mergeCells(currentRow - 1, 1, currentRow - 1, 4);
+
+    // Fill the totals in the correct columns (aligned under the correct header)
+    const colIndexMap = {
+      "Total_Mrp": 5,
+      "Discount_Issued": 6,
+      "Net_Amount": 7,
+      "Diagnostics_Charges_Paid": 8,
+      "Doctor_Incentive": 9,
+    };
+
+    // Set the total values in their respective columns
+    Object.keys(totals).forEach((field, index) => {
+      totalRow.getCell(colIndexMap[field]).value = totals[field];
+      totalRow.getCell(colIndexMap[field]).border = {
+      top: { style: 'thin' },
+      left: { style: 'thin' },
+      bottom: { style: 'thin' },
+      right: { style: 'thin' }
+    };
+    });
+
+  }
+
+  // Auto column widths
+  headers1.forEach((header, index) => {
+    let maxLength = header.length;
+    for (const rows of Object.values(grouped)) {
+      for (const row of rows) {
+        const val = row[header];
+        if (val && val.toString().length > maxLength) {
+          maxLength = val.toString().length;
+        }
+      }
+    }
+    worksheet.getColumn(index + 1).width = maxLength + 3;
+  });
+
+  // Export as Excel file
+  workbook.xlsx.writeBuffer().then((data: any) => {
+    const blob = new Blob([data], {
+      type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+    });
+    fs.saveAs(blob, 'Dr_Ref_Calculation.xlsx');
+  });
+ }
+ ExportExcelDrRefMonthlySummary(excelData:any) {
+  const headers = Object.keys(excelData.data[0]);
+  const data: any[] = [];
+  excelData.data.forEach((ele: any) => {
+    data.push(Object.values(ele));
+  });
+
+  const workbook = new Workbook();
+  const worksheet = workbook.addWorksheet(excelData.sheetName);
+
+  // Top Header
+  const topHeaderRow = worksheet.getRow(1);
+  topHeaderRow.getCell(1).value = excelData.TopHeader;
+  topHeaderRow.height = 20;
+  worksheet.mergeCells(1, 1, 1, headers.length);
+  topHeaderRow.getCell(1).alignment = { vertical: 'middle', horizontal: 'center' };
+  topHeaderRow.getCell(1).fill = {
+    type: 'pattern',
+    pattern: 'solid',
+    fgColor: { argb: 'c5d2da' },
+  };
+  topHeaderRow.getCell(1).font = {
+    bold: true,
+    color: { argb: '000000' },
+    size: 12,
+  };
+  topHeaderRow.getCell(1).border = {
+    top: { style: 'thin' },
+    left: { style: 'thin' },
+    bottom: { style: 'thin' },
+    right: { style: 'thin' },
+  };
+
+  // Add an empty row
+  worksheet.addRow([]);
+
+  // Header Row
+  const formattedHeaders = headers.map(header => header.replace(/_/g, ' '));
+  const headerRow = worksheet.addRow(formattedHeaders);
+  headerRow.eachCell((cell) => {
+    cell.alignment = { vertical: 'middle', horizontal: 'center' };
+    cell.fill = {
+      type: 'pattern',
+      pattern: 'solid',
+      fgColor: { argb: '' },
+    };
+    cell.font = {
+      bold: true,
+      color: { argb: '000000' },
+    };
+    cell.border = {
+      top: { style: 'thin' },
+      left: { style: 'thin' },
+      bottom: { style: 'thin' },
+      right: { style: 'thin' },
+    };
+  });
+
+  // Add data rows
+  data.forEach((rowData) => {
+  const row = worksheet.addRow(rowData); // Get the added row
+
+  row.eachCell((cell) => {
+    cell.alignment = { vertical: 'middle', horizontal: 'center' };
+    cell.fill = {
+      type: 'pattern',
+      pattern: 'solid',
+      fgColor: { argb: '' },
+    };
+    cell.font = {
+      color: { argb: '000000' },
+    };
+    cell.border = {
+      top: { style: 'thin' },
+      left: { style: 'thin' },
+      bottom: { style: 'thin' },
+      right: { style: 'thin' },
+    };
+    });
+  });
+
+  // Freeze top 3 rows (header + empty + column headers)
+  worksheet.views = [{ state: 'frozen', ySplit: 3 }];
+
+  // Auto column width
+  headers.forEach((header, index) => {
+    let maxLength = header.length;
+    excelData.data.forEach((row: any) => {
+      const cellValue = row[header];
+      if (cellValue && cellValue.toString().length > maxLength) {
+        maxLength = cellValue.toString().length;
+      }
+    });
+    worksheet.getColumn(index + 1).width = maxLength + 3;
+  });
+
+  // Save file
+  workbook.xlsx.writeBuffer().then((buffer) => {
+    const blob = new Blob([buffer], {
+      type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+    });
+    fs.saveAs(blob, 'Doctor_Ref_Monthly_Summary.xlsx');
+  });
+ }
+ ExportExcelDrRefTimeBasedSummary(excelData:any) {
+  const headers = excelData.Header;
+  const data: any = [];
+  excelData.data.forEach((ele: any) => {
+    data.push(Object.values(ele));
+  });
+
+  const workbook = new Workbook();
+  const worksheet = workbook.addWorksheet(excelData.sheetName);
+
+  // Top Header
+  const topHeaderRow = worksheet.getRow(1);
+  topHeaderRow.getCell(1).value = excelData.TopHeader;
+  topHeaderRow.height = 20;
+  worksheet.mergeCells(1, 1, 1, headers.length);
+  topHeaderRow.getCell(1).alignment = { vertical: 'middle', horizontal: 'center' };
+  topHeaderRow.getCell(1).fill = {
+    type: 'pattern',
+    pattern: 'solid',
+    fgColor: { argb: 'c5d2da' },
+  };
+  topHeaderRow.getCell(1).font = {
+    bold: true,
+    color: { argb: '000000' },
+    size: 12,
+  };
+  topHeaderRow.getCell(1).border = {
+    top: { style: 'thin' },
+    left: { style: 'thin' },
+    bottom: { style: 'thin' },
+    right: { style: 'thin' },
+  };
+
+  // Add an empty row
+  worksheet.addRow([]);
+
+  // Header Row
+  const headerRow = worksheet.addRow(headers);
+  headerRow.eachCell((cell) => {
+    cell.alignment = { vertical: 'middle', horizontal: 'center' };
+    // cell.fill = {
+    //   type: 'pattern',
+    //   pattern: 'solid',
+    //   fgColor: { argb: '' },
+    // };
+    cell.font = {
+      bold: true,
+      color: { argb: '000000' },
+    };
+    cell.border = {
+      top: { style: 'thin' },
+      left: { style: 'thin' },
+      bottom: { style: 'thin' },
+      right: { style: 'thin' },
+    };
+  });
+
+  // Add data rows
+  data.forEach((rowData) => {
+  const row = worksheet.addRow(rowData); // Get the added row
+  row.eachCell((cell) => {
+    // cell.alignment = { vertical: 'middle', horizontal: rowData.Enq_Source_Sub_Name ? 'left' : 'right' };
+    // cell.fill = {
+    //   type: 'pattern',
+    //   pattern: 'solid',
+    //   fgColor: { argb: '' },
+    // };
+    cell.font = {
+      color: { argb: '000000' },
+    };
+    cell.border = {
+      top: { style: 'thin' },
+      left: { style: 'thin' },
+      bottom: { style: 'thin' },
+      right: { style: 'thin' },
+    };
+    });
+  });
+
+  // Freeze top 3 rows (header + empty + column headers)
+  worksheet.views = [{ state: 'frozen', ySplit: 3 }];
+
+  worksheet.getColumn('A').width = 40
+  worksheet.getColumn('B').width = 40
+  worksheet.getColumn('C').width = 35
+  // Save file
+  workbook.xlsx.writeBuffer().then((buffer) => {
+    const blob = new Blob([buffer], {
+      type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+    });
+    fs.saveAs(blob, 'Doctor_Ref_Time_Based_Summary.xlsx');
+  });
+ }
+
+
+
 
 
 }
