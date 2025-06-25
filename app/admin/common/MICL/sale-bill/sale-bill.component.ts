@@ -7,6 +7,7 @@ import { CompacctHeader } from '../../../shared/compacct.services/common.header.
 import { CompacctGlobalApiService } from '../../../shared/compacct.services/compacct.global.api.service';
 import { ActivatedRoute, Router } from '@angular/router';
 import { NgxUiLoaderService } from "ngx-ui-loader";
+import { CommonUserActivityService } from '../../../shared/compacct.services/common-user-activity.service';
 
 @Component({
   selector: 'app-sale-bill',
@@ -34,6 +35,8 @@ export class SaleBillComponent implements OnInit {
   GridList: any = [];
   TempObj: any = {};
   ChallanSave: any = {};
+  Amount:any = undefined;
+  DiscountAmount:any = undefined;
   Tax:any = undefined;
   CGST:any = undefined;
   SGST:any = undefined;
@@ -56,6 +59,7 @@ export class SaleBillComponent implements OnInit {
   editChallanList:any = [];
   TCSTaxRequiredValidation = false;
   TCSdataList:any = [];
+  databaseName: any;
   constructor(
     private Header: CompacctHeader,
     private $http: HttpClient,
@@ -66,6 +70,7 @@ export class SaleBillComponent implements OnInit {
     private route : ActivatedRoute,
     private ngxService: NgxUiLoaderService,
     private router: Router,
+    private _CommonUserActivity : CommonUserActivityService
   ){
      this.route.queryParamMap.subscribe((val:any) => {
       this.GetCustmer();
@@ -89,11 +94,20 @@ export class SaleBillComponent implements OnInit {
       Header: "Sale Bill",
       Link: " Financial Management ->  Sale Bill"
     });
+    this.getDatabase();
     this.GetCustmer();
     this.GetCostcenter();
     this.GetStateList();
     this.Finyear();
     this.GetTaxCategory();
+  }
+  getDatabase(){
+    this.$http
+        .get("/Common/Get_Database_Name")
+        .subscribe((data: any) => {
+          this.databaseName = data;
+          console.log(data)
+        });
   }
   TabClick(e:any) {
     this.tabIndexToView = e.index;
@@ -104,7 +118,8 @@ export class SaleBillComponent implements OnInit {
     this.ObjTopSale.TCS_Persentage = 0;
     this.ObjTopSale.TCS_Amount = 0;
     this.ObjTopSale.TCS_Per = undefined;
-    this.router.navigate(['./MICL_Sale_Bill']);
+    // this.router.navigate(['./MICL_Sale_Bill']);
+    this.router.navigate(['./BL_Txn_Sale_Bill_From_Challan']);
   }
   clearData() {
     this.browseSpinner = false;
@@ -133,7 +148,7 @@ export class SaleBillComponent implements OnInit {
     this.Rounded_Off = undefined;
     this.Total_Amount = undefined;
     // this.SerarchSaleBill = [];
-  
+    this.DocNo = undefined;
   }
   Finyear() {
     this.$http
@@ -170,6 +185,7 @@ export class SaleBillComponent implements OnInit {
         "Json_Param_String": JSON.stringify([tempobj])
       }
       this.GlobalAPI.getData(obj).subscribe((data: any) => {
+        this.browseSpinner = false;
         if (data.length) {
           this.SerarchSaleBill = data;
           this.SerarchSaleBillHeader = data.length ? Object.keys(data[0]): []  
@@ -295,8 +311,8 @@ export class SaleBillComponent implements OnInit {
   }
   GetStateList() {
     const obj = {
-      "SP_String": "SP_MICL_Purchase_Bill_New",
-      "Report_Name_String": "Get_State_List",
+      "SP_String": "SP_MICL_Sale_Bill",
+      "Report_Name_String": "Get_State_List"
     }
     this.GlobalAPI.getData(obj).subscribe((data: any) => {
       this.StateList = data;
@@ -372,15 +388,35 @@ export class SaleBillComponent implements OnInit {
     this.GlobalAPI.getData(obj).subscribe((data: any) => {
       if (data.length) {
         this.GridList = data; 
-        this.GridList.forEach(element => {
-          element.Cost_Cen_Name = "Finish Product"
-        });
+        // this.GridList.forEach(element => {
+        //   element.Cost_Cen_Name = "Finish Product"
+        // });
+          for(let i = 0; i < data.length; i++){
+            data[i].Amount = Number(Number(Number(data[i].Qty) * Number(data[i].Rate)).toFixed(2))
+            data[i].Taxable_Amount = Number(Number(Number(data[i].Amount) - Number(data[i].Discount)).toFixed(2))
+            if(data[i].igst_tag === 'Y'){
+              data[i].IGST_Rate = data[i].IGST_Rate
+              data[i].IGST_Amount = data[i].IGST_Amount
+              data[i].CGST_Rate = 0
+              data[i].CGST_Amount = 0
+              data[i].SGST_Rate = 0
+              data[i].SGST_Amount = 0
+            } else {
+              data[i].IGST_Rate = 0
+              data[i].IGST_Amount = 0
+              data[i].CGST_Rate = data[i].CGST_Rate
+              data[i].CGST_Amount = data[i].CGST_Amount
+              data[i].SGST_Rate = data[i].SGST_Rate
+              data[i].SGST_Amount = data[i].SGST_Amount
+            }
+            data[i].Line_Total_Amount = Number(Number(data[i].Taxable_Amount + data[i].CGST_Amount + data[i].SGST_Amount + data[i].IGST_Amount).toFixed(2))
+          }
         //  if(this.QueryStringObj.Challan_No){
          this.ObjTopSale.TCS_Y_N = data[0].TCS_Y_N;
          this.GetTCSdat();
           this.ObjTopSale.TCS_Per = data[0].TCS_Per;
           this.ObjTopSale.TCS_Ledger_ID = data[0].TCS_Ledger_ID;
-          this.ObjTopSale.TCS_Amount = Number(data[0].TCS_Amount);
+          this.ObjTopSale.TCS_Amount = data[0].TCS_Amount ? Number(data[0].TCS_Amount) : 0;
           this.TotalCalculation();
           this.NetAMT = this.RoundOff(Number(this.Total_Amount) + Number(this.ObjTopSale.TCS_Amount));
           this.ngxService.stop();
@@ -405,6 +441,8 @@ export class SaleBillComponent implements OnInit {
   
   }
   TotalCalculation() {
+    this.Amount = undefined;
+    this.DiscountAmount = undefined;
     this.Tax = undefined;
     this.CGST = undefined;
     this.SGST = undefined;
@@ -412,18 +450,24 @@ export class SaleBillComponent implements OnInit {
     this.Total_Amount = undefined;
     this.Rounded_Off = undefined;
     this.NetAMT = undefined;
+    let count001 = 0;
+    let count01 = 0;
     let count1 = 0;
     let count2 = 0;
     let count3 = 0;
     let count4 = 0;
     let count5 = 0;
     this.GridList.forEach(item => {
+      count001 = count001 + Number(item.Amount);
+      count01 = count01 + Number(item.Discount);
       count1 = count1 + Number(item.Taxable_Amount);
       count2= count2 + Number(item.CGST_Amount);
       count3 = count3 + Number(item.SGST_Amount);
       count4= count4 + Number(item.IGST_Amount);
       count5 = count5 + Number(item.Line_Total_Amount);
     });
+    this.Amount = count001.toFixed(2);
+    this.DiscountAmount = count01.toFixed(2);
     this.Tax = count1.toFixed(2);
     this.CGST = count2.toFixed(2);
     this.SGST = count3.toFixed(2);
@@ -535,7 +579,8 @@ export class SaleBillComponent implements OnInit {
         TCS_Y_N : this.ObjTopSale.TCS_Y_N,
         TCS_Per : this.ObjTopSale.TCS_Per,
         TCS_Amount : this.ObjTopSale.TCS_Amount,
-        TCS_Ledger_ID : this.ObjTopSale.TCS_Ledger_ID
+        TCS_Ledger_ID : this.ObjTopSale.TCS_Ledger_ID,
+        Product_Details : this.GridList
       }
       this.ChallanSave = [];
       // this.ObjTopSale.Bill_No.forEach(element => {
@@ -550,16 +595,19 @@ export class SaleBillComponent implements OnInit {
         "Json_Param_String": JSON.stringify([TempSaveList]),
         "Json_1_String" : JSON.stringify(this.ChallanSave)
       }
-      this.GlobalAPI.getData(obj).subscribe((data: any) => {
+      this.GlobalAPI.getData(obj).subscribe(async(data: any) => {
         var tempID = data[0].Column1;
+        let msg = this.DocNo ? 'Update' : 'Create'
+        let docno = this.DocNo ? this.DocNo : data[0].Column1
         if (data[0].Column1) {
           this.compacctToast.clear();
           this.compacctToast.add({
             key: "compacct-toast",
             severity: "success",
             summary: tempID,
-            detail: "successfully Create ",
+            detail: "successfully " + msg,
           });
+      await this.SaveUserActivity(msg,docno);
       this.ObjTopSale = new TopSale();
       this.BillDate = new Date();
       this.SaleBillFormSubmitted = false;
@@ -579,7 +627,9 @@ export class SaleBillComponent implements OnInit {
       this.Total_Amount = undefined;
       this.GridList = [];
       this.SelectedChallanNo = [];
-      this.router.navigate(['./MICL_Sale_Bill']);
+      this.DocNo = undefined;
+      // this.router.navigate(['./MICL_Sale_Bill']);
+      this.router.navigate(['./BL_Txn_Sale_Bill_From_Challan']);
       this.GetSerarchBrowse(true);
       // this.Tax_Category = undefined;
      }
@@ -601,7 +651,7 @@ export class SaleBillComponent implements OnInit {
         "Report_Name_String": "Delete_Sale_Bill",
         "Json_Param_String": JSON.stringify([{ Doc_No: this.DocNo, User_ID: this.$CompacctAPI.CompacctCookies.User_ID }])
       }
-      this.GlobalAPI.getData(obj).subscribe((data: any) => {
+      this.GlobalAPI.getData(obj).subscribe(async(data: any) => {
         var terd = data[0].Column1
         if (data[0].Column1 === this.DocNo) {
           this.compacctToast.clear();
@@ -611,6 +661,7 @@ export class SaleBillComponent implements OnInit {
             summary: terd,
             detail: "Succesfully Delete",
           });
+          await this.SaveUserActivity('Delete',this.DocNo);
           this.DocNo = undefined;
           this.GetSerarchBrowse(true);
         } else {
@@ -642,19 +693,22 @@ export class SaleBillComponent implements OnInit {
   }
   Print(DocNo) {
     if (DocNo) {
-      if(DocNo){
-       const url = `/Report/Print/MICL/sale_bill_print.html?Doc_No=${DocNo}`;
-        window.open(url,"Print",  'fullscreen=yes, scrollbars=auto,width=950,height=500');
+      // if(DocNo){
+      //  const url = `/Report/Print/MICL/sale_bill_print.html?Doc_No=${DocNo}`;
+      //   window.open(url,"Print",  'fullscreen=yes, scrollbars=auto,width=950,height=500');
       
-      }
-      // const objtemp = {
-      //   "SP_String": "SP_MICL_Sale_Bill",
-      //   "Report_Name_String": "Sale_Bill_Print"
       // }
-      // this.GlobalAPI.getData(objtemp).subscribe((data: any) => {
-      //   var printlink = data[0].Column1;
-      //   window.open(printlink + `?Doc_No=${DocNo}`, "Print", 'fullscreen=yes, scrollbars=auto,width=950,height=500');
-      // })
+      const objtemp = {
+        "SP_String": "SP_MICL_Sale_Bill",
+        "Report_Name_String": "Sale_Bill_Print"
+      }
+      this.GlobalAPI.getData(objtemp).subscribe((data: any) => {
+        if(data[0].Column1){
+          var printlink = data[0].Column1;
+          window.open(printlink + `?Doc_No=${DocNo}`, "Print", 'fullscreen=yes, scrollbars=auto,width=950,height=500');
+        }
+        
+      })
     }
   }
   PrintChallan(DocNo){
@@ -757,7 +811,7 @@ export class SaleBillComponent implements OnInit {
       this.GetTCSdat();
       this.ObjTopSale.TCS_Per = data[0].TCS_Per;
       this.ObjTopSale.TCS_Ledger_ID = data[0].TCS_Ledger_ID;
-      this.ObjTopSale.TCS_Amount = Number(data[0].TCS_Amount);
+      this.ObjTopSale.TCS_Amount = data[0].TCS_Amount ? Number(data[0].TCS_Amount) : 0;
       this.editChallanList.forEach(el=>{
         this.GridList.push({
           Cost_Cen_ID : el.Cost_Cen_ID,
@@ -793,6 +847,10 @@ export class SaleBillComponent implements OnInit {
     this.ChallanNoList.forEach((item) => {
          this.SelectedChallanNo.push(item.Doc_No);
     });
+  }
+  async SaveUserActivity(activity,docno){
+    const result = await this._CommonUserActivity.GetUserActivity(activity,'Sale Bill From Challan',docno,'0')
+    console.log(result)
   }
 }
 class TopSale{

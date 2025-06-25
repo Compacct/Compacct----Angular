@@ -2549,6 +2549,13 @@ path: 'MICL_Cost_Center_Master',
 }
 },
 {
+  path: 'BL_Txn_Sale_Bill_From_Challan',
+    component: SaleBillComponent,
+    data: {
+      title: 'Sale Bill From Challan'
+}
+},
+{
   path: 'Doctors_Appo_New_Fluency_Evaluation',
     component: DoctorsAppoNewFluencyEvaluationComponent,
     data: {
