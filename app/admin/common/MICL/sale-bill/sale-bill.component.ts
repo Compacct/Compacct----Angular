@@ -36,7 +36,7 @@ export class SaleBillComponent implements OnInit {
   TempObj: any = {};
   ChallanSave: any = {};
   Amount:any = undefined;
-  DiscountAmount:any = undefined;
+  Discount_Amount:any = undefined;
   Tax:any = undefined;
   CGST:any = undefined;
   SGST:any = undefined;
@@ -140,6 +140,8 @@ export class SaleBillComponent implements OnInit {
     this.ObjTopSale.Sub_Ledger_GST_No = undefined;
     this.ObjTopSale.Cost_Cen_ID = this.$CompacctAPI.CompacctCookies.Cost_Cen_ID;
     this.GetCosCenAddress();
+    this.Amount = undefined;
+    this.Discount_Amount = undefined;
     this.Tax = undefined;
     this.CGST = undefined;
     this.SGST = undefined;
@@ -366,6 +368,8 @@ export class SaleBillComponent implements OnInit {
   getButtomTable() {
     this.GridList = [];
     this.TempObj = [];
+    this.Amount = undefined;
+    this.Discount_Amount = undefined;
     this.Tax = undefined;
     this.CGST = undefined;
     this.SGST = undefined;
@@ -393,10 +397,13 @@ export class SaleBillComponent implements OnInit {
         // });
           for(let i = 0; i < data.length; i++){
             data[i].Amount = Number(Number(Number(data[i].Qty) * Number(data[i].Rate)).toFixed(2))
+            data[i].Discount_Type = data[i].Discount_Type ? data[i].Discount_Type : undefined;
+            data[i].Discount_Type_Amount = data[i].Discount_Type_Amount ? Number(data[i].Discount_Type_Amount) : 0;
+            data[i].Discount = data[i].Discount ? Number(data[i].Discount) : 0;
             data[i].Taxable_Amount = Number(Number(Number(data[i].Amount) - Number(data[i].Discount)).toFixed(2))
             if(data[i].igst_tag === 'Y'){
-              data[i].IGST_Rate = data[i].IGST_Rate
-              data[i].IGST_Amount = data[i].IGST_Amount
+              data[i].IGST_Rate = Number(data[i].IGST_Rate)
+              data[i].IGST_Amount = Number(data[i].IGST_Amount)
               data[i].CGST_Rate = 0
               data[i].CGST_Amount = 0
               data[i].SGST_Rate = 0
@@ -404,10 +411,10 @@ export class SaleBillComponent implements OnInit {
             } else {
               data[i].IGST_Rate = 0
               data[i].IGST_Amount = 0
-              data[i].CGST_Rate = data[i].CGST_Rate
-              data[i].CGST_Amount = data[i].CGST_Amount
-              data[i].SGST_Rate = data[i].SGST_Rate
-              data[i].SGST_Amount = data[i].SGST_Amount
+              data[i].CGST_Rate = Number(data[i].CGST_Rate)
+              data[i].CGST_Amount = Number(data[i].CGST_Amount)
+              data[i].SGST_Rate = Number(data[i].SGST_Rate)
+              data[i].SGST_Amount = Number(data[i].SGST_Amount)
             }
             data[i].Line_Total_Amount = Number(Number(data[i].Taxable_Amount + data[i].CGST_Amount + data[i].SGST_Amount + data[i].IGST_Amount).toFixed(2))
           }
@@ -429,6 +436,44 @@ export class SaleBillComponent implements OnInit {
      
     })  
   }
+  ClearDiscount(rowdata){
+    rowdata.Discount = 0;
+    rowdata.Discount_Type_Amount = 0;
+    this.DiscountCalculation(rowdata);
+  }
+  DiscountCalculation(rowdata){
+    console.log(rowdata)
+    if(rowdata.Discount_Type === "%"){
+      rowdata.Discount = rowdata.Discount_Type_Amount ? Number(Number(Number(Number(rowdata.Amount) * Number(rowdata.Discount_Type_Amount)) / 100).toFixed(2)) : 0;
+      rowdata.Taxable_Amount = Number(Number(Number(rowdata.Amount) - rowdata.Discount).toFixed(2))
+      if(rowdata.igst_tag === 'Y'){
+        rowdata.IGST_Amount = Number(Number(Number(Number(rowdata.Amount) * Number(rowdata.IGST_Rate)) / 100).toFixed(2))
+        rowdata.CGST_Amount = 0
+        rowdata.SGST_Amount = 0
+        rowdata.Line_Total_Amount = Number(Number(rowdata.Taxable_Amount + rowdata.SGST_Amount + rowdata.CGST_Amount + rowdata.IGST_Amount).toFixed(2))
+      } else {
+        rowdata.IGST_Amount = 0
+        rowdata.CGST_Amount = Number(Number(Number(Number(rowdata.Amount) * Number(rowdata.CGST_Rate)) / 100).toFixed(2))
+        rowdata.SGST_Amount = Number(Number(Number(Number(rowdata.Amount) * Number(rowdata.SGST_Rate)) / 100).toFixed(2))
+        rowdata.Line_Total_Amount = Number(Number(rowdata.Taxable_Amount + rowdata.SGST_Amount + rowdata.CGST_Amount + rowdata.IGST_Amount).toFixed(2))
+      }
+    } else {
+        rowdata.Discount = rowdata.Discount_Type_Amount ? Number(rowdata.Discount_Type_Amount) : 0;
+        rowdata.Taxable_Amount = Number(Number(Number(rowdata.Amount) - rowdata.Discount).toFixed(2))
+        if(rowdata.igst_tag === 'Y'){
+          rowdata.IGST_Amount = Number(Number(Number(Number(rowdata.Amount) * Number(rowdata.IGST_Rate)) / 100).toFixed(2))
+          rowdata.CGST_Amount = 0
+          rowdata.SGST_Amount = 0
+          rowdata.Line_Total_Amount = Number(Number(rowdata.Taxable_Amount + rowdata.SGST_Amount + rowdata.CGST_Amount + rowdata.IGST_Amount).toFixed(2))
+        } else {
+          rowdata.IGST_Amount = 0
+          rowdata.CGST_Amount = Number(Number(Number(Number(rowdata.Amount) * Number(rowdata.CGST_Rate)) / 100).toFixed(2))
+          rowdata.SGST_Amount = Number(Number(Number(Number(rowdata.Amount) * Number(rowdata.SGST_Rate)) / 100).toFixed(2))
+          rowdata.Line_Total_Amount = Number(Number(rowdata.Taxable_Amount + rowdata.SGST_Amount + rowdata.CGST_Amount + rowdata.IGST_Amount).toFixed(2))
+        }
+    }
+    this.TotalCalculation();
+  }
   GetTaxCategory() {
     this.TaxCategoryList = [];
       const obj = {
@@ -442,7 +487,7 @@ export class SaleBillComponent implements OnInit {
   }
   TotalCalculation() {
     this.Amount = undefined;
-    this.DiscountAmount = undefined;
+    this.Discount_Amount = undefined;
     this.Tax = undefined;
     this.CGST = undefined;
     this.SGST = undefined;
@@ -467,7 +512,7 @@ export class SaleBillComponent implements OnInit {
       count5 = count5 + Number(item.Line_Total_Amount);
     });
     this.Amount = count001.toFixed(2);
-    this.DiscountAmount = count01.toFixed(2);
+    this.Discount_Amount = count01.toFixed(2);
     this.Tax = count1.toFixed(2);
     this.CGST = count2.toFixed(2);
     this.SGST = count3.toFixed(2);
@@ -562,19 +607,20 @@ export class SaleBillComponent implements OnInit {
 			  Country		:	FilterSubledger[0].Sub_Ledger_Country,				
 			  Email:	FilterSubledger[0].Sub_Ledger_Email,					
 			  Mobile_No	:FilterSubledger[0].Sub_Ledger_Mobile_No,					
-			  Phone	:	FilterSubledger[0].Sub_Ledger_Mobile_No,							
-			  Taxable_Amt	: this.Tax,				
-			  CGST_Amt:	this.CGST,					
-			  SGST_Amt: this.SGST	,					
-			  IGST_Amt:	this.IGST	,					
-			  Gross_Amt: this.Total_Amount,					
-			  Tax_Amt	: this.Tax,								
-			  Net_Amt: this.NetAMT,								
-			  User_ID	:	this.$CompacctAPI.CompacctCookies.User_ID	,									
-			  Cost_Cen_ID	:this.ObjTopSale.Cost_Cen_ID,	
-        Rounded_Off : this.Rounded_Off,																						
-        Grand_Total: this.NetAMT,
-        Fin_Year_ID : this.$CompacctAPI.CompacctCookies.Fin_Year_ID,
+			  Phone	:	FilterSubledger[0].Sub_Ledger_Mobile_No,		
+        Discount_Amount : Number(this.Discount_Amount),					
+			  Taxable_Amt	: Number(this.Tax),				
+			  CGST_Amt:	Number(this.CGST),					
+			  SGST_Amt: Number(this.SGST)	,					
+			  IGST_Amt:	Number(this.IGST)	,					
+			  Gross_Amt: Number(this.Total_Amount),					
+			  Tax_Amt	: Number(this.Tax),								
+			  Net_Amt: Number(this.NetAMT),								
+			  User_ID	:	Number(this.$CompacctAPI.CompacctCookies.User_ID)	,									
+			  Cost_Cen_ID	: Number(this.ObjTopSale.Cost_Cen_ID),	
+        Rounded_Off : Number(this.Rounded_Off),																						
+        Grand_Total: Number(this.NetAMT),
+        Fin_Year_ID : Number(this.$CompacctAPI.CompacctCookies.Fin_Year_ID),
         Address_Type : this.ObjTopSale.Choose_Address,
         TCS_Y_N : this.ObjTopSale.TCS_Y_N,
         TCS_Per : this.ObjTopSale.TCS_Per,
@@ -618,6 +664,8 @@ export class SaleBillComponent implements OnInit {
       this.ObjTopSale.TCS_Per = undefined;
       this.tabIndexToView = 0;
       this.items = ["BROWSE", "CREATE"];
+      this.Amount = undefined;
+      this.Discount_Amount = undefined;
       this.Tax = undefined;
       this.CGST = undefined;
       this.SGST = undefined;
@@ -816,6 +864,7 @@ export class SaleBillComponent implements OnInit {
         this.GridList.push({
           Cost_Cen_ID : el.Cost_Cen_ID,
           Cost_Cen_Name: el.Cost_Cen_Name,
+          godown_id : el.godown_id,
           godown_name : el.godown_name,
           Product_Type_ID : el.Product_Type_ID,
           Product_Type : el.Product_Type,
@@ -825,9 +874,14 @@ export class SaleBillComponent implements OnInit {
           Product_Description : el.Product_Description,
           Product_Specification : el.Product_Specification,
           Batch_Number : el.Batch_Number,
-          Qty : el.Qty,
+          igst_tag : el.igst_tag,
+          Qty : Number(el.Qty),
           UOM : el.UOM,
-          Rate : el.Rate,
+          Rate : Number(el.Rate),
+          Amount : Number(Number(el.Qty * el.Rate).toFixed(2)),
+          Discount_Type : el.Discount_Type,
+          Discount_Type_Amount : el.Discount_Type_Amount,
+          Discount : el.Discount,
           Taxable_Amount : el.Taxable_Amount,
           CGST_Rate : el.CGST_Rate,
           CGST_Amount : el.CGST_Amount,

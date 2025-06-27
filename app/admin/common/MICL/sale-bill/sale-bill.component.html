@@ -428,6 +428,10 @@
                                                 <th nowrap rowspan="2" class="text-center"
                                                     style="vertical-align:middle">Amount</th>
                                                 <th nowrap rowspan="2" class="text-center"
+                                                    style="vertical-align:middle">Discount Type</th>
+                                                <th nowrap rowspan="2" class="text-center"
+                                                    style="vertical-align:middle">Discount</th>
+                                                <th nowrap rowspan="2" class="text-center"
                                                     style="vertical-align:middle">Discount Amount</th>
                                                 <th nowrap rowspan="2" class="text-center"
                                                     style="vertical-align:middle">Taxable Amount</th>
@@ -458,6 +462,19 @@
                                                 <td>{{ Table.UOM ? Table.UOM :"-" }}</td>
                                                 <td>{{ Table.Rate ? Table.Rate :"-" }}</td>
                                                 <td>{{ Table.Amount ? Table.Amount :"-" }}</td>
+                                                <td>
+                                                    <select class="form-control" 
+                                                        [name]="Table.Product_ID+'Discount_Type'"  
+                                                        [(ngModel)]="Table.Discount_Type"
+                                                        (change)="ClearDiscount(Table)">
+                                                        <option  [ngValue]="undefined">Select</option>
+                                                        <option  value="%">%</option>
+                                                        <option  value="Amt">Amt</option>
+                                                    </select>
+                                                </td>
+                                                <td>
+                                                    <input type="text" [name]="Table.Product_ID+'Discount_Type_Amount'" [(ngModel)]="Table.Discount_Type_Amount" (ngModelChange)="DiscountCalculation(Table)" [disabled]="!Table.Discount_Type" CompacctDigitonly="true" class="form-control" style="width: 71px;" />
+                                                </td>
                                                 <td>{{ Table.Discount ? Table.Discount :"-" }}</td>
                                                 <td>{{ Table.Taxable_Amount ? Table.Taxable_Amount :"-" }}</td>
                                                 <td>{{ Table.CGST_Rate ? Table.CGST_Rate :"-" }}</td>
@@ -514,9 +531,9 @@
                                         <tbody>
                                             <tr>
                                                 <th>Amount :</th>
-                                                <td class="amt-td ng-binding">{{Tax ? Tax :"-"}}</td>
+                                                <td class="amt-td ng-binding">{{Amount ? Amount :"-"}}</td>
                                                 <th>Discount Amount :</th>
-                                                <td class="amt-td ng-binding">{{CGST ? CGST :"-"}}</td>
+                                                <td class="amt-td ng-binding">{{Discount_Amount ? Discount_Amount :"-"}}</td>
                                                 <th>Taxable Amount :</th>
                                                 <td class="amt-td ng-binding">{{Tax ? Tax : "-"}}</td>
                                                 
