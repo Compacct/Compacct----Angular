@@ -111,6 +111,7 @@ export class BSHPLAudiologistAppoComponent implements OnInit {
   displayViewCaseHistory:boolean = false;
   ObjCaseHistory:any = {};
   docno:any;
+  CheckStatus:any;
 
   constructor(
     private $http: HttpClient,
@@ -338,10 +339,12 @@ export class BSHPLAudiologistAppoComponent implements OnInit {
     }
   }
 
-  actionClick_UpdateAppo(col: any) {
+  async actionClick_UpdateAppo(col: any) {
     // console.log("actionClick_UpdateAppo");
+    await this.GetCheckStatusForAppo(col);
     this.docno = undefined;
-    if (col) {
+    if(this.CheckCancelStatus()){
+      if (col) {
       this.docno = col.Appo_ID;
       this.objAppointment.Foot_Fall_ID = Number(col.foot_fall_id);
       this.objAppointment.Trial_Date = this.DateService.dateTimeConvert(new Date(col.Appo_Start));
@@ -358,6 +361,7 @@ export class BSHPLAudiologistAppoComponent implements OnInit {
       if(this.databaseName === 'GN_Crystal_Mumbai'){
         this.onReject();
       }
+    }
     }
   }
  
@@ -816,8 +820,12 @@ export class BSHPLAudiologistAppoComponent implements OnInit {
     });
   }
 
-  actionClick_Shift(col: any) {
-    if (col) {
+  async actionClick_Shift(col: any) {
+    await this.GetCheckStatusForAppo(col);
+    this.docno = undefined;
+    if(this.CheckCancelStatus()){
+      if (col) {
+      this.docno = col.Appo_ID;
       this.AudiologistList = [];
       this.ngxService.start();
       const getTempObj = {
@@ -851,6 +859,7 @@ export class BSHPLAudiologistAppoComponent implements OnInit {
         this.showPopup();
       });
     }
+    }
   }
 
   showPopup() {
@@ -865,7 +874,7 @@ export class BSHPLAudiologistAppoComponent implements OnInit {
     this.objAudiologist = new Audiologist();
   }
 
-  SaveAudiologist(valid: any) {
+  async SaveAudiologist(valid: any) {
     //  console.log("save in progress");
     this.AudiologistFormSubmitted = true;
     if (valid) {
@@ -883,11 +892,12 @@ export class BSHPLAudiologistAppoComponent implements OnInit {
         "Json_Param_String": JSON.stringify([SaveTempObj])
       }
       this.ngxService.start();
-      this.GlobalAPI.postData(SaveObj).subscribe((data: any) => {
+      this.GlobalAPI.postData(SaveObj).subscribe(async(data: any) => {
         this.ngxService.stop();
         console.log("save data", data);
 
         if (data[0].Column1) {
+          await this.SaveUserActivity();
           this.getAlldata();
           this.clearData();
           this.compacctToast.clear();
@@ -912,12 +922,15 @@ export class BSHPLAudiologistAppoComponent implements OnInit {
     }
   }
 
-  actionClick_Programming(col: any) {
+  async actionClick_Programming(col: any) {
+    await this.GetCheckStatusForAppo(col);
     this.docno = undefined;
-    if (col) {
+    if(this.CheckCancelStatus()){
+      if (col) {
       this.docno = col.Appo_ID;
       this.displayPopupPro = true;
       this.objProgramming.Appo_Dt = this.DateService.dateTimeConvert(new Date(col.Appo_Start));
+    }
     }
   }
 
@@ -1245,10 +1258,12 @@ export class BSHPLAudiologistAppoComponent implements OnInit {
   }
 
   // for crystall
-  UpdateAppo(col){
+  async UpdateAppo(col){
+    await this.GetCheckStatusForAppo(col);
     this.colobj = {};
     this.clearDataAppoNo();
-    if(col){
+    if(this.CheckCancelStatus()){
+      if(col){
       this.colobj = col;
       this.compacctToast.clear();
       this.compacctToast.add({
@@ -1258,6 +1273,7 @@ export class BSHPLAudiologistAppoComponent implements OnInit {
         summary: "TEST DONE",
         detail: ""
       });
+    }
     }
   }
   actionClick_UpdateAppoNo(col: any) {
@@ -1381,6 +1397,42 @@ export class BSHPLAudiologistAppoComponent implements OnInit {
   async SaveUserActivity(){
     const result = await this._CommonUserActivity.GetUserActivity('Update','Audiologist Appo',this.docno,'0')
     console.log(result)
+  }
+  async GetCheckStatusForAppo(dataobj: any): Promise<void> {
+  const sendonj = {
+    Appo_ID: dataobj.Appo_ID,
+    Foot_Fall_ID: dataobj.foot_fall_id
+  };
+  const obj = {
+    SP_String: "sp_BSHPL_Audiologist_Appo",
+    Report_Name_String: "status_check",
+    Json_Param_String: JSON.stringify([sendonj])
+  };
+
+  try {
+    const data: any = await this.GlobalAPI.getData(obj).toPromise();
+    // console.log('CheckStatus===', data);
+    this.CheckStatus = data.length ? data[0].Tag : undefined;
+  } catch (error) {
+    // console.error('Error fetching appointment status', error);
+    this.CheckStatus = null;
+  }
+}
+
+  
+  CheckCancelStatus(){
+    if(this.CheckStatus === "Y"){
+      return true;
+    } else {
+      this.compacctToast.clear();
+      this.compacctToast.add({
+        key: "compacct-toast",
+        severity: "error",
+        summary: "Warn Message",
+        detail: "This Appointmnet Already Cancelled"
+      });
+      return false;
+    }
   }
 }
 
