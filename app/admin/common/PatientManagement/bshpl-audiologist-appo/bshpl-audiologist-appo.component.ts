@@ -421,7 +421,7 @@ export class BSHPLAudiologistAppoComponent implements OnInit {
   }
   async SaveAppointment(valid: any) {
     // console.log("this.objAppointment.Trail_Missed_Reason",this.objAppointment.Trail_Missed_Reason);
-    this.GetCheckStatusForAppo(this.docno,this.objAppointment.Foot_Fall_ID);
+    await this.GetCheckStatusForAppo(this.docno,this.objAppointment.Foot_Fall_ID);
     this.AppointmentFormSubmitted = true;
     if (valid && this.checkdatabase() && this.CheckCancelStatus()) {
       this.AppoSpinner = true;
@@ -878,7 +878,7 @@ export class BSHPLAudiologistAppoComponent implements OnInit {
 
   async SaveAudiologist(valid: any) {
     //  console.log("save in progress");
-    this.GetCheckStatusForAppo(this.docno,this.objAudiologist.Foot_Fall_ID);
+    await this.GetCheckStatusForAppo(this.docno,this.objAudiologist.Foot_Fall_ID);
     this.AudiologistFormSubmitted = true;
     if (valid && this.CheckCancelStatus()) {
       this.Spinner = true;
@@ -945,7 +945,7 @@ export class BSHPLAudiologistAppoComponent implements OnInit {
   }
 
   async SaveUpdateProgramming(valid: any) {
-    this.GetCheckStatusForAppo(this.docno,this.footfallid);
+    await this.GetCheckStatusForAppo(this.docno,this.footfallid);
     this.ProgrammingFormSubmitted = true;
     if (valid && this.CheckCancelStatus()) {
       this.ProSpinner = true;
@@ -1283,10 +1283,10 @@ export class BSHPLAudiologistAppoComponent implements OnInit {
     }
     }
   }
-  actionClick_UpdateAppoNo(col: any) {
+  async actionClick_UpdateAppoNo(col: any) {
     // console.log("actionClick_UpdateAppo");
     this.docno = undefined;
-    this.GetCheckStatusForAppo(col.Appo_ID,col.foot_fall_id);
+    await this.GetCheckStatusForAppo(col.Appo_ID,col.foot_fall_id);
     if (col && this.CheckCancelStatus()) {
       this.objAppointmentNo.Foot_Fall_ID = Number(col.foot_fall_id);
       this.objAppointmentNo.Appo_Dt = this.DateService.dateTimeConvert(new Date(col.Appo_Start));
@@ -1305,7 +1305,7 @@ export class BSHPLAudiologistAppoComponent implements OnInit {
     }
   }
   async SaveAppointmentNo(valid: any) {
-    this.GetCheckStatusForAppo(this.objAppointmentNo.Appo_ID,this.objAppointmentNo.Foot_Fall_ID);
+    await this.GetCheckStatusForAppo(this.objAppointmentNo.Appo_ID,this.objAppointmentNo.Foot_Fall_ID);
     this.AppointmentNoFormSubmitted = true;
     if (valid && this.CheckCancelStatus()) {
       this.AppoNoSpinner = true;
@@ -1408,6 +1408,7 @@ export class BSHPLAudiologistAppoComponent implements OnInit {
     console.log(result)
   }
   async GetCheckStatusForAppo(Appo_ID,foot_fall_id): Promise<void> {
+  this.CheckStatus = undefined
   const sendonj = {
     Appo_ID: Appo_ID,
     Foot_Fall_ID: foot_fall_id
@@ -1426,7 +1427,7 @@ export class BSHPLAudiologistAppoComponent implements OnInit {
     // console.error('Error fetching appointment status', error);
     this.CheckStatus = null;
   }
-}
+  }
 
   
   CheckCancelStatus(){
