@@ -111,6 +111,7 @@ export class BSHPLAudiologistAppoComponent implements OnInit {
   displayViewCaseHistory:boolean = false;
   ObjCaseHistory:any = {};
   docno:any;
+  footfallid:any;
   CheckStatus:any;
 
   constructor(
@@ -341,7 +342,7 @@ export class BSHPLAudiologistAppoComponent implements OnInit {
 
   async actionClick_UpdateAppo(col: any) {
     // console.log("actionClick_UpdateAppo");
-    await this.GetCheckStatusForAppo(col);
+    await this.GetCheckStatusForAppo(col.Appo_ID,col.foot_fall_id);
     this.docno = undefined;
     if(this.CheckCancelStatus()){
       if (col) {
@@ -420,8 +421,9 @@ export class BSHPLAudiologistAppoComponent implements OnInit {
   }
   async SaveAppointment(valid: any) {
     // console.log("this.objAppointment.Trail_Missed_Reason",this.objAppointment.Trail_Missed_Reason);
+    this.GetCheckStatusForAppo(this.docno,this.objAppointment.Foot_Fall_ID);
     this.AppointmentFormSubmitted = true;
-    if (valid && this.checkdatabase()) {
+    if (valid && this.checkdatabase() && this.CheckCancelStatus()) {
       this.AppoSpinner = true;
 
       this.objAppointment.Trial_ID = 0;
@@ -821,7 +823,7 @@ export class BSHPLAudiologistAppoComponent implements OnInit {
   }
 
   async actionClick_Shift(col: any) {
-    await this.GetCheckStatusForAppo(col);
+    await this.GetCheckStatusForAppo(col.Appo_ID,col.foot_fall_id);
     this.docno = undefined;
     if(this.CheckCancelStatus()){
       if (col) {
@@ -876,8 +878,9 @@ export class BSHPLAudiologistAppoComponent implements OnInit {
 
   async SaveAudiologist(valid: any) {
     //  console.log("save in progress");
+    this.GetCheckStatusForAppo(this.docno,this.objAudiologist.Foot_Fall_ID);
     this.AudiologistFormSubmitted = true;
-    if (valid) {
+    if (valid && this.CheckCancelStatus()) {
       this.Spinner = true;
       const SaveTempObj = {
         Appo_Dt: this.DateService.dateTimeConvert(new Date(this.objAudiologist.Appo_Dt)),
@@ -923,11 +926,13 @@ export class BSHPLAudiologistAppoComponent implements OnInit {
   }
 
   async actionClick_Programming(col: any) {
-    await this.GetCheckStatusForAppo(col);
+    await this.GetCheckStatusForAppo(col.Appo_ID,col.foot_fall_id);
     this.docno = undefined;
+    this.footfallid = undefined;
     if(this.CheckCancelStatus()){
       if (col) {
       this.docno = col.Appo_ID;
+      this.footfallid = col.foot_fall_id;
       this.displayPopupPro = true;
       this.objProgramming.Appo_Dt = this.DateService.dateTimeConvert(new Date(col.Appo_Start));
     }
@@ -940,8 +945,9 @@ export class BSHPLAudiologistAppoComponent implements OnInit {
   }
 
   async SaveUpdateProgramming(valid: any) {
+    this.GetCheckStatusForAppo(this.docno,this.footfallid);
     this.ProgrammingFormSubmitted = true;
-    if (valid) {
+    if (valid && this.CheckCancelStatus()) {
       this.ProSpinner = true;
       const SaveTempObjPro = {
         Appo_Dt: this.DateService.dateTimeConvert(new Date(this.objProgramming.Appo_Dt)),
@@ -963,6 +969,7 @@ export class BSHPLAudiologistAppoComponent implements OnInit {
           await this.SaveUserActivity();
           this.getAlldata();
           this.clearData();
+          this.footfallid = undefined;
           this.compacctToast.clear();
           this.compacctToast.add({
             key: "compacct-toast",
@@ -1259,7 +1266,7 @@ export class BSHPLAudiologistAppoComponent implements OnInit {
 
   // for crystall
   async UpdateAppo(col){
-    await this.GetCheckStatusForAppo(col);
+    await this.GetCheckStatusForAppo(col.Appo_ID,col.foot_fall_id);
     this.colobj = {};
     this.clearDataAppoNo();
     if(this.CheckCancelStatus()){
@@ -1279,7 +1286,8 @@ export class BSHPLAudiologistAppoComponent implements OnInit {
   actionClick_UpdateAppoNo(col: any) {
     // console.log("actionClick_UpdateAppo");
     this.docno = undefined;
-    if (col) {
+    this.GetCheckStatusForAppo(col.Appo_ID,col.foot_fall_id);
+    if (col && this.CheckCancelStatus()) {
       this.objAppointmentNo.Foot_Fall_ID = Number(col.foot_fall_id);
       this.objAppointmentNo.Appo_Dt = this.DateService.dateTimeConvert(new Date(col.Appo_Start));
       this.displayPopupUpdateAppoNo = true;
@@ -1297,8 +1305,9 @@ export class BSHPLAudiologistAppoComponent implements OnInit {
     }
   }
   async SaveAppointmentNo(valid: any) {
+    this.GetCheckStatusForAppo(this.objAppointmentNo.Appo_ID,this.objAppointmentNo.Foot_Fall_ID);
     this.AppointmentNoFormSubmitted = true;
-    if (valid) {
+    if (valid && this.CheckCancelStatus()) {
       this.AppoNoSpinner = true;
       this.objAppointmentNo.Other_Test_done = this.objAppointmentNo.Other_Test_done ? this.objAppointmentNo.Other_Test_done.toString() : '-';
 
@@ -1398,10 +1407,10 @@ export class BSHPLAudiologistAppoComponent implements OnInit {
     const result = await this._CommonUserActivity.GetUserActivity('Update','Audiologist Appo',this.docno,'0')
     console.log(result)
   }
-  async GetCheckStatusForAppo(dataobj: any): Promise<void> {
+  async GetCheckStatusForAppo(Appo_ID,foot_fall_id): Promise<void> {
   const sendonj = {
-    Appo_ID: dataobj.Appo_ID,
-    Foot_Fall_ID: dataobj.foot_fall_id
+    Appo_ID: Appo_ID,
+    Foot_Fall_ID: foot_fall_id
   };
   const obj = {
     SP_String: "sp_BSHPL_Audiologist_Appo",
@@ -1429,7 +1438,7 @@ export class BSHPLAudiologistAppoComponent implements OnInit {
         key: "compacct-toast",
         severity: "error",
         summary: "Warn Message",
-        detail: "This Appointmnet Already Cancelled"
+        detail: "This Appointmnet Already Cancelled."
       });
       return false;
     }
