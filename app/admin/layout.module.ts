@@ -544,6 +544,7 @@ import { CommonUserActivityService } from "./shared/compacct.services/common-use
 import { BLTxnPurchaseBillFromGRNComponent } from './common/FinancialManagement/Transaction/Purchase/bl-txn-purchase-bill-from-grn/bl-txn-purchase-bill-from-grn.component';
 import { BlTxnPurchaseGrnComponent } from './common/MaterialManagement/Inward/bl-txn-purchase-grn/bl-txn-purchase-grn.component';
 import { PatientInformationComponent } from './common/PatientManagement/patient-information/patient-information.component';
+import { DoctorsPatientsReportComponent } from './common/PatientManagement/doctors-patients-report/doctors-patients-report.component';
 @NgModule({
   declarations: [
     AppLayoutComponent,
@@ -1001,7 +1002,8 @@ import { PatientInformationComponent } from './common/PatientManagement/patient-
     HearingStockReportNewComponent,
     BLTxnPurchaseBillFromGRNComponent,
     BlTxnPurchaseGrnComponent,
-    PatientInformationComponent
+    PatientInformationComponent,
+    DoctorsPatientsReportComponent
   ],
   imports: [
     CommonModule,

@@ -1,0 +1,113 @@
+<p-toast key="compacct-toast" baseZIndex="99999">
+</p-toast>
+<!-- <p-toast position="center" key="c" (onClose)="onReject()" [modal]="true" [autoZIndex]="true">
+    <ng-template let-message pTemplate="message">
+        <div style="text-align: center">
+            <i class="pi pi-exclamation-triangle" style="font-size: 3em"></i>
+            <h3>{{message.summary}}</h3>
+            <p>{{message.detail}}</p>
+        </div>
+
+        <div class="ui-g ui-fluid">
+          <div class="ui-g-6">
+              <button type="button" pButton (click)="onConfirm()" label="Yes" class="ui-button-success"></button>
+          </div>
+          <div class="ui-g-6">
+              <button type="button" pButton (click)="onReject()" label="No" class="ui-button-secondary"></button>
+          </div>
+      </div>
+    </ng-template>
+</p-toast> -->
+<div class="row">
+    <div class="col-xs-12">
+        <div class="box box-primary">
+            <div class="form-horizontal">
+                <div class="box-body">
+                    <p-tabView>
+                        <form name="DoctorsPatientsReportForm" #DoctorsPatientsReportForm="ngForm" novalidate>
+                            <div class="form-group">
+                                <div class="col-sm-3">
+                                    <label class="control-label">Date <sup class="text-danger">*</sup></label>
+                                    <app-compacct-daterangepicker (DaterangeObj)="getDateRange($event)">
+                                    </app-compacct-daterangepicker>
+                                </div>
+                                <div class="col-sm-3">
+                                    <label class="control-label">Cost Center <sup class="text-danger"></sup></label>
+                                        <p-dropdown
+                                            [options]="CostCenterList"
+                                            name="costcenter"
+                                            [(ngModel)]="Cost_Cen_ID"
+                                            [showClear]="true"
+                                            [emptyFilterMessage]="' No Cost Center Found'"
+                                            [filter]="true"
+                                            filterBy="label,value.name"
+                                            [placeholder]="'Select Cost Center'"
+                                            [virtualScroll]="true"
+                                            itemSize="30"
+                                            #costcenter="ngModel"
+                                            [styleClass]="DoctorsPatientsReportFormSubmited && costcenter.errors?.required? 'clearance': ''"
+                                            >
+                                        </p-dropdown>
+                                       <!-- <p-multiSelect
+											[itemSize]="30"
+											[options]="CostCenterList"
+											name="costcenter"
+											#costcenter="ngModel"
+											[(ngModel)]="selectedCostCenter"
+											optionLabel="Cost_Cen_Name"
+											optionValue="Cost_Cen_ID"
+											[filter]="true"
+											[resetFilterOnHide]="true"
+											placeholder="Select Cost Center"
+                                            [styleClass]="DoctorsPatientsReportFormSubmited && costcenter.errors?.required? 'compacct-multiselect clearance': 'compacct-multiselect'"
+											>
+										</p-multiSelect> -->
+                                </div>
+                                <div class="col-sm-3">
+                                    <label class="control-label">Doctor <sup class="text-danger"></sup></label>
+                                        <p-dropdown
+                                            [options]="DoctorList"
+                                            name="doctor"
+                                            [(ngModel)]="Enq_Source_Sub_ID"
+                                            [showClear]="true"
+                                            [emptyFilterMessage]="' No Cost Center Found'"
+                                            [filter]="true"
+                                            filterBy="label,value.name"
+                                            [placeholder]="'Select Doctor'"
+                                            [virtualScroll]="true"
+                                            itemSize="30"
+                                            #doctor="ngModel"
+                                            [styleClass]="DoctorsPatientsReportFormSubmited && doctor.errors?.required? 'clearance': ''"
+                                            >
+                                        </p-dropdown>
+                                </div>
+                            </div> 
+                            <br>
+                            <div class="form-group">
+                                <div class="text-right">
+                                    <button type="button" (click)="DrRefDetails()" class="btn btn-primary" data-toggle="modal" id="load" [disabled]="Spinner1">
+                                        <p-progressSpinner *ngIf="Spinner1" [style]="{width: '15px', height: '15px'}" strokeWidth="8"  animationDuration=".5s"></p-progressSpinner>
+                                           <span *ngIf="!Spinner1" class="glyphicon glyphicon-download"></span>  Dr Ref Details
+                                    </button> &nbsp;&nbsp;
+                                    <button type="button" (click)="DrRefCalculation()" class="btn btn-primary" data-toggle="modal" id="load" [disabled]="Spinner2">
+                                        <p-progressSpinner *ngIf="Spinner2" [style]="{width: '15px', height: '15px'}" strokeWidth="8"  animationDuration=".5s"></p-progressSpinner>
+                                           <span *ngIf="!Spinner2" class="glyphicon glyphicon-download"></span> Dr Ref Calculation
+                                    </button> &nbsp;&nbsp;
+                                    <button type="button" (click)="DrRefMonthlySummary()" class="btn btn-primary" data-toggle="modal" id="load" [disabled]="Spinner3 || ($CompacctAPI.CompacctCookies.User_Type != 'A')">
+                                        <p-progressSpinner *ngIf="Spinner3" [style]="{width: '15px', height: '15px'}" strokeWidth="8"  animationDuration=".5s"></p-progressSpinner>
+                                           <span *ngIf="!Spinner3" class="glyphicon glyphicon-download"></span> Dr Ref Monthly Summary
+                                    </button> &nbsp;&nbsp;
+                                    <button type="button" class="btn btn-primary" (click)="DrRefTimeBasedSummary()" data-toggle="modal" id="load" [disabled]="Spinner4">
+                                        <p-progressSpinner *ngIf="Spinner4" [style]="{width: '15px', height: '15px'}" strokeWidth="8"  animationDuration=".5s"></p-progressSpinner>
+                                           <span *ngIf="!Spinner4" class="glyphicon glyphicon-download"></span> Dr Ref Time Based Summary
+                                    </button>
+                                </div>
+                            </div>
+                        </form>
+                    </p-tabView>
+
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

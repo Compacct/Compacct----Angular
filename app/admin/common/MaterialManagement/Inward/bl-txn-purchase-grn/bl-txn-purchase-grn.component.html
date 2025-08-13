@@ -588,7 +588,7 @@
                                                 <label class="control-label">Qty<sup class="text-danger">*</sup></label>
                                                     <input class="form-control" 
                                                         name="qty" #qty="ngModel" 
-                                                        [(ngModel)]="ObjProductInfo.Qty" (ngModelChange)="CalCulateTotalAmt()"
+                                                        [(ngModel)]="ObjProductInfo.Qty" (ngModelChange)="CalCulateTotalAmt()" [disabled]="Product_Serial"
                                                         [ngClass]="{clearance:ProductInfoSubmitted && qty?.errors?.required}" [required]="true"
                                                         CompacctDigitonly="true" placeholder="Qty"/>
                                             </div>
@@ -682,7 +682,7 @@
                                                     <td>{{obj.Challan_Rate}}</td>
                                                     <td>{{obj.Amount}}</td>
                                                     <td>{{obj.godown_name ? obj.godown_name : '-'}}</td>
-                                                    <td><button (click)="CheckProEdit(ind,obj)" class="btn danger"><i class="fa fa-trash"></i></button></td>
+                                                    <td><button (click)="CheckProEdit(obj,ind)" class="btn danger"><i class="fa fa-trash"></i></button></td>
                                                 </tr>
                                             </tbody>
                                         </table>
