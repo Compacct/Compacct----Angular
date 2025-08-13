@@ -592,6 +592,7 @@
                             <thead>
                               <tr style="background-color:#3c8dbc;color:white">
                                 <th nowrap rowspan="2" class="text-center" style="vertical-align:middle">Sl. No.</th>
+                                <th nowrap rowspan="2" class="text-center" style="vertical-align:middle">Check</th>
                                 <th nowrap rowspan="2" class="text-center" style="vertical-align:middle">Purchase Challan</th>
                                 <th nowrap rowspan="2" class="text-center" style="vertical-align:middle">Product Details</th>
                                 <th nowrap rowspan="2" class="text-center" style="vertical-align:middle">HSN No</th>
@@ -622,6 +623,11 @@
                             <tbody>
                               <tr *ngFor="let d of selectTableData(); let index = index" > 
                                 <td>{{index+1}}</td>
+                                <td>   
+                                    <p-checkbox [(ngModel)]="d.purchaseChecked" 
+                                    [name]="'purchaseChecked'+ind" 
+                                    [binary]="true"
+                                    ></p-checkbox></td>
                                 <td>{{d.Doc_No}}</td>
                                 <td>{{d.Product_Name}}</td>
                                 <td>{{d.HSN_No}}</td>
@@ -802,7 +808,7 @@
                             </div>
                         </div>
                         <div class="col-xs-6">
-                            <div class="box-footer">
+                            <div class="box-footer" *ngIf="checkLength()" >
                                 <button class="btn btn-primary pull-right" (click)="SavePurchaseBill(putchaseBillCumgrnForm.form.valid)" id="load" [disabled]="Spinner">
                                     <p-progressSpinner *ngIf="Spinner" [style]="{width: '15px', height: '15px'}" strokeWidth="8"  animationDuration=".5s"></p-progressSpinner>
                                 <span *ngIf="!Spinner" class="glyphicon glyphicon-save"></span>{{buttonname}}

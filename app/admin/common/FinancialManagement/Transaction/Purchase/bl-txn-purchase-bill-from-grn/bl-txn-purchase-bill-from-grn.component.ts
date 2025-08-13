@@ -57,6 +57,7 @@ export class BLTxnPurchaseBillFromGRNComponent implements OnInit {
   ProjectList: any = [];
   CurrencyList: any = [];
   purchaseChallanList: any = [];
+  backuppurchaseChallanList:any = []
   termFormSubmitted = false;
   termList: any = [];
   TermTableLists: any = [];
@@ -117,6 +118,7 @@ export class BLTxnPurchaseBillFromGRNComponent implements OnInit {
     this.ObjPurchaseBill = new PurchaseBill();
     this.ObjTerm = new Term();
     this.purchaseChallanList = [];
+    this.backuppurchaseChallanList = []
     this.Spinner = false
     this.termList = [];
     this.termFormSubmitted = false;
@@ -362,6 +364,7 @@ export class BLTxnPurchaseBillFromGRNComponent implements OnInit {
   }
   ShipCostCenterChange() {
     this.purchaseChallanList = [];
+    this.backuppurchaseChallanList = []
     if (this.ShipCostCenter && this.ObjSubLedger.Sub_Ledger_ID) {
       const httpParams = new HttpParams()
         .set("Cost_Cen_ID", this.ShipCostCenter)
@@ -374,28 +377,27 @@ export class BLTxnPurchaseBillFromGRNComponent implements OnInit {
         .subscribe((data: any) => {
           this.purchaseChallanList = data ? JSON.parse(data) : [];
           this.purchaseChallanList = this.purchaseChallanList.map(
-            (el: any) => ({ ...el, ...{ checked: false } })
+            (el: any) => ({ ...el, ...{ checked: false , purchaseChecked:false} })
           );
+          this.backuppurchaseChallanList = JSON.parse(JSON.stringify(this.purchaseChallanList))
         });
     }
   }
 
   CheckBoxChange(row) {
-    this.purchaseChallanList.forEach((el) => {
+    if(!row.checked){
+        this.backuppurchaseChallanList.forEach((ele,i) => {
+            if(ele.Doc_No == row.Doc_No){
+              this.purchaseChallanList[i] = {...ele}
+            }
+        });
+    }
+    this.purchaseChallanList.forEach((el,i) => {
       if (row.Doc_No == el.Doc_No) {
         el.checked = row.checked;
       }
       if (!el.checked) {
-        el.Discount_Type = "";
-        el.Discount_Type_Amount = 0;
-        el.Taxable_Amount = 0;
-        el.Amount = 0;
-        el.Rate = 0;
-        el.CGST_Amount = 0;
-        el.SGST_Amount = 0;
-        el.IGST_Amount = 0;
-      }
-      if (el.checked) {
+        el.purchaseChecked = false
       }
     });
   }
@@ -467,7 +469,6 @@ export class BLTxnPurchaseBillFromGRNComponent implements OnInit {
       });
     }
     this.ListofTotalAmount();
-
     return filterChecked;
   }
 
@@ -607,7 +608,7 @@ export class BLTxnPurchaseBillFromGRNComponent implements OnInit {
     let purchaseBillGST: any = [];
     var obj = {};
     const filterChecked = this.purchaseChallanList.filter(
-      (el: any) => el.checked
+      (el: any) => el.checked && el.purchaseChecked
     );
     for (let i = 0; i < filterChecked.length; i++) {
       filterChecked[i].Bill_Gross_Amt = this.ObjPurchaseBill.Gross_Amt;
@@ -652,7 +653,7 @@ export class BLTxnPurchaseBillFromGRNComponent implements OnInit {
     this.ObjPurchaseBill.ROUNDED_OFF = 0;
     this.ObjPurchaseBill.Discount_Amount = 0;
     const filterChecked = this.purchaseChallanList.filter(
-      (el: any) => el.checked
+      (el: any) => el.checked && el.purchaseChecked 
     );
     this.ObjPurchaseBill.Total_Amount = filterChecked
       .reduce((acc, curr) => acc + curr.Amount, 0)
@@ -707,10 +708,18 @@ export class BLTxnPurchaseBillFromGRNComponent implements OnInit {
       });
   }
 
+
+  checkLength(){
+   const filterChecked = this.purchaseChallanList.filter(
+      (el: any) => el.purchaseChecked
+    );
+    return filterChecked.length
+  }
+
   AddCatIDAmountLedgerID = function () {
     this.CatidwithAmount = [];
     const filterChecked = this.purchaseChallanList.filter(
-      (el: any) => el.checked
+      (el: any) => el.checked && el.purchaseChecked
     );
     for (var i = 0; i < filterChecked.length; i++) {
       filterChecked;
