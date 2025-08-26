@@ -143,7 +143,7 @@
                                                                 <i class="fa fa-fw fa-print"></i> Print Bill
                                                             </a>
                                                         </li>
-                                                        <li>
+                                                        <!-- <li>
                                                             <a (click)="PrintChallan(col.Challan_No)">
                                                                 <i class="fa fa-fw fa-print"></i> Print Challan
                                                             </a>
@@ -157,7 +157,7 @@
                                                             <a (click)="DownloadEINV(col.E_Invoice_PDF_Link)">
                                                                 <i class="fa fa-fw fa-download"></i> Download E-INV
                                                             </a>
-                                                        </li>
+                                                        </li> -->
                                                         <li *ngIf="!col.E_Invoice_IRN_No">
                                                             <a (click)="Delete(col)">
                                                                 <i class="fa fa-fw fa-trash"></i> Delete
@@ -222,7 +222,7 @@
                                             <label class="control-label">Address<sup class="text-danger">*</sup></label>
                                             <input class="form-control" name="billaddress" #billaddress="ngModel"
                                                 [(ngModel)]="ObjTopSale.Sub_Ledger_Address_1" placeholder="Address"
-                                                [disabled]="ObjTopSale.Choose_Address"
+                                                [disabled]="ObjTopSale.Choose_Address || DocNo"
                                                 [ngClass]="{'clearance':SaleBillFormSubmitted && billaddress?.errors?.required}"
                                                 required>
                                         </div>
@@ -231,7 +231,7 @@
                                             <label class="control-label">PIN<sup class="text-danger">*</sup> </label>
                                             <input class="form-control" name="billpin" #billpin="ngModel" [(ngModel)]="ObjTopSale.Sub_Ledger_Pin"
                                             (ngModelChange)="StateDistrictChange(ObjTopSale.Sub_Ledger_Pin)"
-                                                placeholder="PIN" [disabled]="ObjTopSale.Choose_Address"
+                                                placeholder="PIN" [disabled]="ObjTopSale.Choose_Address || DocNo"
                                                 [ngClass]="{'clearance':SaleBillFormSubmitted && billpin?.errors?.required}" required>
                                         </div>
                                         <div class="col-sm-3">
@@ -239,7 +239,7 @@
                                                     class="text-danger">*</sup></label>
                                             <input class="form-control" name="billdistrict" #billdistrict="ngModel"
                                                 [(ngModel)]="ObjTopSale.Sub_Ledger_District" placeholder="District"
-                                                [disabled]="ObjTopSale.Choose_Address"
+                                                [disabled]="ObjTopSale.Choose_Address || DocNo"
                                                 [ngClass]="{'clearance':SaleBillFormSubmitted && billdistrict?.errors?.required}"
                                                 required>
                                         </div>
@@ -247,7 +247,7 @@
                                             <label class="control-label">State<sup class="text-danger">*</sup></label>
                                             <select class="form-control" name="billstate" #billstate="ngModel"
                                                 [(ngModel)]="ObjTopSale.Sub_Ledger_State"
-                                                [disabled]="ObjTopSale.Choose_Address"
+                                                [disabled]="ObjTopSale.Choose_Address || DocNo"
                                                 [ngClass]="{'clearance': SaleBillFormSubmitted && billstate?.errors?.required}"
                                                 required>
                                                 <option [ngValue]="undefined">Select</option>
@@ -261,7 +261,7 @@
                                             <input class="form-control" name="billgstno" #billgstno="ngModel"
                                                 [(ngModel)]="ObjTopSale.Sub_Ledger_GST_No" placeholder="GST No"
                                                 pattern="^[0-9]{2}[A-Z]{5}[0-9]{4}[A-Z]{1}[1-9A-Z]{1}Z[0-9A-Z]{1}$"
-                                                [disabled]="ObjTopSale.Choose_Address"
+                                                [disabled]="ObjTopSale.Choose_Address || DocNo"
                                                 [ngClass]="{'clearance':SaleBillFormSubmitted && (billgstno?.errors?.required || billgstno?.errors?.pattern)}"
                                                 required>
                                         </div>
@@ -410,25 +410,29 @@
                                                 <th nowrap rowspan="2" class="text-center"
                                                     style="vertical-align:middle">Sl. No.</th>
                                                 <th nowrap rowspan="2" class="text-center"
-                                                    style="vertical-align:middle">Cost Center</th>
-                                                <th nowrap rowspan="2" class="text-center"
                                                     style="vertical-align:middle">Stock Point</th>
-                                                <th nowrap rowspan="2" class="text-center"
-                                                    style="vertical-align:middle">Product Type</th>
-                                                <th nowrap rowspan="2" class="text-center"
-                                                    style="vertical-align:middle">Product Sub Type</th>
                                                 <th nowrap rowspan="2" class="text-center"
                                                     style="vertical-align:middle">Product Description</th>
                                                 <th nowrap rowspan="2" class="text-center"
                                                     style="vertical-align:middle">Product Specification</th>
                                                 <th nowrap rowspan="2" class="text-center"
-                                                    style="vertical-align:middle">Lot No./Batch No.</th>
+                                                    style="vertical-align:middle">Batch No.</th>
+                                                <th nowrap rowspan="2" class="text-center"
+                                                    style="vertical-align:middle">Serial No.</th>
                                                 <th nowrap rowspan="2" class="text-center"
                                                     style="vertical-align:middle">QTY</th>
                                                 <th nowrap rowspan="2" class="text-center"
                                                     style="vertical-align:middle">UOM</th>
                                                 <th nowrap rowspan="2" class="text-center"
                                                     style="vertical-align:middle">Rate</th>
+                                                <th nowrap rowspan="2" class="text-center"
+                                                    style="vertical-align:middle">Amount</th>
+                                                <th nowrap rowspan="2" class="text-center"
+                                                    style="vertical-align:middle">Discount Type</th>
+                                                <th nowrap rowspan="2" class="text-center"
+                                                    style="vertical-align:middle">Discount</th>
+                                                <th nowrap rowspan="2" class="text-center"
+                                                    style="vertical-align:middle">Discount Amount</th>
                                                 <th nowrap rowspan="2" class="text-center"
                                                     style="vertical-align:middle">Taxable Amount</th>
                                                 <th colspan="2" scope="colgroup" class="text-center">CGST</th>
@@ -449,16 +453,29 @@
                                         <tbody>
                                             <tr *ngFor=" let Table of GridList; let ind = index;" >
                                                 <td>{{ ind + 1 }}</td>
-                                                <td>{{ Table.Cost_Cen_Name ? Table.Cost_Cen_Name :"-" }}</td>
                                                 <td>{{ Table.godown_name ? Table.godown_name :"-" }}</td>
-                                                <td>{{ Table.Product_Type ? Table.Product_Type :"-" }}</td>
-                                                <td>{{ Table.Product_Sub_Type ? Table.Product_Sub_Type :"-" }}</td>
                                                 <td>{{ Table.Product_Description ? Table.Product_Description :"-" }}</td>
                                                 <td>{{ Table.Product_Specification ? Table.Product_Specification :"-" }}</td>
                                                 <td>{{ Table.Batch_Number ? Table.Batch_Number :"-" }}</td>
+                                                <td>{{ Table.Serial_No ? Table.Serial_No :"-" }}</td>
                                                 <td>{{ Table.Qty ? Table.Qty :"-" }}</td>
                                                 <td>{{ Table.UOM ? Table.UOM :"-" }}</td>
                                                 <td>{{ Table.Rate ? Table.Rate :"-" }}</td>
+                                                <td>{{ Table.Amount ? Table.Amount :"-" }}</td>
+                                                <td>
+                                                    <select class="form-control" 
+                                                        [name]="Table.Product_ID+'Discount_Type'"  
+                                                        [(ngModel)]="Table.Discount_Type"
+                                                        (change)="ClearDiscount(Table)">
+                                                        <option  [ngValue]="undefined">Select</option>
+                                                        <option  value="%">%</option>
+                                                        <option  value="Amt">Amt</option>
+                                                    </select>
+                                                </td>
+                                                <td>
+                                                    <input type="text" [name]="Table.Product_ID+'Discount_Type_Amount'" [(ngModel)]="Table.Discount_Type_Amount" (ngModelChange)="DiscountCalculation(Table)" [disabled]="!Table.Discount_Type" CompacctDigitonly="true" class="form-control" style="width: 71px;" />
+                                                </td>
+                                                <td>{{ Table.Discount ? Table.Discount :"-" }}</td>
                                                 <td>{{ Table.Taxable_Amount ? Table.Taxable_Amount :"-" }}</td>
                                                 <td>{{ Table.CGST_Rate ? Table.CGST_Rate :"-" }}</td>
                                                 <td>{{ Table.CGST_Amount ? Table.CGST_Amount :"-" }}</td>
@@ -473,7 +490,7 @@
                                     </table>
                                 </div>
                                 <br>
-                                <div class="form-group" *ngIf="GridList.length">
+                                <!-- <div class="form-group" *ngIf="(GridList.length) && (databaseName === 'MICL' || databaseName === 'MICL_BHP')">
                                     <div class="col-sm-3">
                                      <label class="control-label">TCS Tax Required <sup class="text-danger">*</sup> </label>
                                      <select class="form-control" 
@@ -488,7 +505,7 @@
                                         <option value ="NO">NO</option>
                                      </select>
                                     </div>
-                                    <div class="col-sm-3" *ngIf="ObjTopSale.TCS_Y_N == 'YES'">
+                                    <div class="col-sm-3" *ngIf="(ObjTopSale.TCS_Y_N == 'YES') && (databaseName === 'MICL' || databaseName === 'MICL_BHP')">
                                         <label class="control-label">TCS % <sup class="text-danger">*</sup> </label>
                                         <select class="form-control" 
                                         name="tcsper" 
@@ -503,7 +520,7 @@
                                           </option>
                                         </select>
                                     </div>
-                                </div>
+                                </div> -->
                                 <br>
                                 <div class="clearfix"></div>
                                 <br>
@@ -513,27 +530,31 @@
                                     <table class="table">
                                         <tbody>
                                             <tr>
+                                                <th>Amount :</th>
+                                                <td class="amt-td ng-binding">{{Amount ? Amount :"-"}}</td>
+                                                <th>Discount Amount :</th>
+                                                <td class="amt-td ng-binding">{{Discount_Amount ? Discount_Amount :"-"}}</td>
                                                 <th>Taxable Amount :</th>
-                                                <td class="amt-td ng-binding">{{Tax ? Tax :"-"}}</td>
+                                                <td class="amt-td ng-binding">{{Tax ? Tax : "-"}}</td>
+                                                
+                                            </tr>
+                                            <tr>
                                                 <th>CGST Amount :</th>
                                                 <td class="amt-td ng-binding">{{CGST ? CGST :"-"}}</td>
                                                 <th>SGST Amount :</th>
                                                 <td class="amt-td ng-binding">{{SGST ? SGST : "-"}}</td>
-                                                
-                                            </tr>
-                                            <tr>
                                                 <th>IGST Amount :</th>
                                                 <td class="amt-td ng-binding">{{IGST ? IGST :"-"}}</td>
-                                                <th>Total Amount : </th>
-                                                <td class="amt-td ng-binding">{{Total_Amount ? Total_Amount :"-"}}</td>
-                                                <th>TCS Amount :</th>
-                                                <td class="amt-td ng-binding">{{ObjTopSale.TCS_Amount}}</td>
                                             </tr>
                                             <tr>
+                                                <th>Total Amount : </th>
+                                                <td class="amt-td ng-binding">{{Total_Amount ? Total_Amount :"-"}}</td>
                                                 <th>Rounded Off : </th>
                                                 <td class="amt-td ng-binding">{{Rounded_Off ? Rounded_Off :"-"}}</td>
                                                 <th>Net Amount : </th>
                                                 <td class="amt-td ng-binding">{{NetAMT ? NetAMT :"-"}}</td>
+                                                <!-- <th *ngIf="(databaseName === 'MICL' || databaseName === 'MICL_BHP')">TCS Amount :</th>
+                                                <td *ngIf="(databaseName === 'MICL' || databaseName === 'MICL_BHP')" class="amt-td ng-binding">{{ObjTopSale.TCS_Amount}}</td> -->
                                             </tr>
                                            
                                         </tbody>

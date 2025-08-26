@@ -91,13 +91,13 @@
                                                                    View Case History
                                                                 </a>
                                                             </li>
-                                                            <li *ngIf="databaseName != 'GN_Crystal_Mumbai'">
+                                                            <li *ngIf="(databaseName != 'GN_Crystal_Mumbai') && (databaseName != 'GN_Anand_Chandigarh')">
                                                                 <a (click)="actionClick_UpdateAppo(col)">
                                                                     <i class="fa fa-repeat"></i>
                                                                     Update Appointment
                                                                 </a>
                                                             </li>
-                                                            <li *ngIf="databaseName === 'GN_Crystal_Mumbai'">
+                                                            <li *ngIf="(databaseName === 'GN_Crystal_Mumbai') || (databaseName === 'GN_Anand_Chandigarh')">
                                                                 <a (click)="UpdateAppo(col)">
                                                                     <i class="fa fa-repeat"></i>
                                                                     Update Appointment
@@ -224,7 +224,7 @@
                                                                     View Reprogramming & Other HL not known Tests 
                                                                 </a>
                                                             </li>
-                                                            <li *ngIf="databaseName === 'GN_Crystal_Mumbai'">
+                                                            <li *ngIf="(databaseName === 'GN_Crystal_Mumbai') || (databaseName === 'GN_Anand_Chandigarh')">
                                                                 <a (click)="ViewTestDetails(col)">
                                                                     <i class="fa fa-eye"></i>
                                                                     View Test Details 
@@ -762,7 +762,7 @@
                     <div class="panel panel-primary">
                         <div class="panel-body">
                             <form name="LeftProductSelect" #LeftProductSelect="ngForm" novalidate>
-                                <div class="col-sm-8">
+                                <div class="col-sm-7">
                                     <label class="control-label">Product Select (Left)</label>
                                     <p-dropdown [options]="ProductList"
                                         name="ProSelectLeft" 
@@ -775,9 +775,14 @@
                                         [placeholder]="'Select Product'" 
                                         [virtualScroll]="true"
                                         [itemSize]="30"
+                                        (onChange)="GetRateLeft(ProductSelectLeft)"
                                         [styleClass]="PSLFormSubmitted &&  ProSelectLeft.errors?.required ? 'clearance' :''"
                                         [required]="true" >
                                     </p-dropdown>
+                                </div>
+                                <div class="col-sm-3">
+                                    <label class="control-label">Rate After Discount <sup class="text-danger">*</sup></label>
+                                    <input class="form-control" name="rateleft" #rateleft="ngModel" [(ngModel)]="Rate_After_Discount_Left" CompacctDigitonly="true" [ngClass]="{'clearance':PSLFormSubmitted && rateleft?.errors?.required}" required>
                                 </div>
                                 <div class="col-sm-2" style="margin-top: 26px;">
                                     <button class="btn btn-primary" (click)="addProductSelectLeft(LeftProductSelect.form.valid)">
@@ -793,7 +798,7 @@
                     <div class="panel panel-primary">
                         <div class="panel-body">
                             <form name="RightProductSelect" #RightProductSelect="ngForm" novalidate>
-                                <div class="col-sm-8">
+                                <div class="col-sm-7">
                                     <label class="control-label">Product Select (Right)</label>
                                     <p-dropdown [options]="ProductList"
                                         name="ProSelectRight" 
@@ -806,9 +811,14 @@
                                         [placeholder]="'Select Product'" 
                                         [virtualScroll]="true"
                                         [itemSize]="30"
+                                        (onChange)="GetRateRight(ProductSelectRight)"
                                         [styleClass]="PSRFormSubmitted &&  ProSelectRight.errors?.required ? 'clearance' :''"
                                         [required]="true" >
                                     </p-dropdown>
+                                </div>
+                                <div class="col-sm-3">
+                                    <label class="control-label">Rate After Discount <sup class="text-danger">*</sup></label>
+                                    <input class="form-control" name="rateright" #rateright="ngModel" [(ngModel)]="Rate_After_Discount_Right" CompacctDigitonly="true" [ngClass]="{'clearance':PSRFormSubmitted && rateright?.errors?.required}" required>
                                 </div>
                                 <div class="col-sm-2" style="margin-top: 26px;">
                                     <button class="btn btn-primary" (click)="addProductSelectRight(RightProductSelect.form.valid)">
@@ -829,6 +839,7 @@
                                 <tr style="background-color:#3c8dbc;color:white;">
                                     <th>SL No.</th>
                                     <th>Product Select (Left)</th>
+                                    <th>Rate After Discount</th>
                                     <th>Delete</th>
                                 </tr>
                             </thead>
@@ -836,6 +847,7 @@
                                 <tr *ngFor="let obj of PSLList ;let ind = index;">
                                     <td>{{ ind + 1 }}</td>
                                     <td>{{obj.Product_Description ? obj.Product_Description : '-'}}</td>
+                                    <td>{{obj.Rate_After_Discount_Left ? obj.Rate_After_Discount_Left : '-'}}</td>
                                     <td><button (click)="deleteProductSelectLeft(ind)" class="btn btn-danger"><i class="fa fa-trash"></i></button></td>
                                 </tr>
                             </tbody>
@@ -850,6 +862,7 @@
                                 <tr style="background-color:#3c8dbc;color:white;">
                                     <th>SL No.</th>
                                     <th>Product Select (Right)</th>
+                                    <th>Rate After Discount</th>
                                     <th>Delete</th>
                                 </tr>
                             </thead>
@@ -857,6 +870,7 @@
                                 <tr *ngFor="let obj of PSRList ;let ind = index;">
                                     <td>{{ ind + 1 }}</td>
                                     <td>{{obj.Product_Description ? obj.Product_Description : '-'}}</td>
+                                    <td>{{obj.Rate_After_Discount_Right ? obj.Rate_After_Discount_Right : '-'}}</td>
                                     <td><button (click)="deleteProductSelectRight(ind)" class="btn btn-danger"><i class="fa fa-trash"></i></button></td>
                                 </tr>
                             </tbody>
@@ -883,7 +897,7 @@
                     </select>
                 </div>
 
-                <div class="col-sm-3" *ngIf="objAppointment.Trial_Restult == 'MISSED'">
+                <div class="col-sm-3" *ngIf="(objAppointment.Trial_Restult == 'MISSED')">
                     <label class="control-label">Reason <sup *ngIf="databaseName === 'GN_Crystal_Mumbai'" class="text-danger">*</sup></label>
                     <p-multiSelect 
                         [options]="MissedReasonList"
@@ -897,12 +911,17 @@
                         [styleClass]="'compacct-multiselect'" >
                     </p-multiSelect>    
                 </div>
-                <div class="col-sm-3" *ngIf="(MISSEDOpen) && (databaseName === 'GN_Crystal_Mumbai')">
+                <!-- <div class="col-sm-3" *ngIf="(MISSEDOpen) && (databaseName === 'GN_Crystal_Mumbai')">
                     <label class="control-label">Final Price Offered After Discount <sup class="text-danger">*</sup></label>
                     <input class="form-control" name="Price" #Price="ngModel" [(ngModel)]="objAppointment.Final_Price_After_Disc" CompacctDigitonly="true" [ngClass]="{'clearance':AppointmentFormSubmitted && Price?.errors?.required}" required>
 
                 </div>
-                <div class="col-sm-2" *ngIf="(objAppointment.Trial_Restult === 'ON TRIAL') && (databaseName === 'GN_Crystal_Mumbai')">
+                <div class="col-sm-3" *ngIf="(databaseName === 'GN_Anand_Chandigarh')">
+                    <label class="control-label">Final Price Offered After Discount <sup class="text-danger"></sup></label>
+                    <input class="form-control" name="Price" #Price="ngModel" [(ngModel)]="objAppointment.Final_Price_After_Disc" CompacctDigitonly="true" [ngClass]="{'clearance':AppointmentFormSubmitted && Price?.errors?.required}">
+
+                </div> -->
+                <div class="col-sm-2" *ngIf="(objAppointment.Trial_Restult === 'ON TRIAL' || objAppointment.Trial_Restult === 'TRIAL ONGOING') && (databaseName === 'GN_Crystal_Mumbai' || databaseName === 'GN_Anand_Chandigarh')">
                     <label class="control-label">For Days <sup class="text-danger"></sup></label>
                     <div class="input-group">  
                         <input class="form-control" name="fordays" #fordays="ngModel"
@@ -1197,12 +1216,14 @@
                                 <tr style="background-color:#3c8dbc;color:white;">
                                     <th>SL No.</th>
                                     <th>Product Select (Left)</th>
+                                    <th>Rate After Discount</th>
                                 </tr>
                             </thead>
                             <tbody>
                                 <tr *ngFor="let obj of PSLList ;let ind = index;">
                                     <td>{{ ind + 1 }}</td>
                                     <td>{{obj.Product_Description ? obj.Product_Description : '-'}}</td>
+                                    <td>{{obj.Rate_After_Discount ? obj.Rate_After_Discount : '-'}}</td>
                                 </tr>
                             </tbody>
                         </table>
@@ -1216,12 +1237,14 @@
                                 <tr style="background-color:#3c8dbc;color:white;">
                                     <th>SL No.</th>
                                     <th>Product Select (Right)</th>
+                                    <th>Rate After Discount</th>
                                 </tr>
                             </thead>
                             <tbody>
                                 <tr *ngFor="let obj of PSRList ;let ind = index;">
                                     <td>{{ ind + 1 }}</td>
                                     <td>{{obj.Product_Description ? obj.Product_Description : '-'}}</td>
+                                    <td>{{obj.Rate_After_Discount ? obj.Rate_After_Discount : '-'}}</td>
                                 </tr>
                             </tbody>
                         </table>
@@ -1240,12 +1263,16 @@
                     <div class="label-t">{{objAppointment.Trail_Missed_Reason ? objAppointment.Trail_Missed_Reason : '-'}}</div>
                 </div>
 
-                <div class="col-sm-3" *ngIf="(MISSEDOpen) && (databaseName === 'GN_Crystal_Mumbai')">
+                <!-- <div class="col-sm-3" *ngIf="(MISSEDOpen) && (databaseName === 'GN_Crystal_Mumbai')">
                     <label class="control-label">Final Price Offered After Discount <sup *ngIf="databaseName === 'GN_Crystal_Mumbai'" class="text-danger">*</sup></label>
                     <div class="label-t">{{objAppointment.Final_Price_After_Disc ? objAppointment.Final_Price_After_Disc : '-'}}</div>
                 </div>
+                <div class="col-sm-3" *ngIf="(databaseName === 'GN_Anand_Chandigarh')">
+                    <label class="control-label">Final Price Offered After Discount</label>
+                    <div class="label-t">{{objAppointment.Final_Price_After_Disc ? objAppointment.Final_Price_After_Disc : '-'}}</div>
+                </div> -->
 
-                <div class="col-sm-2" *ngIf="(objAppointment.Trial_Restult === 'ON TRIAL') && (databaseName === 'GN_Crystal_Mumbai')">
+                <div class="col-sm-2" *ngIf="(objAppointment.Trial_Restult === 'ON TRIAL' || objAppointment.Trial_Restult === 'TRIAL ONGOING') && (databaseName === 'GN_Crystal_Mumbai' || databaseName === 'GN_Anand_Chandigarh')">
                     <label class="control-label">For Days <sup class="text-danger">*</sup></label>
                     <div class="input-group">  
                         <div class="label-t">{{objAppointment.Trial_days ? objAppointment.Trial_days : '-'}}</div>
@@ -1292,7 +1319,7 @@
    [closable]="false"
    [modal]="true"
    [responsive]="false"
-   [style]="{ width: '60%', minWidth: '200px', height: '600px', minHeight: '400px' }"
+   [style]="{ width: '60%', minWidth: '200px' }"
    style="text-align: center;"
    [minY]="70"
    [maximizable]="true"

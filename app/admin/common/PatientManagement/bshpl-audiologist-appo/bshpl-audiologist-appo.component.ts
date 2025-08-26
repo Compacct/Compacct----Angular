@@ -7,6 +7,7 @@ import { CompacctCommonApi } from '../../../shared/compacct.services/common.api.
 import { CompacctHeader } from '../../../shared/compacct.services/common.header.service';
 import { CompacctGlobalApiService } from '../../../shared/compacct.services/compacct.global.api.service';
 import { FileUpload } from 'primeng/primeng';
+import { CommonUserActivityService } from "../../../shared/compacct.services/common-user-activity.service";
 import { log } from 'console';
 @Component({
   selector: 'app-bshpl-audiologist-appo',
@@ -47,7 +48,9 @@ export class BSHPLAudiologistAppoComponent implements OnInit {
   ProductTrialLeft: any = undefined;
   ProductTrialRight: any = undefined;
   ProductSelectLeft: any = undefined;
+  Rate_After_Discount_Left: any = undefined;
   ProductSelectRight: any = undefined;
+  Rate_After_Discount_Right: any = undefined;
   PTLFormSubmitted: boolean = false;
   PTRFormSubmitted: boolean = false;
   PSLFormSubmitted: boolean = false;
@@ -107,6 +110,9 @@ export class BSHPLAudiologistAppoComponent implements OnInit {
   // view case History
   displayViewCaseHistory:boolean = false;
   ObjCaseHistory:any = {};
+  docno:any;
+  footfallid:any;
+  CheckStatus:any;
 
   constructor(
     private $http: HttpClient,
@@ -116,7 +122,8 @@ export class BSHPLAudiologistAppoComponent implements OnInit {
     private DateService: DateTimeConvertService,
     public $CompacctAPI: CompacctCommonApi,
     private compacctToast: MessageService,
-    private ngxService: NgxUiLoaderService
+    private ngxService: NgxUiLoaderService,
+    private _CommonUserActivity : CommonUserActivityService
   ) { }
 
   ngOnInit() {
@@ -126,19 +133,32 @@ export class BSHPLAudiologistAppoComponent implements OnInit {
     });
     this.items = ["PENDING", "COMPLETED"];
     this.UserID = Number(this.$CompacctAPI.CompacctCookies.User_ID);
-    this.TypeLossList = ['NORMAL', 'CONDUCTIVE', 'SENSORINEURAL', 'MIXED','SLOPING SENSORINEURAL','SLOPING MIXED'];
+    this.getDatabase();
+    // this.TypeLossList = ['NORMAL', 'CONDUCTIVE', 'SENSORINEURAL', 'MIXED','SLOPING SENSORINEURAL','SLOPING MIXED','REVERSE SLOPING SENSORINEURAL'];
     this.YesNoList = ['YES', 'NO'];
     this.HAYesNoListL = ['YES', 'NO'];
     this.HAYesNoListR = ['YES', 'NO'];
     this.Trial_ForList = ['Binaural', 'Monorual'];
-    this.TestDoneListAppoNo = ["Ear wax","Active ear discharge","Patient not ready to do test","Enquiry only","Others"];
-    this.getDatabase();
+    this.TestDoneListAppoNo = ["Ear wax","Active ear discharge","Patient not ready to do test","Enquiry only","Fitted","Others"];
+    
     this.getAlldata();
     this.GetDegreeLossList();
     this.GetProductList();
     this.GetMissedReasonList();
     this.GetTestDoneList();
     this.getResult();
+    this.GetTypeofLost();
+  }
+  getDatabase(){
+    this.$http
+        .get("/Common/Get_Database_Name",
+        {responseType: 'text'})
+        .subscribe((data: any) => {
+          this.databaseName = data;
+          console.log(data)
+          this.getResult();
+          this.GetTypeofLost();
+        });
   }
 
   viewCaseHistory(col:any){
@@ -162,7 +182,18 @@ export class BSHPLAudiologistAppoComponent implements OnInit {
       this.ObjCaseHistory = data[0];
     });
   }
-
+  GetTypeofLost(){
+    this.TypeLossList = [];
+    if(this.databaseName === "GN_Anand_Chandigarh") {
+      this.TypeLossList = ['NORMAL', 'CONDUCTIVE', 'SENSORINEURAL', 'MIXED','SLOPING SENSORINEURAL','SLOPING MIXED','REVERSE SLOPING SENSORINEURAL'];
+    } 
+    else if(this.databaseName === "GN_Crystal_Mumbai"){
+      this.TypeLossList = ['NORMAL', 'CONDUCTIVE', 'SENSORINEURAL', 'MIXED','SLOPING SENSORINEURAL','SLOPING MIXED'];
+    }
+    else {
+      this.TypeLossList = ['NORMAL', 'CONDUCTIVE', 'SENSORINEURAL', 'MIXED'];
+    }
+  }
   
   closeCaseHistory(){
     this.displayViewCaseHistory = false;
@@ -174,21 +205,15 @@ export class BSHPLAudiologistAppoComponent implements OnInit {
     this.items = ["PENDING", "COMPLETED"];
     this.clearData();
   }
-  getDatabase(){
-    this.$http
-        .get("/Common/Get_Database_Name",
-        {responseType: 'text'})
-        .subscribe((data: any) => {
-          this.databaseName = data;
-          console.log(data)
-          this.getResult();
-        });
-  }
   getResult(){
     let resultoption:any = [];
     if(this.databaseName === "GN_Crystal_Mumbai") {
       resultoption = ['ADVANCE PAID', 'FITTED', 'MISSED', 'ON TRIAL'];
-    } else {
+    }
+    else if(this.databaseName === "GN_Anand_Chandigarh") {
+      resultoption = ['ADVANCE PAID', 'FITTED', 'MISSED', 'TRIAL ONGOING', 'IN PROCESS'];
+    }
+    else {
       resultoption = ['ADVANCE PAID', 'FITTED', 'MISSED'];
     }
     this.TrialRestultList = resultoption;
@@ -315,9 +340,13 @@ export class BSHPLAudiologistAppoComponent implements OnInit {
     }
   }
 
-  actionClick_UpdateAppo(col: any) {
+  async actionClick_UpdateAppo(col: any) {
     // console.log("actionClick_UpdateAppo");
-    if (col) {
+    await this.GetCheckStatusForAppo(col.Appo_ID,col.foot_fall_id);
+    this.docno = undefined;
+    if(this.CheckCancelStatus()){
+      if (col) {
+      this.docno = col.Appo_ID;
       this.objAppointment.Foot_Fall_ID = Number(col.foot_fall_id);
       this.objAppointment.Trial_Date = this.DateService.dateTimeConvert(new Date(col.Appo_Start));
       this.objAppointment.Doctor_ID = Number(col.Doctor_ID);
@@ -333,6 +362,7 @@ export class BSHPLAudiologistAppoComponent implements OnInit {
       if(this.databaseName === 'GN_Crystal_Mumbai'){
         this.onReject();
       }
+    }
     }
   }
  
@@ -389,10 +419,11 @@ export class BSHPLAudiologistAppoComponent implements OnInit {
       return true;
     }
   }
-  SaveAppointment(valid: any) {
+  async SaveAppointment(valid: any) {
     // console.log("this.objAppointment.Trail_Missed_Reason",this.objAppointment.Trail_Missed_Reason);
+    await this.GetCheckStatusForAppo(this.docno,this.objAppointment.Foot_Fall_ID);
     this.AppointmentFormSubmitted = true;
-    if (valid && this.checkdatabase()) {
+    if (valid && this.checkdatabase() && this.CheckCancelStatus()) {
       this.AppoSpinner = true;
 
       this.objAppointment.Trial_ID = 0;
@@ -431,6 +462,7 @@ export class BSHPLAudiologistAppoComponent implements OnInit {
           Entry_ID: 0,
           Product_ID: item.Product_ID,
           Product_Description: item.Product_Description,
+          Rate_After_Discount: item.Rate_After_Discount_Left,
           Ear_Side: item.Ear_Side
         })
       }
@@ -439,6 +471,7 @@ export class BSHPLAudiologistAppoComponent implements OnInit {
           Entry_ID: 0,
           Product_ID: item.Product_ID,
           Product_Description: item.Product_Description,
+          Rate_After_Discount: item.Rate_After_Discount_Right,
           Ear_Side: item.Ear_Side
         })
       }
@@ -456,11 +489,12 @@ export class BSHPLAudiologistAppoComponent implements OnInit {
         "Json_Param_String": JSON.stringify([this.objAppointment])
       }
       this.ngxService.start();
-      this.GlobalAPI.postData(SaveAppObj).subscribe((data: any) => {
+      this.GlobalAPI.postData(SaveAppObj).subscribe(async(data: any) => {
         this.ngxService.stop();
         // console.log("save data",data);
 
         if (data[0].Column1) {
+          await this.SaveUserActivity();
           this.getAlldata();
           this.clearData();
           this.compacctToast.clear();
@@ -644,9 +678,11 @@ export class BSHPLAudiologistAppoComponent implements OnInit {
         Entry_ID: 0,
         Product_ID: this.ProductSelectLeft,
         Product_Description: GetProduct_Description[0].Product_Description,
+        Rate_After_Discount_Left: Number(this.Rate_After_Discount_Left),
         Ear_Side: 'L'
       })
       this.ProductSelectLeft = undefined;
+      this.Rate_After_Discount_Left = undefined;
       this.PSLFormSubmitted = false;
     }
     //  console.log("PSLList",this.PSLList);
@@ -662,9 +698,11 @@ export class BSHPLAudiologistAppoComponent implements OnInit {
         Entry_ID: 0,
         Product_ID: this.ProductSelectRight,
         Product_Description: GetProduct_Description[0].Product_Description,
+        Rate_After_Discount_Right: Number(this.Rate_After_Discount_Right),
         Ear_Side: 'R'
       })
       this.ProductSelectRight = undefined;
+      this.Rate_After_Discount_Right = undefined;
       this.PSRFormSubmitted = false;
     }
     //  console.log("PSRList",this.PSRList);
@@ -727,6 +765,20 @@ export class BSHPLAudiologistAppoComponent implements OnInit {
       }
     });
   }
+  GetRateLeft(proid){
+    this.Rate_After_Discount_Left = undefined;
+    if(proid){
+      var prodetails = this.ProductList.filter(el=> el.Product_ID === proid)
+      this.Rate_After_Discount_Left = prodetails[0].rate;
+    }
+  }
+  GetRateRight(proid){
+    this.Rate_After_Discount_Right = undefined;
+    if(proid){
+      var prodetails = this.ProductList.filter(el=> el.Product_ID === proid)
+      this.Rate_After_Discount_Right = prodetails[0].rate;
+    }
+  }
 
   GetTestDoneList() {
     this.TestDoneList = [];
@@ -770,8 +822,12 @@ export class BSHPLAudiologistAppoComponent implements OnInit {
     });
   }
 
-  actionClick_Shift(col: any) {
-    if (col) {
+  async actionClick_Shift(col: any) {
+    await this.GetCheckStatusForAppo(col.Appo_ID,col.foot_fall_id);
+    this.docno = undefined;
+    if(this.CheckCancelStatus()){
+      if (col) {
+      this.docno = col.Appo_ID;
       this.AudiologistList = [];
       this.ngxService.start();
       const getTempObj = {
@@ -805,6 +861,7 @@ export class BSHPLAudiologistAppoComponent implements OnInit {
         this.showPopup();
       });
     }
+    }
   }
 
   showPopup() {
@@ -819,10 +876,11 @@ export class BSHPLAudiologistAppoComponent implements OnInit {
     this.objAudiologist = new Audiologist();
   }
 
-  SaveAudiologist(valid: any) {
+  async SaveAudiologist(valid: any) {
     //  console.log("save in progress");
+    await this.GetCheckStatusForAppo(this.docno,this.objAudiologist.Foot_Fall_ID);
     this.AudiologistFormSubmitted = true;
-    if (valid) {
+    if (valid && this.CheckCancelStatus()) {
       this.Spinner = true;
       const SaveTempObj = {
         Appo_Dt: this.DateService.dateTimeConvert(new Date(this.objAudiologist.Appo_Dt)),
@@ -837,11 +895,12 @@ export class BSHPLAudiologistAppoComponent implements OnInit {
         "Json_Param_String": JSON.stringify([SaveTempObj])
       }
       this.ngxService.start();
-      this.GlobalAPI.postData(SaveObj).subscribe((data: any) => {
+      this.GlobalAPI.postData(SaveObj).subscribe(async(data: any) => {
         this.ngxService.stop();
         console.log("save data", data);
 
         if (data[0].Column1) {
+          await this.SaveUserActivity();
           this.getAlldata();
           this.clearData();
           this.compacctToast.clear();
@@ -866,10 +925,17 @@ export class BSHPLAudiologistAppoComponent implements OnInit {
     }
   }
 
-  actionClick_Programming(col: any) {
-    if (col) {
+  async actionClick_Programming(col: any) {
+    await this.GetCheckStatusForAppo(col.Appo_ID,col.foot_fall_id);
+    this.docno = undefined;
+    this.footfallid = undefined;
+    if(this.CheckCancelStatus()){
+      if (col) {
+      this.docno = col.Appo_ID;
+      this.footfallid = col.foot_fall_id;
       this.displayPopupPro = true;
       this.objProgramming.Appo_Dt = this.DateService.dateTimeConvert(new Date(col.Appo_Start));
+    }
     }
   }
 
@@ -878,9 +944,10 @@ export class BSHPLAudiologistAppoComponent implements OnInit {
     this.objProgramming = new Programming();
   }
 
-  SaveUpdateProgramming(valid: any) {
+  async SaveUpdateProgramming(valid: any) {
+    await this.GetCheckStatusForAppo(this.docno,this.footfallid);
     this.ProgrammingFormSubmitted = true;
-    if (valid) {
+    if (valid && this.CheckCancelStatus()) {
       this.ProSpinner = true;
       const SaveTempObjPro = {
         Appo_Dt: this.DateService.dateTimeConvert(new Date(this.objProgramming.Appo_Dt)),
@@ -894,13 +961,15 @@ export class BSHPLAudiologistAppoComponent implements OnInit {
         "Json_Param_String": JSON.stringify([SaveTempObjPro])
       }
       this.ngxService.start();
-      this.GlobalAPI.postData(SaveObjPro).subscribe((data: any) => {
+      this.GlobalAPI.postData(SaveObjPro).subscribe(async(data: any) => {
         this.ngxService.stop();
         //  console.log("save data",data);
 
         if (data[0].Column1) {
+          await this.SaveUserActivity();
           this.getAlldata();
           this.clearData();
+          this.footfallid = undefined;
           this.compacctToast.clear();
           this.compacctToast.add({
             key: "compacct-toast",
@@ -1078,6 +1147,7 @@ export class BSHPLAudiologistAppoComponent implements OnInit {
                 this.PSLList.push({
                   Product_ID: item.Product_ID,
                   Product_Description: item.Product_Description,
+                  Rate_After_Discount: item.Rate_After_Discount,
                   Ear_Side: item.Ear_Side
                 })
               }
@@ -1085,6 +1155,7 @@ export class BSHPLAudiologistAppoComponent implements OnInit {
                 this.PSRList.push({
                   Product_ID: item.Product_ID,
                   Product_Description: item.Product_Description,
+                  Rate_After_Discount: item.Rate_After_Discount,
                   Ear_Side: item.Ear_Side
                 })
               }
@@ -1194,10 +1265,12 @@ export class BSHPLAudiologistAppoComponent implements OnInit {
   }
 
   // for crystall
-  UpdateAppo(col){
+  async UpdateAppo(col){
+    await this.GetCheckStatusForAppo(col.Appo_ID,col.foot_fall_id);
     this.colobj = {};
     this.clearDataAppoNo();
-    if(col){
+    if(this.CheckCancelStatus()){
+      if(col){
       this.colobj = col;
       this.compacctToast.clear();
       this.compacctToast.add({
@@ -1208,15 +1281,19 @@ export class BSHPLAudiologistAppoComponent implements OnInit {
         detail: ""
       });
     }
+    }
   }
-  actionClick_UpdateAppoNo(col: any) {
+  async actionClick_UpdateAppoNo(col: any) {
     // console.log("actionClick_UpdateAppo");
-    if (col) {
+    this.docno = undefined;
+    await this.GetCheckStatusForAppo(col.Appo_ID,col.foot_fall_id);
+    if (col && this.CheckCancelStatus()) {
       this.objAppointmentNo.Foot_Fall_ID = Number(col.foot_fall_id);
       this.objAppointmentNo.Appo_Dt = this.DateService.dateTimeConvert(new Date(col.Appo_Start));
       this.displayPopupUpdateAppoNo = true;
       // this.FileUploadAsset.clear();
       this.objAppointmentNo.Appo_ID = col.Appo_ID;
+      this.docno = col.Appo_ID;
       this.P_NameNo = col.Patient;
       this.PhoneNo = Number(col.Mobile);
       this.AgeNo = Number(col.Age);
@@ -1227,9 +1304,10 @@ export class BSHPLAudiologistAppoComponent implements OnInit {
       this.onReject();
     }
   }
-  SaveAppointmentNo(valid: any) {
+  async SaveAppointmentNo(valid: any) {
+    await this.GetCheckStatusForAppo(this.objAppointmentNo.Appo_ID,this.objAppointmentNo.Foot_Fall_ID);
     this.AppointmentNoFormSubmitted = true;
-    if (valid) {
+    if (valid && this.CheckCancelStatus()) {
       this.AppoNoSpinner = true;
       this.objAppointmentNo.Other_Test_done = this.objAppointmentNo.Other_Test_done ? this.objAppointmentNo.Other_Test_done.toString() : '-';
 
@@ -1239,11 +1317,12 @@ export class BSHPLAudiologistAppoComponent implements OnInit {
         "Json_Param_String": JSON.stringify([this.objAppointmentNo])
       }
       this.ngxService.start();
-      this.GlobalAPI.postData(SaveAppObj).subscribe((data: any) => {
+      this.GlobalAPI.postData(SaveAppObj).subscribe(async (data: any) => {
         this.ngxService.stop();
         // console.log("save data",data);
 
         if (data[0].Column1) {
+          await this.SaveUserActivity();
           this.getAlldata();
           this.clearDataAppoNo();
           this.compacctToast.clear();
@@ -1323,6 +1402,47 @@ export class BSHPLAudiologistAppoComponent implements OnInit {
   closedisplayViewTestPOP() {
     this.displayViewTestPOP = false;
     this.ObjTestDetails = new TestDetails();
+  }
+  async SaveUserActivity(){
+    const result = await this._CommonUserActivity.GetUserActivity('Update','Audiologist Appo',this.docno,'0')
+    console.log(result)
+  }
+  async GetCheckStatusForAppo(Appo_ID,foot_fall_id): Promise<void> {
+  this.CheckStatus = undefined
+  const sendonj = {
+    Appo_ID: Appo_ID,
+    Foot_Fall_ID: foot_fall_id
+  };
+  const obj = {
+    SP_String: "sp_BSHPL_Audiologist_Appo",
+    Report_Name_String: "status_check",
+    Json_Param_String: JSON.stringify([sendonj])
+  };
+
+  try {
+    const data: any = await this.GlobalAPI.getData(obj).toPromise();
+    // console.log('CheckStatus===', data);
+    this.CheckStatus = data.length ? data[0].Tag : undefined;
+  } catch (error) {
+    // console.error('Error fetching appointment status', error);
+    this.CheckStatus = null;
+  }
+  }
+
+  
+  CheckCancelStatus(){
+    if(this.CheckStatus === "Y"){
+      return true;
+    } else {
+      this.compacctToast.clear();
+      this.compacctToast.add({
+        key: "compacct-toast",
+        severity: "error",
+        summary: "Warn Message",
+        detail: "This Appointmnet Already Cancelled."
+      });
+      return false;
+    }
   }
 }
 

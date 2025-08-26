@@ -1,4 +1,5 @@
 import { Component, OnInit, ViewEncapsulation } from '@angular/core';
+import { HttpClient } from "@angular/common/http";
 import { MessageService } from 'primeng/api';
 import { DateTimeConvertService } from '../../../shared/compacct.global/dateTime.service';
 import { CompacctCommonApi } from '../../../shared/compacct.services/common.api.service';
@@ -21,18 +22,30 @@ export class LeaveEncashmentComponent implements OnInit {
   SerachFormSubmitted: boolean = false;
   tableData: any = [];
   tableDataHeader: any = [];
+  databaseName:any;
   constructor(
     private Header: CompacctHeader,
     private CompacctToast: MessageService,
     private GlobalAPI: CompacctGlobalApiService,
+    private $http : HttpClient,
   ) { }
 
   ngOnInit() {
     this.Header.pushHeader({
       Header: "Leave Encashment",
-      Link: "JOH HR --> Leave Encashmentr"
+      Link: "HR --> Leave Encashmentr"
     });
+    this.getDatabase();
     this.getLeavePeriod();
+  }
+  getDatabase(){
+    this.$http
+        .get("/Common/Get_Database_Name",
+        {responseType: 'text'})
+        .subscribe((data: any) => {
+          this.databaseName = data;
+          // console.log(data)
+        });
   }
 
   getLeavePeriod() {
@@ -79,10 +92,17 @@ export class LeaveEncashmentComponent implements OnInit {
   }
 
   checkValidity(col:any){
-    if(Number(col.Leave_Balance)< (Number(col.Encashment) + Number(col.next_year_opening))){
-      return true;
+    if(this.databaseName !== "GN_CCSAHA_Kolkata"){
+      if(Number(col.Leave_Balance)< (Number(col.Encashment) + Number(col.next_year_opening))){
+        return true;
+      }
+      else {
+        return false;
+      }
     }
-    else return false;
+    else {
+      return false;
+    }
   }
 
   SaveData() {
@@ -110,6 +130,7 @@ export class LeaveEncashmentComponent implements OnInit {
             summary: "Success",
             detail: "Succesfully Saved"
           });
+          this.SearchData();
         }
         else {
           this.CompacctToast.clear();

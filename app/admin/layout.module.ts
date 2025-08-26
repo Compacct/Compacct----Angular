@@ -539,6 +539,12 @@ import { LeaveAutoUpdateComponent } from './common/HR/leave-auto-update/leave-au
 import { PackageSessionCompleteComponent } from './common/PatientManagement/package-session-complete/package-session-complete.component';
 import { BlTxnRefDocEntryComponent } from './common/PatientManagement/bl-txn-ref-doc-entry/bl-txn-ref-doc-entry.component';
 import { BlTxnPettyCashVoucherComponent } from './common/SalesAndDistribution/Transaction/bl-txn-petty-cash-voucher/bl-txn-petty-cash-voucher.component';
+import { HearingStockReportNewComponent } from './common/MaterialManagement/Report/hearing-stock-report-new/hearing-stock-report-new.component';
+import { CommonUserActivityService } from "./shared/compacct.services/common-user-activity.service";
+import { BLTxnPurchaseBillFromGRNComponent } from './common/FinancialManagement/Transaction/Purchase/bl-txn-purchase-bill-from-grn/bl-txn-purchase-bill-from-grn.component';
+import { BlTxnPurchaseGrnComponent } from './common/MaterialManagement/Inward/bl-txn-purchase-grn/bl-txn-purchase-grn.component';
+import { PatientInformationComponent } from './common/PatientManagement/patient-information/patient-information.component';
+import { DoctorsPatientsReportComponent } from './common/PatientManagement/doctors-patients-report/doctors-patients-report.component';
 @NgModule({
   declarations: [
     AppLayoutComponent,
@@ -992,7 +998,12 @@ import { BlTxnPettyCashVoucherComponent } from './common/SalesAndDistribution/Tr
     LeaveAutoUpdateComponent,
     PackageSessionCompleteComponent,
     BlTxnRefDocEntryComponent,
-    BlTxnPettyCashVoucherComponent
+    BlTxnPettyCashVoucherComponent,
+    HearingStockReportNewComponent,
+    BLTxnPurchaseBillFromGRNComponent,
+    BlTxnPurchaseGrnComponent,
+    PatientInformationComponent,
+    DoctorsPatientsReportComponent
   ],
   imports: [
     CommonModule,
@@ -1059,6 +1070,7 @@ import { BlTxnPettyCashVoucherComponent } from './common/SalesAndDistribution/Tr
     CompacctAccountJournal,
     DateTimeConvertService,
     DateNepalConvertService,
+    CommonUserActivityService,
     SelectionService,
     {provide: OWL_DATE_TIME_LOCALE, useValue: 'en-IN'},
     SortService,

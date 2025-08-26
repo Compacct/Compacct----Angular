@@ -6,7 +6,35 @@ import { HttpClient, HttpHeaders } from '@angular/common/http';
 @Component({
   selector: 'app-header',
   templateUrl: './header.component.html',
-  styleUrls: []
+  styles: [`   
+ .marquee-container {
+            width: 100%;
+            background-color: #dc2626;
+            overflow: hidden;
+            position: relative;
+            border-radius: 5px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        .marquee-text {
+            position: relative;
+            white-space: nowrap;
+            color: white;
+            font-weight: bold;
+            font-family: 'Source Sans Pro', sans-serif;
+            padding: 0 20px;
+            transform: translateX(100%);
+            animation: marqueeAnimation 20s linear infinite;
+        }
+
+        @keyframes marqueeAnimation {
+            0% {
+                transform: translateX(100%);
+            }
+            100% {
+                transform: translateX(-100%);
+            }
+        }`],
 })
 export class HeaderComponent implements OnInit {
  // title = 'ClientApp';

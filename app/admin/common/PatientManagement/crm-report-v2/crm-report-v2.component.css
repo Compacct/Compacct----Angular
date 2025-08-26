@@ -59,3 +59,15 @@ body .ui-tabview.ui-tabview-top .ui-tabview-nav {
     cursor: pointer;
     color: rgb(64, 110, 227);
 }
+.btn-link {
+    color: black;
+    background-color: transparent;
+    text-decoration: none;
+    cursor: pointer;
+  }
+.btn-link:hover {
+    color: rgb(64, 110, 227);
+    background-color: transparent;
+    text-decoration: underline;
+    cursor: pointer;
+  }

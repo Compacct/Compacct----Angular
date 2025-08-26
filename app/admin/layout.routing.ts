@@ -441,6 +441,12 @@ import { LeaveAutoUpdateComponent } from './common/HR/leave-auto-update/leave-au
 import { PackageSessionCompleteComponent } from "./common/PatientManagement/package-session-complete/package-session-complete.component";
 import { BlTxnRefDocEntryComponent } from './common/PatientManagement/bl-txn-ref-doc-entry/bl-txn-ref-doc-entry.component';
 import { BlTxnPettyCashVoucherComponent } from './common/SalesAndDistribution/Transaction/bl-txn-petty-cash-voucher/bl-txn-petty-cash-voucher.component';
+import { HearingStockReportNewComponent } from './common/MaterialManagement/Report/hearing-stock-report-new/hearing-stock-report-new.component';
+import { BLTxnPurchaseBillFromGRNComponent } from './common/FinancialManagement/Transaction/Purchase/bl-txn-purchase-bill-from-grn/bl-txn-purchase-bill-from-grn.component';
+import { BlTxnPurchaseGrnComponent } from './common/MaterialManagement/Inward/bl-txn-purchase-grn/bl-txn-purchase-grn.component';
+import { PatientInformationComponent } from './common/PatientManagement/patient-information/patient-information.component';
+import { DoctorsPatientsReportComponent } from './common/PatientManagement/doctors-patients-report/doctors-patients-report.component';
+
 const layoutRoutes: Routes = [{
   path: "",
   component: AppLayoutComponent,
@@ -2543,6 +2549,13 @@ path: 'MICL_Cost_Center_Master',
 }
 },
 {
+  path: 'BL_Txn_Sale_Bill_From_Challan',
+    component: SaleBillComponent,
+    data: {
+      title: 'Sale Bill From Challan'
+}
+},
+{
   path: 'Doctors_Appo_New_Fluency_Evaluation',
     component: DoctorsAppoNewFluencyEvaluationComponent,
     data: {
@@ -2785,6 +2798,13 @@ path: 'Doctors_Appointment_New_Fine_Tuning_Hearing',
       component: BSHPLAudiologistAppoComponent,
       data: {
           title: 'BSHPL Audiologist Appointment'
+      } 
+    },
+    {
+      path: 'Txn_Audiologist_Appo',
+      component: BSHPLAudiologistAppoComponent,
+      data: {
+          title: 'Audiologist Appo'
       } 
     },
     {
@@ -3380,6 +3400,41 @@ path: 'Doctors_Appointment_New_Fine_Tuning_Hearing',
       component: BlTxnPettyCashVoucherComponent,
       data: {
         title: 'Petty Cash'
+      }
+    },
+    {
+      path: 'Hearing_Stock_Report_New',
+      component: HearingStockReportNewComponent,
+      data: {
+        title: 'Stock Report'
+      }
+    }, 
+    {
+      path: 'BL_Txn_Purchase_Bill_from_GRN',
+      component: BLTxnPurchaseBillFromGRNComponent,
+      data: {
+        title: 'Purchase Bill from Purchase GRN'
+      }
+    },
+    {
+      path: 'Bl_Txn_Purchase_GRN',
+      component: BlTxnPurchaseGrnComponent,
+      data: {
+        title: 'GRN'
+      }
+    },
+    {
+      path: 'Patient_Information',
+      component: PatientInformationComponent,
+      data: {
+        title: 'Patient Information'
+      }
+    },
+    {
+      path: 'Doctors_Patients_Report',
+      component: DoctorsPatientsReportComponent,
+      data: {
+        title: 'Doctors Report'
       }
     },
     /*{

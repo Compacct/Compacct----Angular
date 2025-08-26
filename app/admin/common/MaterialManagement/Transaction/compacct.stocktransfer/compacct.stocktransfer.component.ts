@@ -14,6 +14,7 @@ declare var $: any;
 import * as moment from "moment";
 import { CompacctGlobalUrlService } from "../../../../shared/compacct.global/global.service.service";
 import { CompacctGlobalApiService } from "../../../../shared/compacct.services/compacct.global.api.service";
+import { CommonUserActivityService } from "../../../../shared/compacct.services/common-user-activity.service";
 
 @Component({
   selector: "app-compacct-stocktransfer",
@@ -112,6 +113,7 @@ export class StocktransferComponent implements OnInit {
     public $CompacctAPI: CompacctCommonApi,
     private compacctToast: MessageService,
     private GlobalAPI: CompacctGlobalApiService,
+    private _CommonUserActivity : CommonUserActivityService
   ) {}
   selectedCities2: any;
   ngOnInit() {
@@ -1443,11 +1445,12 @@ export class StocktransferComponent implements OnInit {
         ? this.urlService.updatestocktransfer
         : this.urlService.createStocktransferGst;
 
-      this.$http.post(url, ParamString).subscribe((data: any) => {
+      this.$http.post(url, ParamString).subscribe(async (data: any) => {
         if (data.success === true) {
           console.group("Compacct V2");
           console.log("%c Stock Transfer Sucess:", "color:green;", data.Doc_No);
           console.log(url);
+          await this.SaveUserActivity( (this.ObjStockBill.Doc_No ? 'Update' : 'Save') ,this.ObjStockBill.Doc_No || data.Doc_No );
           if (
             this.ObjStockBill.IGST_Amt ||
             (this.ObjStockBill.SGST_Amt && this.ObjStockBill.CGST_Amt)
@@ -1663,6 +1666,11 @@ export class StocktransferComponent implements OnInit {
     }
   }
 
+  async SaveUserActivity(type,doc){
+    const result = await this._CommonUserActivity.GetUserActivity(type,'Stock Transfer',doc,'0')
+    console.log(result)
+  }
+
   EditStockTransfer(obj) {
     if (obj.Doc_No) {
       this.$CompacctAPI.compacctSpinnerShow();
@@ -1871,8 +1879,9 @@ export class StocktransferComponent implements OnInit {
     if (this.stockDocNo) {
       this.$http
         .post(this.urlService.deletestocktransfer, { id: this.stockDocNo })
-        .subscribe((data: any) => {
+        .subscribe(async (data: any) => {
           if (data.success === true) {
+            await this.SaveUserActivity('Delete',this.stockDocNo );
             this.SearchStockBill(true);
             this.onReject();
             this.compacctToast.clear();
@@ -1889,10 +1898,11 @@ export class StocktransferComponent implements OnInit {
   onReject() {
     this.compacctToast.clear("c");
   }
-  DeleteStockTransfer(obj) {
+  async DeleteStockTransfer(obj) {
     this.stockDocNo = undefined;
     if (obj.Doc_No) {
       this.stockDocNo = obj.Doc_No;
+      
       this.compacctToast.clear();
       this.compacctToast.add({
         key: "c",
