@@ -377,7 +377,7 @@ export class BLTxnPurchaseBillFromGRNComponent implements OnInit {
         .subscribe((data: any) => {
           this.purchaseChallanList = data ? JSON.parse(data) : [];
           this.purchaseChallanList = this.purchaseChallanList.map(
-            (el: any) => ({ ...el, ...{ checked: false , purchaseChecked:false} })
+            (el: any) => ({ ...el, ...{ checked: false , purchaseChecked:true} })
           );
           this.backuppurchaseChallanList = JSON.parse(JSON.stringify(this.purchaseChallanList))
         });
@@ -397,7 +397,7 @@ export class BLTxnPurchaseBillFromGRNComponent implements OnInit {
         el.checked = row.checked;
       }
       if (!el.checked) {
-        el.purchaseChecked = false
+        el.purchaseChecked = true
       }
     });
   }
@@ -1065,7 +1065,10 @@ export class BLTxnPurchaseBillFromGRNComponent implements OnInit {
               summary: "Succesfully Created",
               detail: "Doc No : " + Doc_No,
             });
+
+           const backUpsub = JSON.parse( JSON.stringify(this.ObjSubLedger))
            this.clearData()
+           this.ObjSubLedger = JSON.parse( JSON.stringify(backUpsub))
           }
         }
       });
@@ -1086,7 +1089,9 @@ export class BLTxnPurchaseBillFromGRNComponent implements OnInit {
               summary: "Succesfully Created",
               detail: "Doc No : " + docNo,
             });
-          this.clearData()
+          const backUpsub = JSON.parse( JSON.stringify(this.ObjSubLedger))
+           this.clearData()
+           this.ObjSubLedger = JSON.parse( JSON.stringify(backUpsub))
         }
       });
   }
