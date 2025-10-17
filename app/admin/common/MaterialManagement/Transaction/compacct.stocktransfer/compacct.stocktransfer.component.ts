@@ -203,7 +203,7 @@ export class StocktransferComponent implements OnInit {
         .subscribe((data: any) => {
           this.databaseName = data;
           console.log(data)
-          if (this.databaseName == 'GN_Crystal_Mumbai' || this.databaseName == 'GN_Global_Coimbatore') {
+          if (this.databaseName == 'GN_Crystal_Mumbai' || this.databaseName == 'GN_Global_Coimbatore' ||this.databaseName == 'GN_Anand_Chandigarh')  {
             const newCols = [];
             
             for (const col of this.cols) {
@@ -212,9 +212,9 @@ export class StocktransferComponent implements OnInit {
               if (col.field == 'F_Cost_Cen_Name') {
                 newCols.push({ field: "F_godown_name", header: "Issuing Godown" });
               }
-              else if (col.field == 'T_Cost_Cen_Name') {
-                newCols.push({ field: "T_godown_name", header: "To Godown" });
-              }
+              // else if (col.field == 'T_Cost_Cen_Name') {
+              //   newCols.push({ field: "T_godown_name", header: "To Godown" });
+              // }
             }
             
             this.cols = newCols;
