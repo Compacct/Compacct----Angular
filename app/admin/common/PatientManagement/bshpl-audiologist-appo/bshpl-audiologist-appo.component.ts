@@ -935,6 +935,7 @@ export class BSHPLAudiologistAppoComponent implements OnInit {
       this.footfallid = col.foot_fall_id;
       this.displayPopupPro = true;
       this.objProgramming.Appo_Dt = this.DateService.dateTimeConvert(new Date(col.Appo_Start));
+      this.objProgramming.Appo_ID = col.Appo_ID
     }
     }
   }
@@ -950,6 +951,7 @@ export class BSHPLAudiologistAppoComponent implements OnInit {
     if (valid && this.CheckCancelStatus()) {
       this.ProSpinner = true;
       const SaveTempObjPro = {
+        Appo_ID: this.objProgramming.Appo_ID,
         Appo_Dt: this.DateService.dateTimeConvert(new Date(this.objProgramming.Appo_Dt)),
         Audio_Note: this.objProgramming.Audio_Note
       }
@@ -1448,6 +1450,7 @@ export class BSHPLAudiologistAppoComponent implements OnInit {
 
 class Programming{
   Audio_Note: any;
+  Appo_ID: any;
   Appo_Dt: any;
 }
 
