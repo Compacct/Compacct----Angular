@@ -328,7 +328,7 @@
                                         (change)="CostCenterChange(ObjCostCenter.Cost_Cen_ID)"
                                         [ngClass]="{'clearance': putchaseBillCumgrnFormSubmitted && CostCentTrn?.errors?.required}"
                                         required>
-                                        <option *ngFor=" let option of CostCenterList " value="{{option.Cost_Cen_ID}}" >
+                                        <option *ngFor=" let option of CostCenterList " [ngValue]="option.Cost_Cen_ID" >
                                             {{option.Cost_Cen_Name}}
                                         </option>
                                     </select>
