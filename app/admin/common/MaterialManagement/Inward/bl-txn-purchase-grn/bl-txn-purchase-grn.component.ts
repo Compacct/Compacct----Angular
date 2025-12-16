@@ -536,11 +536,11 @@ export class BlTxnPurchaseGrnComponent implements OnInit {
       this.GetTotalNetAmount();
     })
   }
-  CheckProEdit(data,index){
+  CheckProEdit(val,index){
     const sendobj = {
-      Serial_No: data.Serial_No,
+      Serial_No: val.Serial_No,
 			type_id: this.ObjOther.Type_ID,     
-			Product_ID: data.Product_ID
+			Product_ID: val.Product_ID
     }
     const obj = {
       "SP_String": "sp_Bl_Txn_Purchase_GRN",
@@ -555,10 +555,17 @@ export class BlTxnPurchaseGrnComponent implements OnInit {
       else {
         this.compacctToast.clear();
         this.compacctToast.add({
-          key: "compacct-toast",
-          severity: "error",
-          summary: "Warn Message",
-          detail: data[0].Column1
+          // key: "compacct-toast",
+          // severity: "error",
+          // summary: "Warn Message",
+          // detail: data[0].Column1
+          key: "di",
+          sticky: true,
+          severity: "warn",
+          // summary: "Are you sure?",
+          detail: "The Product ( " + val.Product_Name +" with "+ val.Serial_No +" ) Has been used in other document" + 
+          "/ other transaction has been done. Can't change"  +
+          "/ edit anything with this at GRN.",
         });
       }
     });
@@ -604,6 +611,7 @@ export class BlTxnPurchaseGrnComponent implements OnInit {
   }
   onReject() {
     this.compacctToast.clear("c");
+    this.compacctToast.clear("di");
   }
   Print(DocNo) {
     if (DocNo) {
