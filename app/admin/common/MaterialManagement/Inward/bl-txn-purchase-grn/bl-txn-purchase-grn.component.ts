@@ -208,6 +208,9 @@ export class BlTxnPurchaseGrnComponent implements OnInit {
     });
   }
   ProductChange(proid){
+    this.ObjProductInfo.Batch_Number = '';
+    this.ObjProductInfo.Serial_No = '';
+    this.ObjProductInfo.Qty = undefined;
     this.ObjProductInfo.Product_Name = '';
     this.Product_Serial = '';
     this.ObjProductInfo.UOM = '';
@@ -233,30 +236,33 @@ export class BlTxnPurchaseGrnComponent implements OnInit {
     if(this.ObjCostCenter.Cost_Cen_ID){
       this.$http.get("/Common/Get_Godown_list?Cost_Cent_ID="+this.ObjCostCenter.Cost_Cen_ID).subscribe((data: any) => {
       this.GodownList = JSON.parse(data);
-      this.ObjProductInfo.godown_id = this.GodownList.length === 1 ? this.GodownList[0].godown_id : '';
+      setTimeout(() => {
+        this.ObjProductInfo.godown_id = this.GodownList.length === 1 ? this.GodownList[0].godown_id : '';
+      }, 100);
     });
     }
   }
   GetSerialNoStatus(): Promise<string> {
-  this.SerialNostatus = '';
-  return new Promise((resolve, reject) => {
-    if (this.ObjCostCenter.Cost_Cen_ID) {
-      this.$http.get("/Common/Check_Serial_without_cost_center?Serial_No=" + this.ObjProductInfo.Serial_No + "&Product_ID=" + this.ObjProductInfo.Product_ID, 
-        { responseType: 'text' }).subscribe({
-          next: (data: string) => {
-            this.SerialNostatus = data;
-            console.log(this.SerialNostatus)
-            resolve(data);
-          },
-          error: err => {
-            reject(err);
-          }
-      });
-    } else {
-      resolve(''); // or reject('No Cost Center ID');
-    }
-  });
+    this.SerialNostatus = '';
+    return new Promise((resolve, reject) => {
+      if (this.ObjCostCenter.Cost_Cen_ID && this.ObjProductInfo.Product_ID && this.ObjProductInfo.Serial_No) {
+        this.$http.get("/Common/Check_Serial_without_cost_center?Serial_No=" + this.ObjProductInfo.Serial_No + "&Product_ID=" + this.ObjProductInfo.Product_ID, 
+          { responseType: 'text' }).subscribe({
+            next: (data: string) => {
+              this.SerialNostatus = data;
+              console.log(this.SerialNostatus)
+              resolve(data);
+            },
+            error: err => {
+              reject(err);
+            }
+        });
+      } else {
+        resolve('NO'); // or reject('No Cost Center ID');
+      }
+    }); 
   }
+
   async CheckSerialNo(): Promise<boolean> {
   try {
     const status = await this.GetSerialNoStatus();
@@ -278,20 +284,25 @@ export class BlTxnPurchaseGrnComponent implements OnInit {
   }
   }
   CheckSameProductSerialNoExit(){
-    const sameproduct = this.AddProductDetails.filter(item=> (item.Product_ID === this.ObjProductInfo.Product_ID) && (item.Serial_No === this.ObjProductInfo.Serial_No));
-    if(sameproduct.length) {
-      this.compacctToast.clear();
-      this.compacctToast.add({
-        key: "compacct-toast",
-        severity: "error",
-        summary: "Warn Message",
-        detail: "Serial Number Exist."
-      });
-      return false;
-    } 
-    else {
-      return true;
+    if(this.ObjProductInfo.Product_ID && this.ObjProductInfo.Serial_No){
+      const sameproduct = this.AddProductDetails.filter(item=> (item.Product_ID === this.ObjProductInfo.Product_ID) && (item.Serial_No === this.ObjProductInfo.Serial_No));
+      if(sameproduct.length) {
+        this.compacctToast.clear();
+        this.compacctToast.add({
+          key: "compacct-toast",
+          severity: "error",
+          summary: "Warn Message",
+          detail: "Serial Number Exist."
+        });
+        return false;
+      } 
+      else {
+        return true;
+      }
     }
+    else {
+        return true;
+      }
   }
   async AddProductInfo(valid){
     this.ProductInfoSubmitted = true;
@@ -537,8 +548,9 @@ export class BlTxnPurchaseGrnComponent implements OnInit {
     })
   }
   CheckProEdit(val,index){
+    if(this.ObjOther.Type_ID && val.Serial_No && val.Product_ID){
     const sendobj = {
-      Serial_No: val.Serial_No,
+      Serial_No: val.Serial_No ? val.Serial_No : null,
 			type_id: this.ObjOther.Type_ID,     
 			Product_ID: val.Product_ID
     }
@@ -569,6 +581,10 @@ export class BlTxnPurchaseGrnComponent implements OnInit {
         });
       }
     });
+    }
+    else {
+      this.delete(index);
+    }
   }
   purchaseBillDelete(docNo) {
     if (docNo) {
