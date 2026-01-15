@@ -57,6 +57,8 @@ export class BlTxnPurchaseGrnComponent implements OnInit {
   DistInwardType:any = [];
   SelectedInwardType:any = [];
   SearchFields:any = [];
+  is_service:boolean = false;
+  BackupProductList:any = [];
 
   constructor(
     private Header: CompacctHeader,
@@ -83,7 +85,7 @@ export class BlTxnPurchaseGrnComponent implements OnInit {
     this.GetInwardType();
     this.GetProduct();
   }
-  TabClick(e) {
+  TabClick(e:any) {
     this.tabIndexToView = e.index;
     this.items = ["BROWSE", "CREATE"];
     this.buttonname = "Create";
@@ -110,6 +112,8 @@ export class BlTxnPurchaseGrnComponent implements OnInit {
     this.buttonname = "Create";
     this.docNumber = undefined;
     this.ViewButtonDisabled = false;
+    this.is_service = false;
+    this.ChangeServiceProduct();
   }
   GetSubLedger() {
     this.$http.get(this.url.apiGetSubledgerCr).subscribe((data: any) => {
@@ -122,7 +126,7 @@ export class BlTxnPurchaseGrnComponent implements OnInit {
       }
     });
   }
-  SubledgerChange(SubLedgerID) {
+  SubledgerChange(SubLedgerID:any) {
     const obj = this.SubLedgerList.filter((el: any) => el.Sub_Ledger_ID == SubLedgerID)[0];
 
     this.ObjSubLedger.Sub_Ledger_Name = obj.Sub_Ledger_Name;
@@ -150,7 +154,7 @@ export class BlTxnPurchaseGrnComponent implements OnInit {
       this.CostCenterList = data ? JSON.parse(data) : [];
     });
   }
-  CostCenterChange(CostCenID) {
+  CostCenterChange(CostCenID:any) {
     // this.ObjCostCenter.Cost_Cen_ID = undefined;
     const ObjCostCenter = this.CostCenterList.filter((el: any) => el.Cost_Cen_ID == CostCenID)[0];
     // this.ObjCostCenter = ObjCostCenter;
@@ -190,24 +194,37 @@ export class BlTxnPurchaseGrnComponent implements OnInit {
       this.InwardTypeList = data ;
     });
   }
+  // GetProduct(){
+  //   this.ProductList = [];
+  //   this.$http.get("/Common/Get_Product_Purchasable").subscribe((data: any) => {
+  //     let prodata = JSON.parse(data);
+  //     if(prodata.length){
+  //       prodata.forEach(element => {
+  //         element['value'] = element.Product_ID
+  //         element['label'] = element.Product_Name
+  //       });
+  //     this.ProductList = prodata ;
+  //     }
+  //     else {
+  //       this.ProductList = [] ;
+  //     }
+      
+  //   });
+  // }
   GetProduct(){
     this.ProductList = [];
-    this.$http.get("/Common/Get_Product_Purchasable").subscribe((data: any) => {
-      let prodata = JSON.parse(data);
-      if(prodata.length){
-        prodata.forEach(element => {
-          element['value'] = element.Product_ID
-          element['label'] = element.Product_Name
-        });
-      this.ProductList = prodata ;
-      }
-      else {
-        this.ProductList = [] ;
-      }
-      
+    this.BackupProductList = [];
+    const obj = {
+      "SP_String": "sp_Bl_Txn_Purchase_GRN",
+      "Report_Name_String" : "Get_Product_For_Grn"
+    }
+    this.GlobalAPI.getData(obj).subscribe((data:any)=>{
+      this.BackupProductList = data;
+      this.ChangeServiceProduct();
     });
   }
-  ProductChange(proid){
+  ChangeServiceProduct(){
+    this.ObjProductInfo.Product_ID = undefined;
     this.ObjProductInfo.Batch_Number = '';
     this.ObjProductInfo.Serial_No = '';
     this.ObjProductInfo.Qty = undefined;
@@ -217,13 +234,56 @@ export class BlTxnPurchaseGrnComponent implements OnInit {
     this.ObjProductInfo.MRP = undefined;
     this.ObjProductInfo.Rate = undefined;
     this.ObjProductInfo.Amount = undefined;
+    this.ObjProductInfo.is_service = undefined;
+    if(this.is_service){
+      const serviceProduct = this.BackupProductList.filter((el:any)=> el.Is_Service)
+      if(serviceProduct.length){
+        serviceProduct.forEach((element:any) => {
+          element['value'] = element.Product_ID
+          element['label'] = element.Product_Name
+        });
+      this.ProductList = serviceProduct ;
+      console.log('serviceProduct',this.ProductList)
+      }
+      else {
+        this.ProductList = [] ;
+      }
+    }
+    else {
+      const serviceProduct = this.BackupProductList.filter((el:any)=> !el.Is_Service)
+        if(serviceProduct.length){
+          serviceProduct.forEach((element:any) => {
+            element['value'] = element.Product_ID
+            element['label'] = element.Product_Name
+          });
+        this.ProductList = serviceProduct ;
+        console.log('Product',this.ProductList)
+        }
+        else {
+          this.ProductList = [] ;
+        }
+    }
+  }
+  ProductChange(proid:any){
+    this.ObjProductInfo.Batch_Number = '';
+    this.ObjProductInfo.Serial_No = '';
+    this.ObjProductInfo.Qty = undefined;
+    this.ObjProductInfo.Product_Name = '';
+    this.Product_Serial = '';
+    this.ObjProductInfo.UOM = '';
+    this.ObjProductInfo.MRP = undefined;
+    this.ObjProductInfo.Rate = undefined;
+    this.ObjProductInfo.Amount = undefined;
+    this.ObjProductInfo.is_service = undefined;
       if(proid){
         const productobj = this.ProductList.filter((el: any) => el.Product_ID == proid)[0];
         // console.log(productobj)
         this.ObjProductInfo.Product_Name = productobj.Product_Name;
+        this.ObjProductInfo.Batch_Number = this.is_service ? 'NA' : undefined;
         this.Product_Serial = productobj.Product_Serial;
         this.ObjProductInfo.Qty = this.Product_Serial ? 1 : undefined;
         this.ObjProductInfo.UOM = productobj.UOM;
+        this.ObjProductInfo.is_service = productobj.Is_Service;
       }
   }
   CalCulateTotalAmt(){
@@ -285,7 +345,7 @@ export class BlTxnPurchaseGrnComponent implements OnInit {
   }
   CheckSameProductSerialNoExit(){
     if(this.ObjProductInfo.Product_ID && this.ObjProductInfo.Serial_No){
-      const sameproduct = this.AddProductDetails.filter(item=> (item.Product_ID === this.ObjProductInfo.Product_ID) && (item.Serial_No === this.ObjProductInfo.Serial_No));
+      const sameproduct = this.AddProductDetails.filter((item:any)=> (item.Product_ID === this.ObjProductInfo.Product_ID) && (item.Serial_No === this.ObjProductInfo.Serial_No));
       if(sameproduct.length) {
         this.compacctToast.clear();
         this.compacctToast.add({
@@ -304,9 +364,9 @@ export class BlTxnPurchaseGrnComponent implements OnInit {
         return true;
       }
   }
-  async AddProductInfo(valid){
+  async AddProductInfo(valid:any){
     this.ProductInfoSubmitted = true;
-    var stockpoint = this.GodownList.filter(item=> Number(item.godown_id) === Number(this.ObjProductInfo.godown_id))
+    var stockpoint = this.GodownList.filter((item:any)=> Number(item.godown_id) === Number(this.ObjProductInfo.godown_id))
     if(valid && await this.CheckSerialNo() && this.CheckSameProductSerialNoExit()) {
     var productObj = {
       Product_ID : this.ObjProductInfo.Product_ID,
@@ -319,7 +379,8 @@ export class BlTxnPurchaseGrnComponent implements OnInit {
       Challan_Rate : Number(this.ObjProductInfo.Rate),
       Amount : Number(this.ObjProductInfo.Amount),
       godown_id : Number(this.ObjProductInfo.godown_id),
-      godown_name : stockpoint.length ? stockpoint[0].godown_name : ''
+      godown_name : stockpoint.length ? stockpoint[0].godown_name : '',
+      Is_Service : this.ObjProductInfo.is_service
   
     };
       this.AddProductDetails.push(productObj);
@@ -341,13 +402,13 @@ export class BlTxnPurchaseGrnComponent implements OnInit {
     this.ObjOther.Bill_Gross_Amt = 0;
     this.ObjOther.Bill_Net_Amt = 0;
     var totalAmount = 0;
-    this.AddProductDetails.forEach(item => {
+    this.AddProductDetails.forEach((item:any) => {
       totalAmount = totalAmount + Number(item.Amount);
     });
     this.ObjOther.Bill_Gross_Amt = (totalAmount).toFixed(2);
     this.ObjOther.Bill_Net_Amt = (totalAmount).toFixed(2);
   }
-  delete(index) {
+  delete(index:any) {
     this.AddProductDetails.splice(index,1);
       this.GetTotalNetAmount();
   }
@@ -378,7 +439,7 @@ export class BlTxnPurchaseGrnComponent implements OnInit {
       });
     }
   }
-  SavePurchaseGRN(valid){
+  SavePurchaseGRN(valid:any){
     this.PurchaseGrnFormSubmitted = true;
     if(valid){
       this.PurchaseGrnFormSubmitted = false;
@@ -429,7 +490,7 @@ export class BlTxnPurchaseGrnComponent implements OnInit {
       this.Spinner = false;
     }
   }
-  getDateRange(dateRangeObj) {
+  getDateRange(dateRangeObj:any) {
     if (dateRangeObj.length) {
       this.ObjBrowseSearch.from_date = dateRangeObj[0];
       this.ObjBrowseSearch.to_date = dateRangeObj[1];
@@ -472,7 +533,7 @@ export class BlTxnPurchaseGrnComponent implements OnInit {
     this.DistInwardType =[];
     this.SelectedInwardType =[];
     this.SearchFields =[];
-    this.getAllDataList.forEach((item) => {
+    this.getAllDataList.forEach((item:any) => {
     if (DSubLedger.indexOf(item.Sub_Ledger_ID) === -1) {
      DSubLedger.push(item.Sub_Ledger_ID);
      this.DistSubLedger.push({ label: item.Sub_Ledger_Name, value: item.Sub_Ledger_ID });
@@ -498,7 +559,7 @@ export class BlTxnPurchaseGrnComponent implements OnInit {
   }
   this.getAllDataList = [];
   if (this.SearchFields.length) {
-    let LeadArr = this.BackupSearchedlist.filter(function (e) {
+    let LeadArr = this.BackupSearchedlist.filter(function (e:any) {
       return (DSubLedger.length ? DSubLedger.includes(e['Sub_Ledger_ID']) : true)
       && (DInwardType.length ? DInwardType.includes(e['Type_ID']) : true)
     });
@@ -507,7 +568,7 @@ export class BlTxnPurchaseGrnComponent implements OnInit {
   this.getAllDataList = [...this.BackupSearchedlist] ;
   }
   }
-  EditPurchaseGRN(docNo){
+  EditPurchaseGRN(docNo:any){
     this.clearData();
     if (docNo) {
       this.editDocNo = docNo;
@@ -517,7 +578,7 @@ export class BlTxnPurchaseGrnComponent implements OnInit {
       this.geteditData(docNo);
     }
   }
-  ViewPurchaseGRN(docNo){
+  ViewPurchaseGRN(docNo:any){
     this.clearData();
     if (docNo) {
       this.tabIndexToView = 1;
@@ -526,7 +587,7 @@ export class BlTxnPurchaseGrnComponent implements OnInit {
       this.geteditData(docNo);
     }
   }
-  geteditData(Dno){
+  geteditData(Dno:any){
     const obj = {
       "SP_String": "sp_Bl_Txn_Purchase_GRN",
       "Report_Name_String": "Bl_Txn_Purchase_GRN_Edit_Data",
@@ -545,9 +606,11 @@ export class BlTxnPurchaseGrnComponent implements OnInit {
       this.ObjOther.Type_ID = data[0].Type_ID;
       this.AddProductDetails = data[0].L_element;
       this.GetTotalNetAmount();
+      this.is_service = this.AddProductDetails[0].Is_Service
+      this.ChangeServiceProduct();
     })
   }
-  CheckProEdit(val,index){
+  CheckProEdit(val:any,index:any){
     if(this.ObjOther.Type_ID && val.Serial_No && val.Product_ID){
     const sendobj = {
       Serial_No: val.Serial_No ? val.Serial_No : null,
@@ -586,7 +649,7 @@ export class BlTxnPurchaseGrnComponent implements OnInit {
       this.delete(index);
     }
   }
-  purchaseBillDelete(docNo) {
+  purchaseBillDelete(docNo:any) {
     if (docNo) {
       this.docNumber = docNo;
       this.compacctToast.clear();
@@ -629,7 +692,7 @@ export class BlTxnPurchaseGrnComponent implements OnInit {
     this.compacctToast.clear("c");
     this.compacctToast.clear("di");
   }
-  Print(DocNo) {
+  Print(DocNo:any) {
     if (DocNo) {
       if(DocNo){
        const url = `/Report/Crystal_Files/Finance/SaleBill/Purchase_GRN.html?Doc_No=${DocNo}`;
@@ -638,7 +701,7 @@ export class BlTxnPurchaseGrnComponent implements OnInit {
       }
     }
   }
-  async SaveUserActivity(msg,docno){
+  async SaveUserActivity(msg:any,docno:any){
     const result = await this._CommonUserActivity.GetUserActivity(msg,'Purchase GRN',docno,'0')
     console.log(result)
   }
@@ -721,4 +784,5 @@ class ProductInfo {
   Amount: any; 
   godown_id: any;
   godown_name: any;
+  is_service: any;
 }
