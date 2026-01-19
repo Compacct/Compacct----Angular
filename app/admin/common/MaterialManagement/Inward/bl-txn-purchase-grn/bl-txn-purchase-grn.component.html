@@ -18,6 +18,24 @@
 
     </ng-template>
 </p-toast>
+<p-toast position="center" key="di" (onClose)="onReject()" [modal]="true" [autoZIndex]="true">
+    <ng-template let-message pTemplate="message">
+        <div style="text-align: center">
+            <i class="pi pi-info-circle" style="font-size: 3em"></i>
+            <h3>{{message.summary}}</h3>
+            <p>{{message.detail}}</p>
+        </div>
+
+        <div class="ui-g ui-fluid">
+            <div class="ui-g-3"></div>
+          <div class="ui-g-6">
+              <button type="button" pButton (click)="onReject()" label="Ok" class="ui-button-secondary"></button>
+          </div>
+            <div class="ui-g-3"></div>
+      </div>
+
+    </ng-template>
+</p-toast>
 
 <div class="row">
     <div class="col-xs-12">
@@ -45,7 +63,7 @@
                                     </div>
                                     <div class="col-sm-2">
                                         <div class="col-sm-3">
-                                            <button class="btn btn-primary custombutton" data-toggle="modal" (click)="getSerarch()" id="load" [disabled]="seachSpinner">
+                                            <button class="btn btn-primary" style="margin-top: 27px;" data-toggle="modal" (click)="getSerarch()" id="load" [disabled]="seachSpinner">
                                                 <p-progressSpinner *ngIf="seachSpinner" [style]="{width: '15px', height: '15px'}" strokeWidth="8"  animationDuration=".5s"></p-progressSpinner>
                                                 <span *ngIf="!seachSpinner" class="glyphicon glyphicon-search"></span>&nbsp;Search
                                             </button>
@@ -124,7 +142,7 @@
                                                                    <i class="fa fa-fw fa-print"></i> Print
                                                                 </a>
                                                             </li>
-                                                            <li *ngIf="Permission === 'Y'">
+                                                            <li *ngIf="Permission === 'Y' && !col.Bill_No">
                                                                 <a (click)="purchaseBillDelete(col.Doc_No)">
                                                                     <i class="fa fa-fw fa-trash"></i> Delete
                                                                 </a>
@@ -544,6 +562,11 @@
                                         <div class="form-group">
                                             <div Class='col-sm-4'>
                                                 <label class="control-label">Product Details&nbsp;<span class="text-danger">*</span></label>
+                                                    <div class="checkBox" class="pull-right" style="display:inline-block;margin-top: -2px;">
+                                                        <p-checkbox name="is_service" [binary]="true" [(ngModel)]="is_service" (onChange)="ChangeServiceProduct()" [disabled]="AddProductDetails.length"></p-checkbox>
+                                                        &nbsp; &nbsp;
+                                                        <label class="control-label"><small>Is Service</small> &nbsp;</label>
+                                                    </div>
                                                     <p-dropdown
                                                     [options]="ProductList"
                                                     name="product"
@@ -606,23 +629,21 @@
                                             </div>
                                             <div class="col-sm-3">
                                                 <label class="control-label">MRP<sup class="text-danger"></sup></label>
-                                                    <input class="form-control" name="mrp" type="text"
-                                                        [ngClass]="{clearance:ProductInfoSubmitted && rate?.errors?.required}"
-                                                        #mrp="ngModel"
+                                                    <input class="form-control" type="text" name="mrp" #mrp="ngModel"
                                                         [(ngModel)]="ObjProductInfo.MRP"
                                                         CompacctDigitonly="true"
-                                                        placeholder="MRP"/>
+                                                        placeholder="MRP"
+                                                        [ngClass]="{clearance:ProductInfoSubmitted && mrp?.errors?.required}"/>
                                             </div>
                                             <div class="col-sm-3">
                                                 <label class="control-label">Rate<sup class="text-danger">*</sup></label>
-                                                    <input class="form-control" name="rate" type="text"
-                                                        [ngClass]="{clearance:ProductInfoSubmitted && rate?.errors?.required}"
-                                                        #rate="ngModel"
+                                                    <input class="form-control" type="text" name="rate" #rate="ngModel"
                                                         [(ngModel)]="ObjProductInfo.Rate"
                                                         (ngModelChange)="CalCulateTotalAmt()"
                                                         CompacctDigitonly="true"
-                                                        [required]="true"
-                                                        placeholder="Rate"/>
+                                                        placeholder="Rate"
+                                                        [ngClass]="{clearance:ProductInfoSubmitted && rate?.errors?.required}"
+                                                        [required]="true"/>
                                             </div>
                                             <div class="col-sm-3">
                                                 <label class="control-label">Total Amount<sup class="text-danger">*</sup></label>
