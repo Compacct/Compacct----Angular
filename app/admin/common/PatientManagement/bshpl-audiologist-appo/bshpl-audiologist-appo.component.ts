@@ -188,7 +188,7 @@ export class BSHPLAudiologistAppoComponent implements OnInit {
       this.TypeLossList = ['NORMAL', 'CONDUCTIVE', 'SENSORINEURAL', 'MIXED','SLOPING SENSORINEURAL','SLOPING MIXED','REVERSE SLOPING SENSORINEURAL'];
     } 
     else if(this.databaseName === "GN_Crystal_Mumbai"){
-      this.TypeLossList = ['NORMAL', 'CONDUCTIVE', 'SENSORINEURAL', 'MIXED','SLOPING SENSORINEURAL','SLOPING MIXED'];
+      this.TypeLossList = ['NORMAL', 'CONDUCTIVE', 'SENSORINEURAL', 'MIXED','SLOPING SENSORINEURAL','SLOPING MIXED','HIGH FREQUENCY HEARING LOSS','LOW FREQUENCY HEARING LOSS','HEARING LOSS'];
     }
     else {
       this.TypeLossList = ['NORMAL', 'CONDUCTIVE', 'SENSORINEURAL', 'MIXED'];
@@ -522,13 +522,19 @@ export class BSHPLAudiologistAppoComponent implements OnInit {
 
   HAYesNoL() {
     this.objAppointment.HA_Req_L=undefined;
-    if (this.objAppointment.Type_Of_Loss_L == 'SENSORINEURAL' || this.objAppointment.Type_Of_Loss_L == 'MIXED') {
+    if (this.objAppointment.Type_Of_Loss_L == 'SENSORINEURAL') {
       this.HAYesNoListL = ['YES'];
     }
     else if(this.objAppointment.Type_Of_Loss_L == 'NORMAL'){
       this.HAYesNoListL = ['NO'];
       this.objAppointment.HA_Req_L='NO';
       this.TrialDoneOnOFF();
+    }
+    else if(this.databaseName != "GN_Crystal_Mumbai" && this.objAppointment.Type_Of_Loss_L == 'MIXED'){
+      this.HAYesNoListL = ['YES'];
+    }
+    else if(this.databaseName == "GN_Crystal_Mumbai" && this.objAppointment.Type_Of_Loss_L == 'MIXED'){
+      this.HAYesNoListL = ['YES','NO'];
     }
     else {
       this.HAYesNoListL = ['YES', 'NO'];
@@ -537,13 +543,19 @@ export class BSHPLAudiologistAppoComponent implements OnInit {
 
   HAYesNoR() {
     this.objAppointment.HA_Req_R=undefined;
-    if (this.objAppointment.Type_Of_Loss_R == 'SENSORINEURAL' || this.objAppointment.Type_Of_Loss_R == 'MIXED') {
+    if (this.objAppointment.Type_Of_Loss_R == 'SENSORINEURAL') {
       this.HAYesNoListR = ['YES'];
     }
     else if(this.objAppointment.Type_Of_Loss_R == 'NORMAL'){
       this.HAYesNoListR = ['NO'];
       this.objAppointment.HA_Req_R='NO';
       this.TrialDoneOnOFF()
+    }
+    else if(this.databaseName != "GN_Crystal_Mumbai" && this.objAppointment.Type_Of_Loss_R == 'MIXED'){
+      this.HAYesNoListR = ['YES'];
+    }
+    else if(this.databaseName == "GN_Crystal_Mumbai" && this.objAppointment.Type_Of_Loss_R == 'MIXED'){
+      this.HAYesNoListR = ['YES','NO'];
     }
     else {
       this.HAYesNoListR = ['YES', 'NO'];
