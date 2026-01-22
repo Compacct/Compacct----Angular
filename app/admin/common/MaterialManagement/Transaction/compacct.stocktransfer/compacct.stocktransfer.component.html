@@ -138,10 +138,22 @@
                                                                                     Edit
                                                                                 </a>
                                                                             </li>
-                                                                            <li *ngIf='list.Total_Accept !== list.Total_Issue && databaseName !== "GN_Crystal_Mumbai" && databaseName !=="GN_Global_Coimbatore"'>
+                                                                            <!-- <li *ngIf='list.Total_Accept !== list.Total_Issue && databaseName !== "GN_Crystal_Mumbai" && databaseName !=="GN_Global_Coimbatore"'>
                                                                                 <a (click)="AcceptStockTransfer(list)">
                                                                                     <i class="fa fa-fw fa-history"></i>
                                                                                     {{list.F_Cost_Cen_ID == $CompacctAPI.CompacctCookies.Cost_Cen_ID ? 'Edit Product' : list.T_Cost_Cen_ID == $CompacctAPI.CompacctCookies.Cost_Cen_ID ? 'Accept Challan' : ''}}
+                                                                                </a>
+                                                                            </li> -->
+                                                                            <li *ngIf='(list.Total_Accept !== list.Total_Issue) && (databaseName !== "GN_Crystal_Mumbai") && (databaseName !=="GN_Global_Coimbatore") && (list.F_Cost_Cen_ID == $CompacctAPI.CompacctCookies.Cost_Cen_ID)'>
+                                                                                <a (click)="AcceptStockTransfer(list)">
+                                                                                    <i class="fa fa-fw fa-history"></i>
+                                                                                    Edit Product
+                                                                                </a>
+                                                                            </li>
+                                                                            <li *ngIf='(list.Total_Accept !== list.Total_Issue) && (databaseName !== "GN_Crystal_Mumbai") && (databaseName !=="GN_Global_Coimbatore") && (list.T_Cost_Cen_ID == $CompacctAPI.CompacctCookies.Cost_Cen_ID) && (list.T_godown_id !== list.F_godown_id)'>
+                                                                                <a (click)="AcceptStockTransfer(list)">
+                                                                                    <i class="fa fa-fw fa-history"></i>
+                                                                                    Accept Challan
                                                                                 </a>
                                                                             </li>
 

@@ -123,7 +123,7 @@ export class BLTxnPurchaseBillFromGRNComponent implements OnInit {
     this.termList = [];
     this.termFormSubmitted = false;
     this.TermTableLists = [];
-    this.ObjCostCenter.Cost_Cen_ID = this.$CompacctAPI.CompacctCookies.Cost_Cen_ID;
+    this.ObjCostCenter.Cost_Cen_ID = this.ObjCostCenter.Cost_Cen_ID ? this.ObjCostCenter.Cost_Cen_ID : this.$CompacctAPI.CompacctCookies.Cost_Cen_ID;
     this.CostCenterChange(this.ObjCostCenter.Cost_Cen_ID)
     this.GetCurrency();
   }
@@ -132,16 +132,32 @@ export class BLTxnPurchaseBillFromGRNComponent implements OnInit {
     this.CostCenterList = [];
     this.$http.get(this.url.apiGetCostCenter).subscribe((data: any) => {
       this.CostCenterList = data ? JSON.parse(data) : [];
-    
+      console.log(this.CostCenterList)
      
     });
   }
 
   CostCenterChange(CostCenID) {
     this.ObjPurchaseBill.Cost_Cen_ID = CostCenID;
-    this.ObjCostCenter = this.CostCenterList.filter(
-      (el: any) => el.Cost_Cen_ID == CostCenID
+    const selectCostCenter = this.CostCenterList.filter((el: any) => el.Cost_Cen_ID == CostCenID
     )[0];
+    
+    this.ObjCostCenter.Cost_Cen_Name =  selectCostCenter.Cost_Cen_Name
+    this.ObjCostCenter.Cost_Cen_Address1  = selectCostCenter.Cost_Cen_Address1
+    this.ObjCostCenter.Cost_Cen_Address2  = selectCostCenter.Cost_Cen_Address2
+    this.ObjCostCenter.Cost_Cen_Location  = selectCostCenter.Cost_Cen_Location
+    this.ObjCostCenter.Cost_Cen_District  = selectCostCenter.Cost_Cen_District
+    this.ObjCostCenter.Cost_Cen_State  = selectCostCenter.Cost_Cen_State
+    this.ObjCostCenter.Cost_Cen_Country  = selectCostCenter.Cost_Cen_Country
+    this.ObjCostCenter.Cost_Cen_PIN  = selectCostCenter.Cost_Cen_PIN
+    this.ObjCostCenter.Cost_Cen_Mobile  = selectCostCenter.Cost_Cen_Mobile
+    this.ObjCostCenter.Cost_Cen_Phone  = selectCostCenter.Cost_Cen_Phone
+    this.ObjCostCenter.Cost_Cen_Email1  = selectCostCenter.Cost_Cen_Email1
+    this.ObjCostCenter.Cost_Cen_VAT_CST  = selectCostCenter.Cost_Cen_VAT_CST
+    this.ObjCostCenter.Cost_Cen_CST_NO  = selectCostCenter.Cost_Cen_CST_NO
+    this.ObjCostCenter.Cost_Cen_SRV_TAX_NO  = selectCostCenter.Cost_Cen_SRV_TAX_NO
+    this.ObjCostCenter.Cost_Cen_GST_No  = selectCostCenter.Cost_Cen_GST_No
+
   }
 
   GetSubLedger() {
@@ -377,7 +393,7 @@ export class BLTxnPurchaseBillFromGRNComponent implements OnInit {
         .subscribe((data: any) => {
           this.purchaseChallanList = data ? JSON.parse(data) : [];
           this.purchaseChallanList = this.purchaseChallanList.map(
-            (el: any) => ({ ...el, ...{ checked: false , purchaseChecked:false} })
+            (el: any) => ({ ...el, ...{ checked: false , purchaseChecked:true} })
           );
           this.backuppurchaseChallanList = JSON.parse(JSON.stringify(this.purchaseChallanList))
         });
@@ -397,7 +413,7 @@ export class BLTxnPurchaseBillFromGRNComponent implements OnInit {
         el.checked = row.checked;
       }
       if (!el.checked) {
-        el.purchaseChecked = false
+        el.purchaseChecked = true
       }
     });
   }
@@ -1065,7 +1081,11 @@ export class BLTxnPurchaseBillFromGRNComponent implements OnInit {
               summary: "Succesfully Created",
               detail: "Doc No : " + Doc_No,
             });
+
+           const backUpsub = JSON.parse( JSON.stringify(this.ObjSubLedger))
            this.clearData()
+           this.ObjSubLedger.Sub_Ledger_ID = backUpsub.Sub_Ledger_ID
+           this.SubledgerChange(this.ObjSubLedger.Sub_Ledger_ID)
           }
         }
       });
@@ -1086,7 +1106,10 @@ export class BLTxnPurchaseBillFromGRNComponent implements OnInit {
               summary: "Succesfully Created",
               detail: "Doc No : " + docNo,
             });
-          this.clearData()
+          const backUpsub = JSON.parse( JSON.stringify(this.ObjSubLedger))
+           this.clearData()
+           this.ObjSubLedger.Sub_Ledger_ID = backUpsub.Sub_Ledger_ID
+           this.SubledgerChange(this.ObjSubLedger.Sub_Ledger_ID)
         }
       });
   }
