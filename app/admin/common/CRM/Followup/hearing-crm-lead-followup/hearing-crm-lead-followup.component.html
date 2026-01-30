@@ -44,6 +44,12 @@
                                     <span  class="glyphicon glyphicon-search"></span>&nbsp;Search
                                 </button>
                             </div>
+                            <div class="col-sm-3" *ngIf="(usertype === 'A') && userListTable.length">
+                                <button class="btn btn-success" style="margin-top: 28px" data-toggle="modal"
+                                    (click)="exportoexcel(userListTable,'Patient_Followup')">
+                                    <span  class="glyphicon glyphicon-save"></span>&nbsp;export to excel
+                                </button>
+                            </div>
                             <!-- <div class="col-sm-5">
                                 <fieldset style="margin-top: -6px;">
                                     <legend style="text-align: right;">Filter</legend>
@@ -91,7 +97,7 @@
                             #dt>
                             <ng-template pTemplate="caption">
                                 <div class="row">
-                    
+                                    
                                     <div class="col-sm-3 pull-right" style="text-align: right">
                                         <input type="text" pInputText size="50" placeholder="Search"
                                             (input)="dt.filterGlobal($event.target.value, 'contains')" class="searchInput form-control">

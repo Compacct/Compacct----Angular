@@ -8,6 +8,7 @@ import { CompacctGlobalApiService } from '../../../../shared/compacct.services/c
 import { NgxUiLoaderService } from 'ngx-ui-loader';
 import { DateTimeConvertService } from '../../../../shared/compacct.global/dateTime.service';
 import { data } from 'jquery';
+import * as XLSX from 'xlsx';
 
 @Component({
   selector: 'app-hearing-crm-lead-followup',
@@ -27,6 +28,7 @@ export class HearingCRMLeadFollowupComponent implements OnInit {
   userListTable: any = [];
   userListTableDynmic: any = [];
   userid: any = undefined;
+  usertype:any = undefined;
   DistFollowup1: any = [];
   DistFollowupSelect1: any = undefined;
   userListTableBackup: any = [];
@@ -67,6 +69,7 @@ export class HearingCRMLeadFollowupComponent implements OnInit {
 
   ngOnInit() {
     this.userid = this.$CompacctAPI.CompacctCookies.User_ID
+    this.usertype = this.$CompacctAPI.CompacctCookies.User_Type
     this.Header.pushHeader({
       Header: "Patient Followup",
       Link: "Patient Followup"
@@ -84,7 +87,7 @@ export class HearingCRMLeadFollowupComponent implements OnInit {
      }
     this.GlobalAPI.getData(obj).subscribe((data: any) => { 
       if (data.length) {
-        data.forEach(el => {
+        data.forEach((el:any) => {
           el['label'] = el.User_Name;
           el['value'] = el.User_ID;
         });
@@ -126,10 +129,29 @@ export class HearingCRMLeadFollowupComponent implements OnInit {
       }) 
     }
   }
+  exportoexcel(Arr:any,fileName:any): void {
+    let temp:any = [];
+     Arr.forEach((element:any) => {
+       const obj = {
+        Name : element.Contact_Name,
+        Mobile : element.Mobile,
+        Alternative_No : element.Mobile_2,
+        WhatsApp_No : element.Mobile_3_WP,
+        Followup_For_Branch : element.Cost_Cen_Name,
+        Enquiry_Source : element.Enq_Source_Name,
+        Followup_Type : element.Followup_Type,
+        Last_Followup_Remarks : element.Followup_Details,
+       }
+       temp.push(obj)
+     });
+    const worksheet: XLSX.WorkSheet = XLSX.utils.json_to_sheet(temp);
+    const workbook: XLSX.WorkBook = {Sheets: {'data': worksheet}, SheetNames: ['data']};
+    XLSX.writeFile(workbook, fileName+'.xlsx');
+  }
   GetDistinct1() {
     let Status: any = [];
     this.DistFollowup1 = [];
-    this.userListTable.forEach((item) => {
+    this.userListTable.forEach((item:any) => {
       if (Status.indexOf(item.Followup_Type) === -1) {
         Status.push(item.Followup_Type);
         this.DistFollowup1.push({ label: item.Followup_Type, value: item.Followup_Type });
@@ -146,7 +168,7 @@ export class HearingCRMLeadFollowupComponent implements OnInit {
     }
     this.userListTable = [];
     if (SearchFields.length) {
-      let LeadArr = this.userListTableBackup.filter(function (e) {
+      let LeadArr = this.userListTableBackup.filter(function (e:any) {
         return (First.length ? First.includes(e['Followup_Type']) : true)
       });
       this.userListTable = LeadArr.length ? LeadArr : [];
@@ -166,7 +188,7 @@ export class HearingCRMLeadFollowupComponent implements OnInit {
     this.DistFollowupType =[];
     this.SelectedFollowupType =[];
     this.SearchFields =[];
-    this.userListTable.forEach((item) => {
+    this.userListTable.forEach((item:any) => {
    if (DFollowupForBranch.indexOf(item.Cost_Cen_Name) === -1) {
     DFollowupForBranch.push(item.Cost_Cen_Name);
    this.DistFollowupForBranch.push({ label: item.Cost_Cen_Name, value: item.Cost_Cen_Name });
@@ -201,7 +223,7 @@ export class HearingCRMLeadFollowupComponent implements OnInit {
   }
   this.userListTable = [];
   if (this.SearchFields.length) {
-    let LeadArr = this.userListTableBackup.filter(function (e) {
+    let LeadArr = this.userListTableBackup.filter(function (e:any) {
       return (DFollowupForBranch.length ? DFollowupForBranch.includes(e['Cost_Cen_Name']) : true)
       && (DEnquirySource.length ? DEnquirySource.includes(e['Enq_Source_Name']) : true)
       && (DFollowupType.length ? DFollowupType.includes(e['Followup_Type']) : true)
