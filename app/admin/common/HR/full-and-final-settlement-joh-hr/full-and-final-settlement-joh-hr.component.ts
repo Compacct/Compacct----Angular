@@ -145,6 +145,8 @@ export class FullAndFinalSettlementJohHrComponent implements OnInit {
       this.ObjFullAndFinalSettlement.ESI_Deduction = data[0].ESIC ? data[0].ESIC : 0;
       this.ObjFullAndFinalSettlement.P_Tax_Deduction = data[0].P_TAX ? data[0].P_TAX : 0;
       this.ObjFullAndFinalSettlement.TDS_Deduction = data[0].TDS ? data[0].TDS : 0;
+      this.ObjFullAndFinalSettlement.Other1 = data[0].Other1 ? data[0].Other1 : 0;
+      this.ObjFullAndFinalSettlement.Other2 = data[0].Other2 ? data[0].Other2 : 0;
 
       // this.getEmployeeLastMonthEarningDetails();
       this.GetBonusDetails();
@@ -183,7 +185,7 @@ export class FullAndFinalSettlementJohHrComponent implements OnInit {
       this.BonusList = Bonus;
       this.EncashmentList = Encashment;
       this.GratuityList = ggratuity;
-      this.ObjFullAndFinalSettlement.Bonus = Bonus.length ? Bonus[0].Bonus ? Bonus[0].Bonus : 0 : 0;
+      this.ObjFullAndFinalSettlement.Bonus = 0;//Bonus.length ? Bonus[0].Bonus ? Bonus[0].Bonus : 0 : 0;
       this.ObjFullAndFinalSettlement.Leave_Balance = Encashment.length ? Encashment[0].Leave_Days ? Encashment[0].Leave_Days : 0 : 0;
       this.ObjFullAndFinalSettlement.Leave_Encashment = Encashment.length ? Encashment[0].Leave_Amount ? Encashment[0].Leave_Amount : 0 : 0;
       this.ObjFullAndFinalSettlement.Gratuity = ggratuity.length ? ggratuity[0].Gratuity ? ggratuity[0].Gratuity : 0 : 0;
@@ -193,29 +195,47 @@ export class FullAndFinalSettlementJohHrComponent implements OnInit {
 
   }
 
+  // CalculateNoticePeriod() {
+  //   if (this.ObjFullAndFinalSettlement.Notice_Period_Day) {
+  //     const date = new Date(this.Leave_Dt);
+  //     const totaldays = new Date(date.getFullYear(), date.getMonth() + 1, 0).getDate();
+  //     console.log("totaldays====", totaldays);
+  //     var result = Number(this.ObjFullAndFinalSettlement.Total_Basic_Amount / totaldays).toFixed(2);
+  //     var noticeperioddeduction = Number(this.ObjFullAndFinalSettlement.Notice_Period_Day * Number(result)).toFixed(2);
+  //     this.ObjFullAndFinalSettlement.Notice_Period_Amount = Number(noticeperioddeduction);
+  //     this.GetTotalDeduction();
+  //     this.GetNetPayble();
+  //   }
+  //   else {
+  //     this.ObjFullAndFinalSettlement.Notice_Period_Amount = 0;
+  //     this.GetTotalDeduction();
+  //     this.GetNetPayble();
+  //   }
+  // }
   CalculateNoticePeriod() {
+    this.ObjFullAndFinalSettlement.Notice_Period_Amount = 0;
     if (this.ObjFullAndFinalSettlement.Notice_Period_Day) {
-      const date = new Date(this.Leave_Dt);
-      const totaldays = new Date(date.getFullYear(), date.getMonth() + 1, 0).getDate();
-      console.log("totaldays====", totaldays);
-      var result = Number(this.ObjFullAndFinalSettlement.Total_Basic_Amount / totaldays).toFixed(2);
-      var noticeperioddeduction = Number(this.ObjFullAndFinalSettlement.Notice_Period_Day * Number(result)).toFixed(2);
-      this.ObjFullAndFinalSettlement.Notice_Period_Amount = Number(noticeperioddeduction);
-      this.GetTotalDeduction();
-      this.GetNetPayble();
-    }
-    else {
-      this.ObjFullAndFinalSettlement.Notice_Period_Amount = 0;
-      this.GetTotalDeduction();
-      this.GetNetPayble();
+      const obj = {
+        "SP_String": "SP_HR_Full_And_Final_Settlement",
+        "Report_Name_String": "Get_Notice_Periods_deduction_Amount",
+        "Json_Param_String": JSON.stringify([{ Emp_ID: this.Emp_ID, Days: Number(this.ObjFullAndFinalSettlement.Notice_Period_Day) }])
+      }
+      this.GlobalAPI.getData(obj).subscribe((data: any) => {
+        //  console.log("this.AllEmployeeList",this.AllEmployeeList)
+        this.ObjFullAndFinalSettlement.Notice_Period_Amount = data[0].Notice_Period_Amount ? Number(data[0].Notice_Period_Amount).toFixed(2) : 0;
+        this.GetTotalDeduction();
+        // this.GetNetPayble();
+      })
     }
   }
 
   GetTotalDeduction() {
     var Total_Deduction = Number(this.ObjFullAndFinalSettlement.EPF_Deduction) + Number(this.ObjFullAndFinalSettlement.ESI_Deduction) +
       Number(this.ObjFullAndFinalSettlement.P_Tax_Deduction) + Number(this.ObjFullAndFinalSettlement.TDS_Deduction) +
+      Number(this.ObjFullAndFinalSettlement.Other1) + Number(this.ObjFullAndFinalSettlement.Other2) +
       Number(this.ObjFullAndFinalSettlement.Notice_Period_Amount);
     this.ObjFullAndFinalSettlement.Total_Deduction = Number(Total_Deduction).toFixed(2);
+    this.GetNetPayble();
   }
 
   getEmployeeLastMonthEarningDetails() {
@@ -332,6 +352,7 @@ export class FullAndFinalSettlementJohHrComponent implements OnInit {
       this.GlobalAPI.postData(obj).subscribe((data: any) => {
         // console.log("save data",data);
         if (data[0].Column1) {
+          var msg = this.buttonname === "Update" ? "Succesfully Updated" : "Succesfully Saved"
           this.Spinner = false;
           this.FullAndFinalSettlementFormSubmitted = false;
           this.compacctToast.clear();
@@ -339,7 +360,7 @@ export class FullAndFinalSettlementJohHrComponent implements OnInit {
             key: "compacct-toast",
             severity: "success",
             // summary: "Message",
-            detail: "Succesfully Saved"
+            detail: msg
           });
           this.Emp_ID = undefined;
           this.ObjFullAndFinalSettlement = new FullAndFinalSettlement();
@@ -483,6 +504,9 @@ class FullAndFinalSettlement {
   TDS_Deduction: any;
   Notice_Period_Day: any;
   Notice_Period_Amount: any;
+  Other1: any;
+  Other2: any;
+  Remarks: any;
   Total_Deduction: any = 0;
   Net_Payable: any = 0;
 

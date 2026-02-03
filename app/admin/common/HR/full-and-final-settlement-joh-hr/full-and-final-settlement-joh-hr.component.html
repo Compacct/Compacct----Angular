@@ -1,3 +1,4 @@
+<p-toast key="compacct-toast" baseZIndex="99999"></p-toast>
 <div class="row">
 	<div class="col-xs-12">
 		<div class="box box-primary">
@@ -493,7 +494,7 @@
 											</tr>
 											<tr>
 												<td class="text-center" style="vertical-align: middle">1</td>
-												<td>Bonus</td>
+												<td>INCENTIVES</td>
 												<td class="text-center" style="vertical-align: middle">
 													<input
 														type="text"
@@ -603,8 +604,9 @@
 														[(ngModel)]="ObjFullAndFinalSettlement.EPF_Deduction"
 														class="form-control"
 														CompacctDigitonly="true"
+														(ngModelChange)="GetTotalDeduction()"
 														[ngClass]="{ 'clearance ': FullAndFinalSettlementFormSubmitted && epf.errors?.required }"
-														disabled />
+														 />
 												</td>
 											</tr>
 											<tr>
@@ -619,8 +621,9 @@
 														[(ngModel)]="ObjFullAndFinalSettlement.ESI_Deduction"
 														class="form-control"
 														CompacctDigitonly="true"
+														(ngModelChange)="GetTotalDeduction()"
 														[ngClass]="{ 'clearance ': FullAndFinalSettlementFormSubmitted && esi.errors?.required }"
-														disabled />
+														 />
 												</td>
 											</tr>
 											<tr>
@@ -635,8 +638,9 @@
 														[(ngModel)]="ObjFullAndFinalSettlement.P_Tax_Deduction"
 														CompacctDigitonly="true"
 														class="form-control"
+														(ngModelChange)="GetTotalDeduction()"
 														[ngClass]="{ 'clearance ': FullAndFinalSettlementFormSubmitted && ptax.errors?.required }"
-														disabled />
+														 />
 												</td>
 											</tr>
 											<tr>
@@ -651,12 +655,47 @@
 														[(ngModel)]="ObjFullAndFinalSettlement.TDS_Deduction"
 														CompacctDigitonly="true"
 														class="form-control"
+														(ngModelChange)="GetTotalDeduction()"
 														[ngClass]="{ 'clearance ': FullAndFinalSettlementFormSubmitted && tds.errors?.required }"
-														disabled />
+														 />
 												</td>
 											</tr>
 											<tr>
 												<td class="text-center" style="vertical-align: middle">5</td>
+												<td>OTHER 1</td>
+												<td></td>
+												<td>
+													<input
+														type="text"
+														name="other1"
+														#other1="ngModel"
+														[(ngModel)]="ObjFullAndFinalSettlement.Other1"
+														CompacctDigitonly="true"
+														class="form-control"
+														(ngModelChange)="GetTotalDeduction()"
+														[ngClass]="{ 'clearance ': FullAndFinalSettlementFormSubmitted && other1.errors?.required }"
+														 />
+												</td>
+											</tr>
+											<tr>
+												<td class="text-center" style="vertical-align: middle">6</td>
+												<td>OTHER 2</td>
+												<td></td>
+												<td>
+													<input
+														type="text"
+														name="other2"
+														#other2="ngModel"
+														[(ngModel)]="ObjFullAndFinalSettlement.Other2"
+														CompacctDigitonly="true"
+														class="form-control"
+														(ngModelChange)="GetTotalDeduction()"
+														[ngClass]="{ 'clearance ': FullAndFinalSettlementFormSubmitted && other2.errors?.required }"
+														 />
+												</td>
+											</tr>
+											<tr>
+												<td class="text-center" style="vertical-align: middle">7</td>
 												<td>Notice Period Deduction</td>
 												<td class="text-center" style="vertical-align: middle">
 													<input
@@ -678,9 +717,23 @@
 														[(ngModel)]="ObjFullAndFinalSettlement.Notice_Period_Amount"
 														CompacctDigitonly="true"
 														class="form-control"
-														disabled="true"
 														[ngClass]="{ 'clearance ': FullAndFinalSettlementFormSubmitted && npd.errors?.required }"
-														disabled />
+														 />
+												</td>
+											</tr>
+											<tr>
+												<td class="text-center" style="vertical-align: middle">8</td>
+												<td>REMARKS</td>
+												<td></td>
+												<td>
+													<input
+														type="text"
+														name="remarks"
+														#remarks="ngModel"
+														[(ngModel)]="ObjFullAndFinalSettlement.Remarks"
+														class="form-control"
+														[ngClass]="{ 'clearance ': FullAndFinalSettlementFormSubmitted && remarks.errors?.required }"
+														 />
 												</td>
 											</tr>
 											<tr>
