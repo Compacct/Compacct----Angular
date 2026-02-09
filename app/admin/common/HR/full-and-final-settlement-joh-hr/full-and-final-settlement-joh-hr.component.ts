@@ -189,6 +189,8 @@ export class FullAndFinalSettlementJohHrComponent implements OnInit {
       this.ObjFullAndFinalSettlement.Leave_Balance = Encashment.length ? Encashment[0].Leave_Days ? Encashment[0].Leave_Days : 0 : 0;
       this.ObjFullAndFinalSettlement.Leave_Encashment = Encashment.length ? Encashment[0].Leave_Amount ? Encashment[0].Leave_Amount : 0 : 0;
       this.ObjFullAndFinalSettlement.Gratuity = ggratuity.length ? ggratuity[0].Gratuity ? ggratuity[0].Gratuity : 0 : 0;
+      this.ObjFullAndFinalSettlement.Extra_Working = 0;
+      this.ObjFullAndFinalSettlement.Expense = 0;
       this.GetNoticePeriodEarningAmount();
       this.CalculateTotalStatutoryEarnings();
     })
@@ -318,7 +320,8 @@ export class FullAndFinalSettlementJohHrComponent implements OnInit {
 
   CalculateTotalStatutoryEarnings() {
     var Total_Statutory_Earnings = Number(this.ObjFullAndFinalSettlement.Bonus) + Number(this.ObjFullAndFinalSettlement.Leave_Encashment) +
-      Number(this.ObjFullAndFinalSettlement.Gratuity) + Number(this.ObjFullAndFinalSettlement.Notice_Period_Earning_Amount)
+      Number(this.ObjFullAndFinalSettlement.Gratuity) + Number(this.ObjFullAndFinalSettlement.Extra_Working) + 
+      Number(this.ObjFullAndFinalSettlement.Expense) + Number(this.ObjFullAndFinalSettlement.Notice_Period_Earning_Amount)
     this.ObjFullAndFinalSettlement.Total_Statutory_Earnings = Number(Total_Statutory_Earnings).toFixed(2);
     this.GetNetPayble();
   }
@@ -494,6 +497,9 @@ class FullAndFinalSettlement {
   Leave_Balance: any;
   Leave_Encashment: any;
   Gratuity: any;
+  Extra_Working_Day: any;
+  Extra_Working: any;
+  Expense: any;
   Notice_Period_Earning_Day: any;
   Notice_Period_Earning_Amount: any;
   Total_Statutory_Earnings: any = 0;
