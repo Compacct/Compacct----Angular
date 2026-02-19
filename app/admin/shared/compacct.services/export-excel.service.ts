@@ -78,6 +78,72 @@ export class ExportExcelService {
       fs.saveAs(blob, title + '.xlsx');
     })
   }
+  exportExcelForAudiologist(excelData:any) {
+    //worksheetName, title, header & Data
+    const worksheetName = excelData.worksheetName;
+    const title = excelData.title;
+    const header = excelData.header;
+    const data = excelData.data;
+
+    //Create a workbook with a worksheet
+    let workbook = new Workbook();
+    let worksheet = workbook.addWorksheet(worksheetName);
+
+      //Adding Header Row
+      let headerRow = worksheet.addRow(header);
+      headerRow.eachCell((cell, number) => {
+        cell.fill = {
+          type: 'pattern',
+          pattern: 'solid',
+          fgColor: { argb: 'beb9b9' },
+          bgColor: { argb: '' }
+        }
+        cell.font = {
+          bold: true,
+          color: { argb: '0c0c0c' },
+          size: 12
+        }
+        // Add border
+      cell.border = {
+        top: { style: 'thin', color: { argb: '000000' } },
+        left: { style: 'thin', color: { argb: '000000' } },
+        bottom: { style: 'thin', color: { argb: '000000' } },
+        right: { style: 'thin', color: { argb: '000000' } },
+      };
+      })
+
+    // Adding Data with Conditional Formatting
+    data.forEach((item: any) => {
+      // const row = header.map((key: string) => item[key]);
+      // worksheet.addRow(row);
+      const row = worksheet.addRow(header.map((h:any) => item[h]));
+       // Add border to each cell
+      row.eachCell((cell) => {
+        cell.border = {
+          top: { style: 'thin', color: { argb: '000000' } },
+          left: { style: 'thin', color: { argb: '000000' } },
+          bottom: { style: 'thin', color: { argb: '000000' } },
+          right: { style: 'thin', color: { argb: '000000' } },
+        };
+      });
+    });
+
+    // Auto width AFTER data inserted
+    worksheet.columns.forEach((column:any) => {
+      let maxLength = 0;
+      column.eachCell({ includeEmpty: true }, (cell:any) => {
+        const cellValue = cell.value ? cell.value.toString() : '';
+        maxLength = Math.max(maxLength, cellValue.length);
+      });
+      column.width = maxLength < 10 ? 10 : maxLength + 2;
+    });
+
+     //Generate & Save Excel File
+     workbook.xlsx.writeBuffer().then((data) => {
+      let blob = new Blob([data], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' });
+      fs.saveAs(blob, title + '.xlsx');
+    })
+  }
   exporttoExcelSalesMIS(excelData:any, daterange:any) {
     //Title, Header & Data
      const header =  Object.keys(excelData[0]) 
