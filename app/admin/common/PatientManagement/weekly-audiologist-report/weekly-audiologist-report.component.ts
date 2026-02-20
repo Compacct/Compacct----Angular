@@ -158,7 +158,7 @@ export class WeeklyAudiologistReportComponent implements OnInit {
       this.ObjDiagnosticsIncome.To_Date = dateRangeObj[1];
     }
   }
-  GetDateRangeDiagnosticIncome() {
+  GetDiagnosticIncome() {
     this.DiagnosticIncomeList = [];
     this.DiagnosticIncomeListHeader = [];
     const start = this.ObjDiagnosticsIncome.From_Date
