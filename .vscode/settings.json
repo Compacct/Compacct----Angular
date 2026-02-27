@@ -1,4 +1,5 @@
 {
     "terminal.integrated.fontSize": 10,
-    "terminal.integrated.fontWeightBold": "normal"
+    "terminal.integrated.fontWeightBold": "normal",
+    "angular.enable-strict-mode-prompt": false
 }
