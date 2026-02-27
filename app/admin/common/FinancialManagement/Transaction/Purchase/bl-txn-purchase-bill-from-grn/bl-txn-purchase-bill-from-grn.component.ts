@@ -737,8 +737,9 @@ export class BLTxnPurchaseBillFromGRNComponent implements OnInit {
     const filterChecked = this.purchaseChallanList.filter(
       (el: any) => el.checked && el.purchaseChecked
     );
+
+    console.log(filterChecked)
     for (var i = 0; i < filterChecked.length; i++) {
-      filterChecked;
       this.CatidwithAmount.push({
         Cat_ID: filterChecked[i].Cat_ID,
         Amount: filterChecked[i].Amount,
@@ -770,12 +771,15 @@ export class BLTxnPurchaseBillFromGRNComponent implements OnInit {
       });
     }
   };
-  SaveVoucher(Doc_No) {
+  SaveVoucher(Doc_No,outSide = false) {
     let VoucherDataList: any = [];
     //topper data
-    this.ObjVoucherCommon.Voucher_No = Doc_No;
-    this.ObjVoucherCommon.Cost_Cen_ID =
+    if(!outSide){
+      this.ObjVoucherCommon.Voucher_No = Doc_No;
+      this.ObjVoucherCommon.Cost_Cen_ID =
       this.$CompacctAPI.CompacctCookies.Cost_Cen_ID;
+    }
+    
     this.ObjVoucherCommon.User_ID = this.$CompacctAPI.CompacctCookies.User_ID;
     // ctrl.ObjVoucherCommon.Fin_Year_ID = ctrl.userdata.Fin_Year_ID;
     this.getDocDateWiseFinancialYearId();
@@ -1112,6 +1116,122 @@ export class BLTxnPurchaseBillFromGRNComponent implements OnInit {
            this.SubledgerChange(this.ObjSubLedger.Sub_Ledger_ID)
         }
       });
+  }
+
+  resubmitAccount(Doc_No:any){
+    if(Doc_No){
+      this.CatidwithAmount = []
+          const obj = {
+          "SP_String": "sp_Bl_Txn_Purchase_GRN",
+          "Report_Name_String": 'browse_pbill_gst',
+          "Json_Param_String": JSON.stringify([{Doc_No:Doc_No }]) 
+         }
+         this.GlobalAPI.postData(obj)
+         .subscribe((data:any)=>{
+          console.log( data )
+
+          if(!data[0].hasOwnProperty("msg")){
+          this.ObjVoucherTopper.CR_Amt = data[0].Net_Amt
+          this.ObjVoucherTopper.DR_Amt = 0
+          this.ObjVoucherTopper.Is_Topper = 'Y'
+          this.ObjVoucherTopper.Ledger_ID = data[0].Ledger_ID
+          this.ObjVoucherTopper.Sub_Ledger_ID = data[0].Sub_Ledger_ID
+        
+          this.ObjVoucherCommon.Auto_Posted = 'N'
+          this.ObjVoucherCommon.Bank_Branch_Name = ""
+          this.ObjVoucherCommon.Bank_Name = ""
+          this.ObjVoucherCommon.Bank_Txn_Type = ""
+          this.ObjVoucherCommon.Cheque_Date =1 + "/" + "Jan" + "/" + 1900
+          this.ObjVoucherCommon.Cheque_No = ""
+          this.ObjVoucherCommon.Cost_Cen_ID = data[0].Cost_Cen_ID
+          this.ObjVoucherCommon.Cost_Cen_ID_Trn = data[0].cost_cen_id_trn
+          this.ObjVoucherCommon.Cost_Head_ID = 0
+          this.ObjVoucherCommon.Fin_Year_ID = data[0].Fin_Year_ID
+          this.ObjVoucherCommon.Foot_Fall_ID = 0
+          this.ObjVoucherCommon.Naration = ""
+          this.ObjVoucherCommon.Posted_On = this.DateService.dateConvert(new Date())
+          this.ObjVoucherCommon.Prev_doc_no = ""
+          this.ObjVoucherCommon.Project_ID = 0
+          this.ObjVoucherCommon.Reconsil_Date = 1 + "/" + "Jan" + "/" + 1900
+          this.ObjVoucherCommon.Reconsil_Tag = 'N'
+          this.ObjVoucherCommon.Status = "A"
+          this.ObjVoucherCommon.Voucher_Date = this.DateService.dateConvert(new Date(data[0].Doc_Date))
+          this.ObjVoucherCommon.Voucher_No = data[0].Doc_No
+          this.ObjVoucherCommon.Voucher_Type_ID = 6 
+
+          const filterChecked = JSON.parse(data[0].product_details)
+
+          filterChecked.forEach((el) => {
+                  el.Discount_Type = el.Discount_Type || "";
+                  el.Amount = el.Rate * el.Qty;
+                  el.Discount_Type_Amount = el.Discount_Type_Amount || 0;
+                  if (el.Discount_Type == "%") {
+                    el.Discount_Type_Amount = Number(
+                      ((el.Amount * (el.Discount || 0)) / 100).toFixed(2)
+                    );
+                  }
+                  el.Discount_Type_Amount =
+                    el.Discount_Type == "%" ? el.Discount_Type_Amount : el.Discount;
+                  el.Taxable_Amount = el.Discount_Type_Amount
+                    ? el.Amount - el.Discount_Type_Amount
+                    : el.Amount;
+                  if (
+                    this.ObjSubLedger.Sub_Ledger_State ==
+                    this.ObjCostCenter.Cost_Cen_State
+                  ) {
+                    el.IGST_Rate = 0;
+                    el.CGST_Amount = Number(
+                      ((el.Taxable_Amount * el.CGST_Rate) / 100).toFixed(2)
+                    );
+                    el.SGST_Amount = Number(
+                      ((el.Taxable_Amount * el.SGST_Rate) / 100).toFixed(2)
+                    );
+                    el.IGST_Amount = 0;
+                  } else {
+                    el.CGST_Rate = 0;
+                    el.SGST_Rate = 0;
+                    el.CGST_Amount = 0;
+                    el.SGST_Amount = 0;
+                    el.IGST_Amount = Number(
+                      ((el.Taxable_Amount * el.IGST_Rate) / 100).toFixed(2)
+                    );
+                  }
+                });
+
+           for (var i = 0; i < filterChecked.length; i++) {
+                filterChecked;
+                this.CatidwithAmount.push({
+                  Cat_ID: filterChecked[i].Cat_ID,
+                  Amount: Number(filterChecked[i].Amount),
+                  Ledger_ID: filterChecked[i].Ledger_ID,
+                  CGST_Input_Ledger_ID: filterChecked[i].CGST_Input_Ledger_ID,
+                  SGST_Input_Ledger_Id: filterChecked[i].SGST_Input_Ledger_Id,
+                  IGST_Input_Ledger_ID: filterChecked[i].IGST_Input_Ledger_ID,
+                  Discount_Ledger_ID: filterChecked[i].Discount_Ledger_ID,
+                  CGST_Amount: Number(filterChecked[i].CGST_Amount),
+                  SGST_Amount: Number(filterChecked[i].SGST_Amount),
+                  IGST_Amount: Number(filterChecked[i].IGST_Amount),
+                  Discount_Type_Amount: Number(filterChecked[i].Discount_Type_Amount),
+                });
+              }
+
+
+          this.accountJournalCreateUpdateApi = '/ACC_Txn_Acc_Journal/Create_ACC_Txn_Acc_Journal_WO_NO_Ajax_pbill_only';
+          this.SaveVoucher(data[0].Doc_No, true )
+          }
+          else{
+              this.compacctToast.clear();
+              this.compacctToast.add({
+                key: "compacct-toast",
+                severity: "error",
+                life: 5000,
+                summary: "Error!",
+                detail: data[0].msg
+              });
+          }
+        
+         })
+    }
   }
 }
 
