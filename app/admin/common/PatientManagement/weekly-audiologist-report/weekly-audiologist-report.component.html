@@ -43,12 +43,20 @@
                                     </ng-template>
                                     <ng-template pTemplate="header">
                                         <tr id="enq-head">
-                                        <th *ngFor="let option of WeeklyAudiologistReportlListHeader">{{option.replaceAll('_',' ')}}</th>
+                                        <th *ngFor="let option of WeeklyAudiologistReportlListHeader | slice:1">{{option.replaceAll('_',' ')}}</th>
                                         </tr>
                                     </ng-template>
                                     <ng-template pTemplate="body" let-col let-rowIndex="rowIndex">
                                         <tr>
-                                            <td nowrap *ngFor="let option of WeeklyAudiologistReportlListHeader; let i = index">
+                                            <td nowrap *ngFor="let option of WeeklyAudiologistReportlListHeader | slice:1; let i = index" 
+                                                (click)="handleColumnClick(option, col)"
+                                                [style.cursor]="
+                                                    option === 'Appointment_Handled' ||
+                                                    option === 'Trial_Is_Given' ||
+                                                    option === 'Patient_Converted'
+                                                    ? 'pointer'
+                                                    : 'default'
+                                                ">
                                                 {{col[option]}} 
                                             </td>
                                         </tr>
@@ -98,12 +106,18 @@
                                         </ng-template>
                                         <ng-template pTemplate="header">
                                             <tr id="enq-head">
-                                            <th *ngFor="let option of BrandWiseSaleListHeader">{{option.replaceAll('_',' ')}}</th>
+                                            <th *ngFor="let option of BrandWiseSaleListHeader | slice:1">{{option.replaceAll('_',' ')}}</th>
                                             </tr>
                                         </ng-template>
                                         <ng-template pTemplate="body" let-col let-rowIndex="rowIndex">
                                             <tr>
-                                                <td nowrap *ngFor="let option of BrandWiseSaleListHeader; let i = index">
+                                                <td nowrap *ngFor="let option of BrandWiseSaleListHeader | slice:1; let i = index"
+                                                (click)="handleColumnClicktab2(option, col)"
+                                                [style.cursor]="
+                                                    option === 'Unit' 
+                                                    ? 'pointer'
+                                                    : 'default'
+                                                ">
                                                     {{col[option]}} 
                                                 </td>
                                             </tr>
@@ -178,3 +192,93 @@
         </div>
     </div>
 </div>
+
+<!-- VIEW POPUP -->
+<p-dialog header="Details" [appendTo]="'body'" [(visible)]="ViewPoppup" [modal]="true" [responsive]="true" [closeOnEscape]="true" [style]="{width: '70%', minWidth: '300px'}" [maximizable]="true">
+    
+    <div class="clearfix"></div>
+    <div class="table-responsive no-padding" *ngIf="DialogList.length">
+        <p-table [value]="DialogList" [paginator]="DialogList.length ? true : false"
+            [rows]="100" [rowHover]="true" [autoLayout]="true" sortMode="multiple"
+            [rowsPerPageOptions]="[100,200,300]"
+            [globalFilterFields]="DialogListHeader" [rowHover]="true" #dt>
+            <ng-template pTemplate="caption">
+                <div class="row">
+                    <div class="col-sm-8"></div>
+                    <div class="col-sm-4">
+                        <input type="text" pInputText size="50" placeholder="Search"
+                            (input)="dt.filterGlobal($event.target.value, 'contains')"
+                            class="searchInput form-control">
+                    </div>
+                </div>
+            </ng-template>
+            <ng-template pTemplate="header">
+                <tr id="enq-head">
+                <th *ngFor="let option of DialogListHeader">{{option.replaceAll('_',' ')}}</th>
+                </tr>
+            </ng-template>
+            <ng-template pTemplate="body" let-col let-rowIndex="rowIndex">
+                <tr>
+                    <td nowrap *ngFor="let option of DialogListHeader; let i = index">
+                        {{col[option]}} 
+                    </td>
+                </tr>
+            </ng-template>
+            <ng-template pTemplate="paginatorright" let-state>
+                Showing {{state.first+1}} of {{(state.first+1) + state.rows}} of
+                {{state.totalRecords}}
+            </ng-template>
+        </p-table>
+    </div>
+
+    <p-footer>
+        <button type="button" (click)="ViewPoppup = false" class="btn btn-default">
+    <i class="fa fa-close"></i>&nbsp;  Close
+    </button>
+    </p-footer>
+</p-dialog>
+
+<!-- VIEW POPUP TAB2 -->
+<p-dialog header="Details" [appendTo]="'body'" [(visible)]="ViewPoppup2" [modal]="true" [responsive]="true" [closeOnEscape]="true" [style]="{width: '70%', minWidth: '300px'}" [maximizable]="true">
+    
+    <div class="clearfix"></div>
+    <div class="table-responsive no-padding" *ngIf="DialogList2.length">
+        <p-table [value]="DialogList2" [paginator]="DialogList2.length ? true : false"
+            [rows]="100" [rowHover]="true" [autoLayout]="true" sortMode="multiple"
+            [rowsPerPageOptions]="[100,200,300]"
+            [globalFilterFields]="DialogListHeader2" [rowHover]="true" #dt>
+            <ng-template pTemplate="caption">
+                <div class="row">
+                    <div class="col-sm-8"></div>
+                    <div class="col-sm-4">
+                        <input type="text" pInputText size="50" placeholder="Search"
+                            (input)="dt.filterGlobal($event.target.value, 'contains')"
+                            class="searchInput form-control">
+                    </div>
+                </div>
+            </ng-template>
+            <ng-template pTemplate="header">
+                <tr id="enq-head">
+                <th *ngFor="let option of DialogListHeader2">{{option.replaceAll('_',' ')}}</th>
+                </tr>
+            </ng-template>
+            <ng-template pTemplate="body" let-col let-rowIndex="rowIndex">
+                <tr>
+                    <td nowrap *ngFor="let option of DialogListHeader2; let i = index">
+                        {{col[option]}} 
+                    </td>
+                </tr>
+            </ng-template>
+            <ng-template pTemplate="paginatorright" let-state>
+                Showing {{state.first+1}} of {{(state.first+1) + state.rows}} of
+                {{state.totalRecords}}
+            </ng-template>
+        </p-table>
+    </div>
+
+    <p-footer>
+        <button type="button" (click)="ViewPoppup2 = false" class="btn btn-default">
+    <i class="fa fa-close"></i>&nbsp;  Close
+    </button>
+    </p-footer>
+</p-dialog>

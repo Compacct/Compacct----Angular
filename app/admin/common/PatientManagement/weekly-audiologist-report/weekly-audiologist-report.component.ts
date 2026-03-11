@@ -33,6 +33,12 @@ export class WeeklyAudiologistReportComponent implements OnInit {
   ObjDiagnosticsIncome : DiagnosticsIncome = new DiagnosticsIncome();
   DiagnosticIncomeList:any = [];
   DiagnosticIncomeListHeader:any = [];
+  DialogList:any = [];
+  DialogListHeader:any = [];
+  ViewPoppup:boolean = false;
+  DialogList2:any = [];
+  DialogListHeader2:any = [];
+  ViewPoppup2:boolean = false;
 
   constructor(
     private GlobalAPI:CompacctGlobalApiService,
@@ -199,6 +205,95 @@ export class WeeklyAudiologistReportComponent implements OnInit {
       data: this.DiagnosticIncomeList
     }
     this.excelservice.exportExcelForAudiologist(exceldata)
+  }
+
+  handleColumnClick(column: string, row: any) {
+    this.DialogList = [];
+    this.DialogListHeader = [];
+    if ((column === 'Appointment_Handled') || (column === 'Trial_Is_Given') || (column === 'Patient_Converted')) {
+      const start = this.ObjWeeklyAudiologistReport.From_Date
+        ? this.DateService.dateConvert(new Date(this.ObjWeeklyAudiologistReport.From_Date))
+        : this.DateService.dateConvert(new Date());
+      const end = this.ObjWeeklyAudiologistReport.To_Date
+        ? this.DateService.dateConvert(new Date(this.ObjWeeklyAudiologistReport.To_Date))
+        : this.DateService.dateConvert(new Date());
+      let reportname:any;
+
+      if (column === 'Appointment_Handled') {
+        reportname = "weekly_appo_details"
+      }
+
+      else if (column === 'Trial_Is_Given') {
+        reportname= "weekly_trial_given_details"
+      }
+
+      else if (column === 'Patient_Converted') {
+        reportname= "weekly_sale_converted_details"
+      }
+        
+      if (start && end) {
+        const tempobj = {
+          start_date: start,
+          end_date: end,
+          Doctor_ID: row.Doctor_ID
+          
+        }
+        const obj = {
+          "SP_String": "sp_weekly_report",
+          "Report_Name_String": reportname,
+          "Json_Param_String": JSON.stringify([tempobj])
+        }
+        this.GlobalAPI.getData(obj).subscribe((data: any) => {
+          // console.log('data daata',data);
+          if(data.length){
+          this.DialogList = data
+          this.DialogListHeader = Object.keys(data[0]);
+          this.ViewPoppup = true;
+        }
+        });
+      }
+    }
+
+  }
+  handleColumnClicktab2(column: string, row: any) {
+    this.DialogList2 = [];
+    this.DialogListHeader2 = [];
+    if (column === 'Unit') {
+      const start = this.ObjBrandWiseSale.From_Date
+        ? this.DateService.dateConvert(new Date(this.ObjBrandWiseSale.From_Date))
+        : this.DateService.dateConvert(new Date());
+      const end = this.ObjBrandWiseSale.To_Date
+        ? this.DateService.dateConvert(new Date(this.ObjBrandWiseSale.To_Date))
+        : this.DateService.dateConvert(new Date());
+      let reportname:any;
+
+      if (column === 'Unit') {
+        reportname = "Brandwise_sale_details"
+      }
+        
+      if (start && end) {
+        const tempobj = {
+          start_date: start,
+          end_date: end,
+          Product_Mfg_Comp_ID: row.Product_Mfg_Comp_ID
+          
+        }
+        const obj = {
+          "SP_String": "sp_weekly_report",
+          "Report_Name_String": reportname,
+          "Json_Param_String": JSON.stringify([tempobj])
+        }
+        this.GlobalAPI.getData(obj).subscribe((data: any) => {
+          // console.log('data daata',data);
+          if(data.length){
+          this.DialogList2 = data
+          this.DialogListHeader2 = Object.keys(data[0]);
+          this.ViewPoppup2 = true;
+        }
+        });
+      }
+    }
+
   }
 
 }
