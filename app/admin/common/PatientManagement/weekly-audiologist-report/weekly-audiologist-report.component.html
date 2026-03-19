@@ -51,9 +51,7 @@
                                             <td nowrap *ngFor="let option of WeeklyAudiologistReportlListHeader | slice:1; let i = index" 
                                                 (click)="handleColumnClick(option, col)"
                                                 [style.cursor]="
-                                                    option === 'Appointment_Handled' ||
-                                                    option === 'Trial_Is_Given' ||
-                                                    option === 'Patient_Converted'
+                                                    option != 'Doctor_Name'
                                                     ? 'pointer'
                                                     : 'default'
                                                 ">
@@ -114,7 +112,7 @@
                                                 <td nowrap *ngFor="let option of BrandWiseSaleListHeader | slice:1; let i = index"
                                                 (click)="handleColumnClicktab2(option, col)"
                                                 [style.cursor]="
-                                                    option === 'Unit' 
+                                                    option != 'Brand_Name' 
                                                     ? 'pointer'
                                                     : 'default'
                                                 ">
@@ -194,7 +192,7 @@
 </div>
 
 <!-- VIEW POPUP -->
-<p-dialog header="Details" [appendTo]="'body'" [(visible)]="ViewPoppup" [modal]="true" [responsive]="true" [closeOnEscape]="true" [style]="{width: '70%', minWidth: '300px'}" [maximizable]="true">
+<p-dialog header="Details" [appendTo]="'body'" [(visible)]="ViewPoppup" [modal]="true" [responsive]="true" [closeOnEscape]="true" [style]="{width: '70%', minWidth: '300px'}" [maximizable]="true" [baseZIndex]="99999">
     
     <div class="clearfix"></div>
     <div class="table-responsive no-padding" *ngIf="DialogList.length">
@@ -204,7 +202,10 @@
             [globalFilterFields]="DialogListHeader" [rowHover]="true" #dt>
             <ng-template pTemplate="caption">
                 <div class="row">
-                    <div class="col-sm-8"></div>
+                    <div class="col-sm-6"></div>
+                    <div class="col-sm-2" *ngIf="DialogList.length">
+                        <button  class="btn btn-success"  (click)="ExportToExcelDialog1()">Export To Excel</button>
+                    </div>
                     <div class="col-sm-4">
                         <input type="text" pInputText size="50" placeholder="Search"
                             (input)="dt.filterGlobal($event.target.value, 'contains')"
@@ -239,7 +240,7 @@
 </p-dialog>
 
 <!-- VIEW POPUP TAB2 -->
-<p-dialog header="Details" [appendTo]="'body'" [(visible)]="ViewPoppup2" [modal]="true" [responsive]="true" [closeOnEscape]="true" [style]="{width: '70%', minWidth: '300px'}" [maximizable]="true">
+<p-dialog header="Details" [appendTo]="'body'" [(visible)]="ViewPoppup2" [modal]="true" [responsive]="true" [closeOnEscape]="true" [style]="{width: '70%', minWidth: '300px'}" [maximizable]="true" [baseZIndex]="99999">
     
     <div class="clearfix"></div>
     <div class="table-responsive no-padding" *ngIf="DialogList2.length">
@@ -249,7 +250,10 @@
             [globalFilterFields]="DialogListHeader2" [rowHover]="true" #dt>
             <ng-template pTemplate="caption">
                 <div class="row">
-                    <div class="col-sm-8"></div>
+                    <div class="col-sm-6"></div>
+                    <div class="col-sm-2" *ngIf="DialogList2.length">
+                        <button  class="btn btn-success"  (click)="ExportToExcelDialog2()">Export To Excel</button>
+                    </div>
                     <div class="col-sm-4">
                         <input type="text" pInputText size="50" placeholder="Search"
                             (input)="dt.filterGlobal($event.target.value, 'contains')"

@@ -39,6 +39,8 @@ export class WeeklyAudiologistReportComponent implements OnInit {
   DialogList2:any = [];
   DialogListHeader2:any = [];
   ViewPoppup2:boolean = false;
+  excelname:any;
+  excelnamedialog2:any;
 
   constructor(
     private GlobalAPI:CompacctGlobalApiService,
@@ -210,7 +212,9 @@ export class WeeklyAudiologistReportComponent implements OnInit {
   handleColumnClick(column: string, row: any) {
     this.DialogList = [];
     this.DialogListHeader = [];
-    if ((column === 'Appointment_Handled') || (column === 'Trial_Is_Given') || (column === 'Patient_Converted')) {
+    this.excelname = undefined;
+    // if ((column === 'Appointment_Handled') || (column === 'Trial_Is_Given') || (column === 'Patient_Converted')) {
+    if ((column != 'Doctor_Name')) {
       const start = this.ObjWeeklyAudiologistReport.From_Date
         ? this.DateService.dateConvert(new Date(this.ObjWeeklyAudiologistReport.From_Date))
         : this.DateService.dateConvert(new Date());
@@ -220,15 +224,36 @@ export class WeeklyAudiologistReportComponent implements OnInit {
       let reportname:any;
 
       if (column === 'Appointment_Handled') {
+        this.excelname = 'Appointment_Handled';
         reportname = "weekly_appo_details"
       }
-
       else if (column === 'Trial_Is_Given') {
+        this.excelname = 'Trial_Is_Given';
         reportname= "weekly_trial_given_details"
       }
-
       else if (column === 'Patient_Converted') {
+        this.excelname = 'Patient_Converted';
         reportname= "weekly_sale_converted_details"
+      }
+      else if (column === 'Units_Sold') {
+        this.excelname = 'Units_Sold';
+        reportname= "weekly_unit_sold_details"
+      }
+      else if (column === 'ASP') {
+        this.excelname = 'ASP';
+        reportname= "weekly_asp_details"
+      }
+      else if (column === 'MRP_Of_Hearing_Aid') {
+        this.excelname = 'MRP_Of_Hearing_Aid';
+        reportname= "weekly_MRP_Of_Hearing_Aid_details"
+      }
+      else if (column === 'Discount') {
+        this.excelname = 'Discount';
+        reportname= "weekly_Discount_details"
+      }
+      else if (column === 'Patient_Order_Outside_Date') {
+        this.excelname = 'Patient_Order_Outside_Date';
+        reportname= "weekly_Patient_Order_Outside_Date_details"
       }
         
       if (start && end) {
@@ -255,10 +280,20 @@ export class WeeklyAudiologistReportComponent implements OnInit {
     }
 
   }
+  ExportToExcelDialog1(){
+    const exceldata = {
+      worksheetName: this.excelname,
+      title: this.excelname,
+      header: this.DialogListHeader,
+      data: this.DialogList
+    }
+    this.excelservice.exportExcelForAudiologist(exceldata)
+  }
   handleColumnClicktab2(column: string, row: any) {
     this.DialogList2 = [];
     this.DialogListHeader2 = [];
-    if (column === 'Unit') {
+    this.excelnamedialog2 = undefined;
+    if (column != 'Brand_Name') {
       const start = this.ObjBrandWiseSale.From_Date
         ? this.DateService.dateConvert(new Date(this.ObjBrandWiseSale.From_Date))
         : this.DateService.dateConvert(new Date());
@@ -268,7 +303,11 @@ export class WeeklyAudiologistReportComponent implements OnInit {
       let reportname:any;
 
       if (column === 'Unit') {
+        this.excelnamedialog2 = 'Unit';
         reportname = "Brandwise_sale_details"
+      } else if (column === 'Revenue') {
+        this.excelnamedialog2 = 'Revenue';
+        reportname = "Brandwise_revenue_details"
       }
         
       if (start && end) {
@@ -294,6 +333,15 @@ export class WeeklyAudiologistReportComponent implements OnInit {
       }
     }
 
+  }
+  ExportToExcelDialog2(){
+    const exceldata = {
+      worksheetName: this.excelnamedialog2,
+      title: this.excelnamedialog2,
+      header: this.DialogListHeader2,
+      data: this.DialogList2
+    }
+    this.excelservice.exportExcelForAudiologist(exceldata)
   }
 
 }
