@@ -4388,11 +4388,11 @@ header.forEach((col, colIndex) => {
   // Define column spans and titles
   const mergeGroups = [
     { title: '', span: 5, fgColor: 'e0e0e0' },
-    { title: 'INWARD', span: 4, fgColor: 'afffc2' },
+    { title: 'INWARD', span: 5, fgColor: 'afffc2' },
     { title: 'OUTWARD', span: 4, fgColor: 'ff9e9e' },
     { title: '', span: 1, fgColor: 'e0e0e0' },
     { title: 'TRIAL LOANER', span: 4, fgColor: '5e84ff' },
-    { title: '', span: headers.length - 18, fgColor: 'e0e0e0'} // Remaining columns
+    { title: '', span: headers.length - 19, fgColor: 'e0e0e0'} // Remaining columns
   ];
 
   let currentCol = 1;
@@ -4433,10 +4433,10 @@ header.forEach((col, colIndex) => {
 
     let fillColor = 'd8d1d8';
     if (i < 5) fillColor = 'd8d1d8';
-    else if (i < 9) fillColor = 'afffc2';
-    else if (i < 13) fillColor = 'ff9e9e';
-    else if (i < 14) fillColor = 'd8d1d8';
-    else if (i < 18) fillColor = '5e84ff';
+    else if (i < 10) fillColor = 'afffc2';
+    else if (i < 14) fillColor = 'ff9e9e';
+    else if (i < 15) fillColor = 'd8d1d8';
+    else if (i < 19) fillColor = '5e84ff';
 
     cell.fill = {
       type: 'pattern',
