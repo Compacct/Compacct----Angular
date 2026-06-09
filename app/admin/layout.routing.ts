@@ -446,6 +446,7 @@ import { BLTxnPurchaseBillFromGRNComponent } from './common/FinancialManagement/
 import { BlTxnPurchaseGrnComponent } from './common/MaterialManagement/Inward/bl-txn-purchase-grn/bl-txn-purchase-grn.component';
 import { PatientInformationComponent } from './common/PatientManagement/patient-information/patient-information.component';
 import { DoctorsPatientsReportComponent } from './common/PatientManagement/doctors-patients-report/doctors-patients-report.component';
+import { WeeklyAudiologistReportComponent } from './common/PatientManagement/weekly-audiologist-report/weekly-audiologist-report.component';
 
 const layoutRoutes: Routes = [{
   path: "",
@@ -3435,6 +3436,13 @@ path: 'Doctors_Appointment_New_Fine_Tuning_Hearing',
       component: DoctorsPatientsReportComponent,
       data: {
         title: 'Doctors Report'
+      }
+    },
+    {
+      path: 'Weekly_Audiologist_Report',
+      component: WeeklyAudiologistReportComponent,
+      data: {
+        title: 'Weekly Audiologist Report'
       }
     },
     /*{

@@ -78,6 +78,72 @@ export class ExportExcelService {
       fs.saveAs(blob, title + '.xlsx');
     })
   }
+  exportExcelForAudiologist(excelData:any) {
+    //worksheetName, title, header & Data
+    const worksheetName = excelData.worksheetName;
+    const title = excelData.title;
+    const header = excelData.header;
+    const data = excelData.data;
+
+    //Create a workbook with a worksheet
+    let workbook = new Workbook();
+    let worksheet = workbook.addWorksheet(worksheetName);
+
+      //Adding Header Row
+      let headerRow = worksheet.addRow(header);
+      headerRow.eachCell((cell, number) => {
+        cell.fill = {
+          type: 'pattern',
+          pattern: 'solid',
+          fgColor: { argb: 'beb9b9' },
+          bgColor: { argb: '' }
+        }
+        cell.font = {
+          bold: true,
+          color: { argb: '0c0c0c' },
+          size: 12
+        }
+        // Add border
+      cell.border = {
+        top: { style: 'thin', color: { argb: '000000' } },
+        left: { style: 'thin', color: { argb: '000000' } },
+        bottom: { style: 'thin', color: { argb: '000000' } },
+        right: { style: 'thin', color: { argb: '000000' } },
+      };
+      })
+
+    // Adding Data with Conditional Formatting
+    data.forEach((item: any) => {
+      // const row = header.map((key: string) => item[key]);
+      // worksheet.addRow(row);
+      const row = worksheet.addRow(header.map((h:any) => item[h]));
+       // Add border to each cell
+      row.eachCell((cell) => {
+        cell.border = {
+          top: { style: 'thin', color: { argb: '000000' } },
+          left: { style: 'thin', color: { argb: '000000' } },
+          bottom: { style: 'thin', color: { argb: '000000' } },
+          right: { style: 'thin', color: { argb: '000000' } },
+        };
+      });
+    });
+
+    // Auto width AFTER data inserted
+    worksheet.columns.forEach((column:any) => {
+      let maxLength = 0;
+      column.eachCell({ includeEmpty: true }, (cell:any) => {
+        const cellValue = cell.value ? cell.value.toString() : '';
+        maxLength = Math.max(maxLength, cellValue.length);
+      });
+      column.width = maxLength < 10 ? 10 : maxLength + 2;
+    });
+
+     //Generate & Save Excel File
+     workbook.xlsx.writeBuffer().then((data) => {
+      let blob = new Blob([data], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' });
+      fs.saveAs(blob, title + '.xlsx');
+    })
+  }
   exporttoExcelSalesMIS(excelData:any, daterange:any) {
     //Title, Header & Data
      const header =  Object.keys(excelData[0]) 
@@ -4322,11 +4388,11 @@ header.forEach((col, colIndex) => {
   // Define column spans and titles
   const mergeGroups = [
     { title: '', span: 5, fgColor: 'e0e0e0' },
-    { title: 'INWARD', span: 4, fgColor: 'afffc2' },
+    { title: 'INWARD', span: 5, fgColor: 'afffc2' },
     { title: 'OUTWARD', span: 4, fgColor: 'ff9e9e' },
     { title: '', span: 1, fgColor: 'e0e0e0' },
     { title: 'TRIAL LOANER', span: 4, fgColor: '5e84ff' },
-    { title: '', span: headers.length - 18, fgColor: 'e0e0e0'} // Remaining columns
+    { title: '', span: headers.length - 19, fgColor: 'e0e0e0'} // Remaining columns
   ];
 
   let currentCol = 1;
@@ -4367,10 +4433,10 @@ header.forEach((col, colIndex) => {
 
     let fillColor = 'd8d1d8';
     if (i < 5) fillColor = 'd8d1d8';
-    else if (i < 9) fillColor = 'afffc2';
-    else if (i < 13) fillColor = 'ff9e9e';
-    else if (i < 14) fillColor = 'd8d1d8';
-    else if (i < 18) fillColor = '5e84ff';
+    else if (i < 10) fillColor = 'afffc2';
+    else if (i < 14) fillColor = 'ff9e9e';
+    else if (i < 15) fillColor = 'd8d1d8';
+    else if (i < 19) fillColor = '5e84ff';
 
     cell.fill = {
       type: 'pattern',

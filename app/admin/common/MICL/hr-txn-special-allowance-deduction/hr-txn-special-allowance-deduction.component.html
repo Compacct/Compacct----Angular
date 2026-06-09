@@ -41,7 +41,8 @@
                                     </select>
                                 </div>
                                 <div class="col-sm-4" *ngIf="URLid != '0'">
-                                    <label class="control-label">Allowance/Deduction<sup class="text-danger">*</sup></label>
+                                    <label class="control-label" *ngIf="URLid === '8'">Conveyance Reimbursement<sup class="text-danger">*</sup></label>
+                                    <label class="control-label" *ngIf="URLid !== '8'">Allowance/Deduction<sup class="text-danger">*</sup></label>
                                     <select class="form-control" name="Canteen2" #Canteen2="ngModel" [(ngModel)]="objAllowance.Allowance_Deduction_ID" [ngClass]="{'clearance': AllowanceFormSubmit && Canteen2.errors?.required}" selected="selected" disabled required>
                                         
                                             <option *ngFor="let option of Allowancefilter" [ngValue]="option.Allowance_Deduction_ID">

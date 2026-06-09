@@ -545,6 +545,7 @@ import { BLTxnPurchaseBillFromGRNComponent } from './common/FinancialManagement/
 import { BlTxnPurchaseGrnComponent } from './common/MaterialManagement/Inward/bl-txn-purchase-grn/bl-txn-purchase-grn.component';
 import { PatientInformationComponent } from './common/PatientManagement/patient-information/patient-information.component';
 import { DoctorsPatientsReportComponent } from './common/PatientManagement/doctors-patients-report/doctors-patients-report.component';
+import { WeeklyAudiologistReportComponent } from './common/PatientManagement/weekly-audiologist-report/weekly-audiologist-report.component';
 @NgModule({
   declarations: [
     AppLayoutComponent,
@@ -1003,7 +1004,8 @@ import { DoctorsPatientsReportComponent } from './common/PatientManagement/docto
     BLTxnPurchaseBillFromGRNComponent,
     BlTxnPurchaseGrnComponent,
     PatientInformationComponent,
-    DoctorsPatientsReportComponent
+    DoctorsPatientsReportComponent,
+    WeeklyAudiologistReportComponent
   ],
   imports: [
     CommonModule,

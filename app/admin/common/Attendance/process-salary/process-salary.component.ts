@@ -150,19 +150,24 @@ export class ProcessSalaryComponent implements OnInit {
     this.currentmonth = monthNames[month] + '-'+ year;
     console.log('monthNames====',this.currentmonth);
   }
-  Print(DocNo) {
+  Print(DocNo:any) {
     if(DocNo) {
-      var empidd = DocNo.EMP_ID;
-      var sldate = this.DateService.dateConvert(new Date(DocNo.Salary_Month));
-    const objtemp = {
-      "SP_String": "SP_Leave_Application",
-      "Report_Name_String": "Print_Salary_Slip"
-      }
-    this.GlobalAPI.getData(objtemp).subscribe((data:any)=>{
-      var printlink = data[0].Column1;
-      window.open(printlink+"?Emp_ID=" + empidd + "&SLDate=" + sldate, 'mywindow', 'fullscreen=yes, scrollbars=auto,width=950,height=500');
-    })
+    var empidd = DocNo.EMP_ID;
+    var sldate = this.DateService.dateConvert(new Date(DocNo.Salary_Month));
+      window.open("/Report/Crystal_Files/CRM/joh_Form/Joh_Salary_slip.html?Emp_ID=" + empidd + "&SLDate=" + sldate, 'mywindow', 'fullscreen=yes, scrollbars=auto,width=950,height=500');
     }
+    // if(DocNo) {
+    //   var empidd = DocNo.EMP_ID;
+    //   var sldate = this.DateService.dateConvert(new Date(DocNo.Salary_Month));
+    // const objtemp = {
+    //   "SP_String": "SP_Leave_Application",
+    //   "Report_Name_String": "Print_Salary_Slip"
+    //   }
+    // this.GlobalAPI.getData(objtemp).subscribe((data:any)=>{
+    //   var printlink = data[0].Column1;
+    //   window.open(printlink+"?Emp_ID=" + empidd + "&SLDate=" + sldate, 'mywindow', 'fullscreen=yes, scrollbars=auto,width=950,height=500');
+    // })
+    // }
   }
   GetEmpId(){
     this.empid = undefined;
