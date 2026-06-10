@@ -47,10 +47,10 @@ import { CompacctLedgerComponent } from './common/FinancialManagement/Master/com
 import { MasterRoyaleMaterialTypeComponent } from './common/MaterialManagement/Master/master-royale-material-type/master-royale-material-type.component';
 import { CompacctRoyaleLeadComponent } from './common/CRM/Transaction/compacct-royale-lead/compacct-royale-lead.component';
 import { InwardOutwardRegisterComponent } from "./common/SalesAndDistribution/Transaction/inward-outward-register/inward-outward-register.component";
-import { ConsultancyCommissionComponent} from './common/PatientManagement/Master/consultancy-commission/consultancy-commission.component';
-import { DoctorCommissionCalculatorComponent} from './common/PatientManagement/Master/doctor-commission-calculator/doctor-commission-calculator.component';
-import { AdjustmentVoucherComponent} from './common/PatientManagement/Transaction/adjustment-voucher/adjustment-voucher.component';
-import { InwardReplacementComponent} from './common/MaterialManagement/Inward/inward-replacement/inward-replacement.component';
+import { ConsultancyCommissionComponent } from './common/PatientManagement/Master/consultancy-commission/consultancy-commission.component';
+import { DoctorCommissionCalculatorComponent } from './common/PatientManagement/Master/doctor-commission-calculator/doctor-commission-calculator.component';
+import { AdjustmentVoucherComponent } from './common/PatientManagement/Transaction/adjustment-voucher/adjustment-voucher.component';
+import { InwardReplacementComponent } from './common/MaterialManagement/Inward/inward-replacement/inward-replacement.component';
 import { ClinicTrialComponent } from './common/PatientManagement/Transaction/clinic-trial/clinic-trial.component';
 import { CustomerSalesComponent } from './common/CRM/Report/customer-sales/customer-sales.component';
 import { CompacctStockReportComponent } from './common/MaterialManagement/Report/compacct-stock-report/compacct-stock-report.component';
@@ -188,7 +188,7 @@ import { EngineeringQuotationNepalComponent } from "./common/Engineering&CRM/Tra
 import { GrnViewPurchaseBillComponent } from './common/MaterialManagement/Inward/grn-view-purchase-bill/grn-view-purchase-bill.component';
 import { ProductsPlaningComponent } from './common/TenderManagement/products-planing/products-planing.component';
 import { CompacctTxnTaskGanttComponent } from './common/TenderManagement/compacct-txn-task-gantt/compacct-txn-task-gantt.component';
-import {UserAbsentComponent} from './common/CRM/Master/user-absent/user-absent.component'
+import { UserAbsentComponent } from './common/CRM/Master/user-absent/user-absent.component'
 import { TutoBdaJoiningComponent } from "./common/CRM/Transaction/tuto-bda-joining/tuto-bda-joining.component";
 import { TutoAspUnavaliblityComponent } from "./common/CRM/Master/tuto-asp-unavaliblity/tuto-asp-unavaliblity.component";
 import { RetailBrowseComponent } from './common/FinancialManagement/Retail/retail-browse/retail-browse.component';
@@ -447,6 +447,7 @@ import { BlTxnPurchaseGrnComponent } from './common/MaterialManagement/Inward/bl
 import { PatientInformationComponent } from './common/PatientManagement/patient-information/patient-information.component';
 import { DoctorsPatientsReportComponent } from './common/PatientManagement/doctors-patients-report/doctors-patients-report.component';
 import { WeeklyAudiologistReportComponent } from './common/PatientManagement/weekly-audiologist-report/weekly-audiologist-report.component';
+import { HearingBlCrmAppointmentMultipleComponent } from "./common/PatientManagement/hearing-bl-crm-appointment-multiple/hearing-bl-crm-appointment-multiple.component";
 
 const layoutRoutes: Routes = [{
   path: "",
@@ -455,1175 +456,1175 @@ const layoutRoutes: Routes = [{
     title: "Dashboard"
   },
   children: [{
-      path: "Business_Dashboard",
-      loadChildren: () =>
-        import("./dashBoard/compacct.dashboard.module").then(
-          m => m.CompacctDashboardModule
-        ),
-      data: {
-        title: "Business Dashboard"
-      }
-    },
-    {
-      path: "INV_Txn_St_Trf_GST",
-      component: StocktransferComponent,
-      data: {
-        title: "Stock Transfer"
-      }
-    },
-    {
-      path: "scheduler_operation",
-      loadChildren: () =>
-        import(
-          "./common/CRM/Transaction/compacct.scheduler/compacct.scheduler.module"
-        ).then(m => m.CompacctSchedulerModule),
-      data: {
-        title: "Appointment Scheduler"
-      }
-    },
-    {
-      path: "Master_Product_V2",
-      component: MasterProductComponent,
-      data: {
-        title: "Master Product"
-      }
-    },
-    {
-      path: "Master_Cost_Center_V2",
-      component: MasterCostCenterComponent,
-      data: {
-        title: "Master Cost Center"
-      }
-    },
-    {
-      path: "Seed_Process",
-      component: SeedProcessComponent,
-      data: {
-        title: "Seed Process"
-      }
-    },
-    {
-      path: "PP_Bag_Process",
-      component: PpBagProcessComponent,
-      data: {
-        title: "Seed Process"
-      }
-    },
-    {
-      path: "BL_Txn_Purchase_Bill_Complete",
-      component: CompacctPurchasebillGstComponent,
-      data: {
-        title: "Purchase Bill"
-      }
-    },
-    {
-      path: "Oil_Production",
-      component: OilProductionComponent,
-      data: {
-        title: "Oil Production"
-      }
-    },
-    {
-      path: "BNB_New_Lead",
-      component: CompacctBnbLeadComponent,
-      data: {
-        title: "Lead"
-      }
-    },
-    {
-      path: "EXP_Doc_Comm_Inv",
-      component: CommercialInvoiceComponent,
-      data: {
-        title: "EXP_Doc_Comm_Inv"
-      }
-    },
-    {
-      path: "Export_Charges",
-      component: CompacctBnbexportsComponent,
-      data: {
-        title: "Export Charge"
-      }
-    },
-    {
-      path: "Export_Transportation",
-      component: TransportationComponent,
-      data: {
-        title: "Export_Transportation"
-      }
-    },
-    {
-      path: "Exp_Doc_Sale_Contract",
-      component: SalesContractComponent,
-      data: {
-        title: "Exp Doc Sale Contract"
-      }
-    },
-    {
-      path: "BNB_BL_CRM_Lead_Browse",
-      component: CompacctBnbLeadbydateComponent,
-      data: {
-        title: "Lead Search By Date"
-      }
-    },
-    {
-      path: "Container_Booking",
-      component: ContainerBookingComponent,
-      data: {
-        title: "Container Booking"
-      }
-    },
-    {
-      path: "Hearing_Audiogram_Graph",
-      component: CompacctAudiogramComponent,
-      data: {
-        title: "Audiogram"
-      }
-    },
-    {
-      path: "Currency_Booking",
-      component: CurrencyBookingComponent,
-      data: {
-        title: "Currency Booking"
-      }
-    },
-    {
-      path: "BL_Txn_ST_Trf_Tank",
-      component: StockTransferTankComponent,
-      data: {
-        title: "Stock Trans For Tank"
-      }
-    },
-    {
-      path: "Machine_Uses",
-      component: MachineUsesComponent,
-      data: {
-        title: "Machine Uses"
-      }
-    },
-    {
-      path: "Master_Product_HA",
-      component: MasterProductHearingComponent,
-      data: {
-        title: "Master Product Hearing Aid"
-      }
-    },
-    {
-      path: "Renewal",
-      component: RenewalComponent,
-      data: {
-        title: "Renewal"
-      }
-    },
-    {
-      path: "Renewal_Type",
-      component: RenewalTypeComponent,
-      data: {
-        title: "Renewal Type"
-      }
-    },
-    {
-      path: "BL_CRM_Master_Consultancy_V2",
-      component: ConsultancyComponent,
-      data: {
-        title: "BL_CRM_Master_Consultancy_V2"
-      }
-    },
-    {
-      path: "Master_Accounting_Ledger_V2",
-      component: CompacctLedgerComponent,
-      data: {
-        title: "Accounting Ledger"
-      }
-    },
-    {
-      path: "Master_Product_Material_Type",
-      component: MasterRoyaleMaterialTypeComponent,
-      data: {
-        title: "Material Type"
-      }
-    },
-    {
-      path: 'GHC_Inward_Outward_Register',
-      component: InwardOutwardRegisterComponent,
-      data: {
-        title: 'GHC_Inward_Outward_Register'
-      }
-    },
-    {
-      path: "BL_CRM_Lead_Management_V2",
-      component: CompacctRoyaleLeadComponent,
-      data: {
-        title: "Lead"
-      }
-    },
-    {
-      path: 'GHC_Consultancy_Commision',
-      component: ConsultancyCommissionComponent,
-      data: {
-        title: 'Consultancy Commission'
-      }
-    },
-    {
-      path: 'GHC_Doctor_Commission_Calculator',
-      component: DoctorCommissionCalculatorComponent,
-      data: {
-        title: 'Doctor Commission Calculator'
-      }
-    },
-    {
-      path: 'Hearing_Adjustment_Voucher',
-      component: AdjustmentVoucherComponent,
-      data: {
-        title: 'Hearing Adjustment Voucher'
-      }
-    },
-    {
-      path: 'INV_Txn_Inward_Replacement',
-      component: InwardReplacementComponent,
-      data: {
-        title: 'Inward Replacement'
-      }
-    },
-    {
-      path: 'Hearing_Quotation',
-      component: ClinicTrialComponent,
-      data: {
-        title: 'Hearing Quotation'
-      }
-    },
-    {
-      path: 'CRM_Customer_Sales',
-      component: CustomerSalesComponent,
-      data: {
-        title: 'Customer Sales'
-      }
-    },
-    {
-      path: 'CRM_Stock_Report',
-      component: CompacctStockReportComponent,
-      data: {
-        title: 'Stock Report'
-      }
-    },
-    {
-      path: 'Tutopia_Walk_in_Lead_Creation',
-      component: TutoWslkinleadComponent,
-      data: {
-        title: 'Walk in Lead'
-      }
-    },
-    {
-      path: 'Tutopia_Pending_Subscription',
-      component: TutoPendsubscriptionComponent,
-      data: {
-        title: 'Subscription'
-      }
-    },
-    {
-      path: 'Tutopia_Receive_Voucher',
-      component: TutoReceiveVoucherComponent,
-      data: {
-        title: 'Confirm Voucher'
-      }
-    },
-    {
-      path: 'Send_Bulk_Email_Nepal',
-      component: BulkSmsNepalComponent,
-      data: {
-        title: 'Bulk Email'
-      }
-    },
-    {
-      path: 'Tutopia_Master_Teacher',
-      component: TutoMasterTeacherComponent,
-      data: {
-        title: 'Master Teacher'
-      }
-    },
-    {
-      path: 'Tutopia_Support_Question_Answer',
-      component: TutoMastereQNAComponent,
-      data: {
-        title: 'Support Question & Answer'
-      }
-    },
-    {
-      path: 'Tutopia_Support_Query',
-      component: TutoSupportQueryComponent,
-      data: {
-        title: 'Support Query & Reply'
-      }
-    },
-    {
-      path: 'Tutopia_Student_Search',
-      component: TutoStudentSearchComponent,
-      data: {
-        title: 'Student Search'
-      }
-    },
-    {
-      path: 'Tutopia_CRM_Lead',
-      component: TutoLeadFollowupComponent,
-      data: {
-        title: 'Followup Management'
-      }
-    },
-    {
-      path: 'Tutopia_Master_SKU',
-      component: TutoMasterSkuComponent,
-      data: {
-        title: 'Master SKU'
-      }
-    },
-    {
-      path: 'Tutopia_Mater_Class_Management',
-      component: TutoClassManagementComponent,
-      data: {
-        title: 'Class Management'
-      }
-    },
-    {
-      path: 'K4C_Outlet_Requisition',
-      component: K4cOutletRequistionComponent,
-      data: {
-        title: 'K4C_Outlet_Requisition'
-      }
-    },
-    {
-      path: 'K4C_Master_Cost_Center',
-      component: K4cMasterCostCenterComponent,
-      data: {
-        title: 'Master Cost Center'
-      }
-    },
-    {
-      path: 'K4C_Master_Product',
-      component: K4cMasterProductComponent,
-      data: {
-        title: 'Master Product'
-      }
-    }, {
-      path: 'Master_UOM',
-      component: MasterUomComponent,
-      data: {
-        title: 'Master UOM'
-      }
-    },
-    {
-      path: 'K4C_Production_Voucher',
-      component: K4CProductionVoucherComponent,
-      data: {
-        title: 'K4C Production Voucher'
-      }
-    },
-    {
-      path: 'K4C_Dispatch_to_Outlet',
-      component: K4CDispatchToOutletComponent,
-      data: {
-        title: 'Distribution Challan'
-      }
-    },
-    {
-      path: 'K4C_Outlet_Sale_Bill',
-      component: K4cOutletSaleBillComponent,
-      data: {
-        title: 'POS Bill'
-      }
-    },
-    {
-      path: 'K4C_Outlet_Advance_Order',
-      component: K4cOutletAdvanceOrderComponent,
-      data: {
-        title: 'Advance Order'
-      }
-    },
-    {
-      path: 'POS_BIll_Order',
-      component: K4cPosBillOrderComponent,
-      data: {
-        title: 'POS Bill Order'
-      }
-    }, {
-      path: 'Tutopia_Student_Order',
-      component: TutoOrderManagementComponent,
-      data: {
-        title: 'Subscription Order Management'
-      }
-    },
-    {
-      path: 'Tutopia_Direct_Order_Booking',
-      component: TutoOrderBookingComponent,
-      data: {
-        title: 'Direct Order Booking'
-      }
-    },
-    {
-      path: 'Tutopia_Order_Payment',
-      component: TutoOrderPaymentComponent,
-      data: {
-        title: 'Order Payment'
-      }
-    },
-    {
-      path: 'Tutopia_Acc_Cash_Bank_Confirm',
-      component: TutoAccCashBankConfirmComponent,
-      data: {
-        title: 'Cash Bank Confirm'
-      }
-    }, {
-      path: 'Tutopia_Dist_Cash_Confirm',
-      component: TutoCashConfirmComponent,
-      data: {
-        title: ' Cash Deposit Confirmation'
-      }
-    },
-    {
-      path: 'Tutopia_Finance_Peer_Loan_Confirmation',
-      component: TutoLoanConfirmationComponent,
-      data: {
-        title: ' Finance Peer Loan Confirmation'
-      }
-    }, {
-      path: 'Loan_EMI_Trf',
-      component: TutoLoamEmiTransferComponent,
-      data: {
-        title: 'Loan EMI Transfer'
-      }
-    },
-    {
-      path: 'Tutopia_CRM_Master_SalesTeam',
-      component: TutoMasterSalesteamComponent,
-      data: {
-        title: 'Channel Sales Team'
-      }
-    },
-    {
-      path: 'K4C_Factory_Return',
-      component: K4cFactoryReturnComponent,
-      data: {
-        title: 'k4C FACTORY RETURN'
-      }
-    },
-    {
-      path: 'K4C_Advance_Order_Production',
-      component: K4cAdvanceProductionComponent,
-      data: {
-        title: 'Advance Order Production'
-      }
-    },
-
-
-    {
-      path: 'K4C_Dispatch_Outlet_Adv_Order',
-      component: K4CDispatchOutletAdvOrderComponent,
-      data: {
-        title: 'Custom Order Distribution'
-      }
-    }, {
-      path: 'Tutopia_Support_Master',
-      component: TutoSupportMasterComponent,
-      data: {
-        title: 'Support Ticket Master'
-      }
-    }, {
-      path: 'DIPL_Support_Ticket',
-      component: DiplSupportTicketComponent,
-      data: {
-        title: 'Support Ticket'
-      }
-    }, {
-      path: 'DIPL_Service_Team',
-      component: DiplMasterSalesteamComponent,
-      data: {
-        title: 'Sales Team'
-      }
-    }, {
-      path: 'Create_Start_Production',
-      component: K4cCreateStartProductionComponent,
-      data: {
-        title: 'Create Start Production'
-      }
-    }, {
-      path: 'K4C_Cutoff',
-      component: K4cCutoffComponent,
-      data: {
-        title: 'Cutoff Time'
-      }
-    }, {
-      path: 'DIPL_Support_Call_Sheet',
-      component: DIPLSupportCallSheetComponent,
-      data: {
-        title: 'Support Call Sheet'
-      }
-    }, {
-      path: 'Factory_Requisition',
-      component: K4cFactoryRequisitionComponent,
-      data: {
-        title: 'Factory Requisition'
-      }
-    },
-    {
-      path: 'Internal_Stock_Transfer',
-      component: K4cInternalStockTransferComponent,
-      data: {
-        title: 'Internal Stock Transfer'
-      }
-    },
-    {
-      path: 'Department_Wise_Requisition',
-      component: K4cDepartmentWiseRequisitionComponent,
-      data: {
-        title: 'Department Wise Requisition'
-      }
-    }, {
-      path: 'Accept_Receive_Distribution_Challan',
-      component: ReceiveDistributionChallanComponent,
-      data: {
-        title: 'Browse Accept Challan'
-      }
-    },
-    {
-      path: 'Direct_Sale_Call_Track',
-      component: TutoDirectSaleCallTrackComponent,
-      data: {
-        title: 'Call Status'
-      }
-    },
-    {
-      path: 'Distribution_Challan_Status',
-      component: K4cDistributionChallanStatusComponent,
-      data: {
-        title: 'Distribution Challan Status'
-      }
-    },
-    {
-      path: 'Tutopia_Order_Bill_Browse',
-      component: TutoOrderBillBrowseComponent,
-      data: {
-        title: 'Order Bill Browse'
-      }
-    }, {
-      path: 'K4C_Outlet_Stock_Transfer',
-      component: OutletStockTransferComponent,
-      data: {
-        title: 'Outlet Stock Transfer'
-      }
-    }, {
-      path: 'CRM_Payment_Bank_Master',
-      component: CRMPaymentBankComponent,
-      data: {
-        title: 'Payment Bank Master'
-      }
-    }, {
-      path: 'Support_User_Management',
-      component: TutoSupportUserManagementComponent,
-      data: {
-        title: 'Support User Management'
-      }
-    },
-    {
-      path: 'Outlet_Stock_Movement',
-      component: OutletStockMovementComponent,
-      data: {
-        title: 'Outlet Stock Movement'
-      }
-    }, {
-      path: 'Production_Voucher_New',
-      component: K4cProductionVoucherNewComponent,
-      data: {
-        title: 'Production Voucher New'
-      }
-    }, {
-      path: 'Internal_Stock_Transfer_New',
-      component: K4cInternalStockTransferNewComponent,
-      data: {
-        title: 'Internal Stock Transfer New'
-      }
-    }, {
-      path: 'Tutopia_DS_Billing',
-      component: TutoDsBillComponent,
-      data: {
-        title: 'Direct Sale Billing'
-      }
-    }, {
-      path: 'Tutopia_DS_Payment_Link',
-      component: TutoPaymentLinkComponent,
-      data: {
-        title: 'Generate Payment Link'
-      }
-    },
-    {
-      path: 'Master_BOM_Reciepe',
-      component: K4cMasterBOMReciepeComponent,
-      data: {
-        title: 'Master BOM Reciepe'
-      }
-    },
-    {
-      path: 'Issue_Stock_Adjustment',
-      component: IssueStockAdjustmentComponent,
-      data: {
-        title: 'Issue Stock Adjustment'
-      }
-    },
-    {
-      path: 'Receive_Stock_Adjustment',
-      component: ReceiveStockAdjustmentComponent,
-      data: {
-        title: 'Receive Stock Adjustment'
-      }
-    },
-    {
-      path: 'Store_Item_Indent',
-      component: StoreItemIndentComponent,
-      data: {
-        title: 'Store Item Indent'
-      }
-    }, {
-      path: 'Speech_DoctorsAppointment',
-      component: HearingSpeechAppointmentComponent,
-      data: {
-        title: 'Speech Appointment'
-      }
-    },
-    {
-      path: 'Outlet_Txn_Bank_Deposit',
-      component: OutletTxnBankDepositComponent,
-      data: {
-        title: 'Outlet Txn Bank Deposit'
-      }
-    },
-    {
-      path: 'Factory_Indent_Advance_Order',
-      component: K4cFactoryIndentAdvanceComponent,
-      data: {
-        title: 'Indent Adv Order'
-      }
-    }, {
-      path: 'Master_UOM_Common',
-      component: MasterUOMCommonComponent,
-      data: {
-        title: 'Master UOM'
-      }
-    },
-    {
-      path: 'Raw_Material_Issue',
-      component: K4cRawMaterialIssueComponent,
-      data: {
-        title: 'Raw Material Issue'
-      }
-    },
-    {
-      path: 'Raw_Material_Indent',
-      component: K4cRawMaterialIndentComponent,
-      data: {
-        title: 'Raw Material Indent'
-      }
-    },
-    {
-      path: 'Outlet_Physical_Closing_Stock',
-      component: OutletPhysicalClosingStockComponent,
-      data: {
-        title: 'Outlet Physical Closing Stock'
-      }
-    }, {
-      path: 'Raw_Material_Stock_Transfer',
-      component: K4cRawMaterialStockTransferComponent,
-      data: {
-        title: 'Raw Material Stock Transfer'
-      }
-    },
-    {
-      path: 'K4C_Dispatch_to_Outlet_Store',
-      component: K4cDispatchOutletStoreComponent,
-      data: {
-        title: 'Dispatch to Outlet Store'
-      }
-    },
-    {
-      path: 'Purchase_Planing',
-      component: K4cPurchasePlaningComponent,
-      data: {
-        title: 'Purchase Planing'
-      }
-    },
-    {
-      path: 'K4C_Outlet_Stock_Report',
-      component: K4cOutletStockReportComponent,
-      data: {
-        title: 'Stock Report'
-      }
-    },
-    {
-      path: 'K4C_Day_End_Process',
-      component: K4cDayEndProcessComponent,
-      data: {
-        title: 'Day End Process'
-      }
-    }, {
-      path: 'Update_Expiry',
-      component: UpdateExpiryComponent,
-      data: {
-        title: 'Updated Expiry'
-      }
-    },
-    {
-      path: 'Closing_Stock_With_Expiry_Date',
-      component: ClosingStockWithExpiryDateComponent,
-      data: {
-        title: 'Closing Stock With Expiry'
-      }
-    },
-    {
-      path: 'BL_CRM_Master_SalesTeam_Field_Sales',
-      component: TutoSaleTreeFieldComponent,
-      data: {
-        title: 'Sales Tree Field Sales'
-      }
-    },
-    {
-      path: 'BL_CRM_Master_SalesTeam_Inside_Sales',
-      component: TutoSalesTreeInsideSalesComponent,
-      data: {
-        title: 'Sales Team Inside Sales'
-      }
-    }, {
-      path: 'Tutopia_CRM_Lead_Field_Sales',
-      component: TutoCrmLeadFieldSaleComponent,
-      data: {
-        title: 'Followup Management (Channel Sale)'
-      }
-    }, {
-      path: 'Tutoipa_BL_CRM_Temp_To_New_Lead',
-      component: TutoTempCrmLeadComponent,
-      data: {
-        title: 'Followup Management (Channel Sale)'
-      }
-    },
-    {
-      path: 'Tutopia_DS_Dashboard',
-      component: TutoDsDashboardComponent,
-      data: {
-        title: 'DS Dashboard'
-      }
-    },
-    {
-      path: 'Tutopia_Web_Demo_Followup',
-      component: TutoWebDemLeadFollowupComponent,
-      data: {
-        title: 'Web Demo Followup'
-      }
-    },
-    {
-      path: 'Tutopia_Audit_Appointment',
-      component: TutoAuditLeadFollowupComponent,
-      data: {
-        title: 'Audit Appointment'
-      }
-    }, {
-      path: 'Outlet_Closing_Stock_With_Batch',
-      component: OutletClosingStockWithBatchComponent,
-      data: {
-        title: 'Outlet Closing Stock With Batch'
-      }
-    },
-    {
-      path: 'Adv_Order_Internal_Stock_Transfer',
-      component: K4cAdvOrderInternalStockTransferComponent,
-      data: {
-        title: 'Advance Order Internal Stock Transfer'
-      }
-    }, {
-      path: 'Tutopia_Post_Sales_Audit',
-      component: TutoPostSaleAuditLeadFollowupComponent,
-      data: {
-        title: 'POST SALE AUDIT'
-      }
-    },
-    {
-      path: 'Tutopia_BDA_Report',
-      component: TutoBdaReportComponent,
-      data: {
-        title: 'BDA Report'
-      }
-    }, {
-      path: 'Tutopia_School_Request_Details',
-      component: TutoSchoolRequestDetailsComponent,
-      data: {
-        title: 'School Request'
-      }
-    }, {
-      path: 'BL_Txn_Civil_Running_Bill_Details',
-      component: CompacctRunningBillComponent,
-      data: {
-        title: 'Running Bill Details'
-      }
-    }, {
-      path: 'BL_Txn_Civil_Daily_Job',
-      component: CompacctCivildailyJobComponent,
-      data: {
-        title: 'Daily Progress Report (Civil) '
-      }
-    }, {
-      path: 'BL_CRM_Txn_Enq_Tender',
-      component: CompacctTenderComponent,
-      data: {
-        title: 'Tender '
-      }
-    }, {
-      path: 'BL_CRM_Lead_Interaction_Nepal',
-      component: CrmLeadOpportunitiesComponent,
-      data: {
-        title: 'All Opportunities '
-      }
-    }, {
-      path: 'BL_CRM_Lead_Details_Nepal',
-      component: CrmLeadTaskDetailsComponent,
-      data: {
-        title: 'Lead Details '
-      }
-    }, {
-      path: 'Stock_Adjustment_for_Store_Items',
-      component: K4cStockAdjustmentStoreItemsComponent,
-      data: {
-        title: 'Stock Adjustment For Store Items '
-      }
-    }, {
-      path: 'Tutopia_Web_Demo_Team',
-      component: TutoWebDemoTeamComponent,
-      data: {
-        title: 'Tutopia Web Demo Team '
-      }
-    }, {
-      path: 'Tutopia_Pre_Sale_Audit_Team',
-      component: TutoPreSaleAuditTeamComponent,
-      data: {
-        title: 'Tutopia Pre Sale Audit Team '
-      }
-    }, {
-      path: 'Tutopia_Post_Sale_Audit_Team',
-      component: TutoPostSaleAuditTeamComponent,
-      data: {
-        title: 'Tutopia Post Sale Audit Team '
-      }
-    },
-    {
-      path: 'Tutopia_Field_Sales_School',
-      component: TutoFieldSalesSchoolComponent,
-      data: {
-        title: 'Tutopia Field Sales School '
-      }
-    }, {
-      path: 'Raw_SemiFinished_Nonsaleable_Closing_Stock',
-      component: K4cRsnsClosingStockComponent,
-      data: {
-        title: 'Raw SemiFinished Nonsaleable Closing Stock '
-      }
-    },
-    {
-      path: 'Project_Estimate',
-      component: HarbaProjectEstimateComponent,
-      data: {
-        title: 'Project Estimate'
-      }
-    },
-    {
-      path: 'Direct_Payment_Followup_Nepal',
-      component: DirectPaymentFollowupNepalComponent,
-      data: {
-        title: 'Direct Payment Followup'
-      }
-    },
-    {
-      path: 'Franchise_Sale_Bill',
-      component: K4cFranchiseSaleBillComponent,
-      data: {
-        title: 'Franchise Sale Bill'
-      }
-    },
-    {
-      path: 'Tender_Estimate',
-      component: TenderEstimateComponent,
-      data: {
-        title: 'Tender Estimate'
-      }
-    },
-    {
-      path: 'BL_CRM_Master_Package_New',
-      component: HearingPackageMasterComponent,
-      data: {
-        title: 'Package Master'
-      }
-    },
-    {
-      path: 'BL_CRM_TXN_TASK',
-      component: CompacctTxnTaskComponent,
-      data: {
-        title: 'Txn Task'
-      }
-    },
-    {
-      path: 'Tutopia_Manual_Payment_Collection',
-      component: TutoManualPaymentCollectionComponent,
-      data: {
-        title: 'Manual Payment Collection'
-      }
-    },
-    {
-      path: 'Outlet_Sale_Bill_WithOut_batch_Select',
-      component: OutletSaleBillWithoutBatchSelectComponent,
-      data: {
-        title: 'Take Away (Auto Batch)'
-      }
-    },
-    {
-      path: 'Outlet_Stock_Transfer_Atuto_Batch',
-      component: OutletStockTransferAutoBatchComponent,
-      data: {
-        title: 'Outlet Stock Transfer(Auto Batch)'
-      }
-    },
-    {
-
-      path: 'Bill_Edit_From_Admin',
-      component: BillEditFromAdminComponent,
-      data: {
-        title: 'Sale Bill'
-      }
-    },
-    {
-      path: 'BL_CRM_Txn_Enq_Tender_Harbauer',
-      component: TxnEnqTenderHarbauerComponent,
-      data: {
-        title: 'Txn Enq Tender'
-      }
-    },
-    {
-      path: 'Tutopia_Upload_Data_Support',
-      component: TutoUploadDataSupportComponent,
-      data: {
-        title: 'Upload Data Support'
-      }
-    },
-    {
-      path: 'Engg_Nepal_Machine_Master',
-      component: EnggNepalMachineMasterComponent,
-      data: {
-        title: 'Machine Master'
-      }
-    },
-    {
-      path: 'Engg_Nepal_Spare_Parts',
-      component: EnggNepalSparePartsComponent,
-      data: {
-        title: 'Spare Parts And Ink Master'
-      }
-    },
-    {
-      path: 'BL_CRM_Txn_Enq_Tender_Budget',
-      component: TenderBudgetComponent,
-      data: {
-        title: 'Tender Budget'
-      }
-    },
-    {
-      path: 'BL_CRM_Txn_Enq_Tender_Harbauer_View',
-      component: TenderHarbauerViewComponent,
-      data: {
-        title: 'Tender Edit (GOVT.)'
-      }
-    },
-    {
-      path: 'Master_Accounting_Subledger_Nepal',
-      component: NepalMasterSubledgerComponent,
-      data: {
-        title: 'Master Subledger'
-      }
-    },
-    {
-      path: 'Harbauer_Master_Product_mechanical',
-      component: HarbauerMasterProductMechanicalComponent,
-      data: {
-        title: 'Master Product mechanical'
-      }
-    },
-    {
-      path: 'Outlet_Group_Report',
-      component: OutletGroupReportComponent,
-      data: {
-        title: 'Group Report'
-      }
-    },
-    {
-      path: 'BL_Txn_K4C_Crate_IN_OUT',
-      component: K4cCrateInOuComponent,
-      data: {
-        title: 'BL Txn K4C Crate IN OUT'
-      }
-    },
-    {
-      path: 'BL_CRM_ENGG_Master_Nepal',
-      component: BlCrmEnggMasterNepalComponent,
-      data: {
-        title: 'BL CRM ENGG Master Nepal'
-      }
-    },
-    {
-      path: 'BL_CRM_Txn_Enq_Tender_Harbauer_View_Actual',
-      component: TenderHarbauerActualViewComponent,
-      data: {
-        title: 'Tender View (GOVT.)'
-      }
-    },
-    {
-      path: 'Engg_CRM_Installed_Machine',
-      component: EnggCrmInstalledMachineComponent,
-      data: {
-        title: 'Installed Machine'
-      }
-    },
-    {
-      path: 'Engg_CRM_Installed_Machine_Service_Contract',
-      component: EnggCrmInstalledMachineServiceContractComponent,
-      data: {
-        title: 'Service Contract'
-      }
-    },
-    {
-      path: 'BL_CRM_Txn_Enq_Budget_Aproval',
-      component: TenderBudgetAprovalComponent,
-      data: {
-        title: 'Budget Approval'
-      }
-    },
-    {
-      path: 'Support_Ticket_Nepal',
-      component: SupportTicketNepalComponent,
-      data: {
-        title: 'Support Ticket'
-      }
-    },
-    {
-      path: 'Stock_Transfer_To_Store',
-      component: StockTransferToStoreComponent,
-      data: {
-        title: 'Stock Transfer To Store'
-      }
-    },
-    {
-      path: 'Harbauer_Master_Product_Electrical',
-      component: HarbMasterProductElectricalComponent,
-      data: {
-        title: 'Master Product Electrical'
-      }
-    },
-    {
-      path: 'BL_CRM_Txn_Enq_Tender_Budget_Single',
-      component: TenderSingleSchBudgetComponent,
-      data: {
-        title: 'Single Scheme Budget'
-      }
-    },
-    {
-      path: 'BL_CRM_Txn_Enq_Tender_Budget_Multiple',
-      component: TenderMultipleSchBudgetComponent,
-      data: {
-        title: 'Multiple Scheme Budget'
-      }
-    },
-    {
-      path: 'Harbauer_Master_Product_Civil',
-      component: HarbMasterProductCivilComponent,
-      data: {
-        title: 'Master Product Civil'
-      }
-    },
-    {
-      path: 'Support_Ticket_Pending_Calls_Nepal',
-      component: SupportTicketPendingCallsNepalComponent,
-      data: {
-        title: 'Pending Calls'
-      }
-    },
-    {
-      path : 'Semi_Finished_Production_Voucher',
-      component:SemiFinishedProductionVoucherComponent,
-      data: {title: 'Production_Voucher (Semi Finished)'}
+    path: "Business_Dashboard",
+    loadChildren: () =>
+      import("./dashBoard/compacct.dashboard.module").then(
+        m => m.CompacctDashboardModule
+      ),
+    data: {
+      title: "Business Dashboard"
+    }
   },
   {
-    path : 'Credit_Note',
-    component:K4cCreditNoteBrowseComponent,
-    data: {title: 'Credit Note'}
-},
-{
-  path: 'Tutopia_Support_Calender_Dashboard',
-  component: TutoSupportCalenderDashboardComponent,
-  data: {
-    title: 'Calender Dashboard'
-  }
-},
-{
-  path: 'Non_Saleable_Closing_Stock_Outlet',
-  component: NonSaleableClosingStockComponent,
-  data: {
-    title: 'Non Saleable Closing Stock'
-  }
-},
-{
-  path: 'Acc_Txn_Op_Balance_NEW',
-  component: AccOpeningBalcManagementComponent,
-  data: {
-    title: 'Account Opening Balance Mangement'
-  }
-},
-{
-  path: 'BL_CRM_Engineering_Quotation_Nepal',
-  component: EngineeringQuotationNepalComponent,
-  data: {
-    title: 'Engineering Quotation'
-  }
-},
-{
-  path: 'BL_Txn_GRN_View_With_Purchase_Bill',
-  component: GrnViewPurchaseBillComponent,
-  data: {
-    title: 'GRN View with Purchase Bill'
-  }
-},
-{
-  path: 'BL_CRM_Txn_Enq_Harbaur_Product_Planning',
-  component: ProductsPlaningComponent,
-  data: {
-    title: 'Bill Of Materials'
-  }
-},
-{
-  path: 'BL_CRM_TXN_TASK_GNATT',
-  component: CompacctTxnTaskGanttComponent,
-  data: {
-    title: 'Project Task'
-  }
-},
-{
-  path: 'User_Absent',
-  component: UserAbsentComponent,
-  data: {
-    title: 'User Absent'
-  }
-},
-{
-  path: 'Tutopia_BDA_Joining',
-  component: TutoBdaJoiningComponent,
-  data: {
-    title: 'BDA Joining'
-  }
-},
-{
-  path: 'Tutopia_ASP_Unavailability',
-  component: TutoAspUnavaliblityComponent,
-  data: {
-    title: 'ASP Unavailability'
-  }
+    path: "INV_Txn_St_Trf_GST",
+    component: StocktransferComponent,
+    data: {
+      title: "Stock Transfer"
+    }
+  },
+  {
+    path: "scheduler_operation",
+    loadChildren: () =>
+      import(
+        "./common/CRM/Transaction/compacct.scheduler/compacct.scheduler.module"
+      ).then(m => m.CompacctSchedulerModule),
+    data: {
+      title: "Appointment Scheduler"
+    }
+  },
+  {
+    path: "Master_Product_V2",
+    component: MasterProductComponent,
+    data: {
+      title: "Master Product"
+    }
+  },
+  {
+    path: "Master_Cost_Center_V2",
+    component: MasterCostCenterComponent,
+    data: {
+      title: "Master Cost Center"
+    }
+  },
+  {
+    path: "Seed_Process",
+    component: SeedProcessComponent,
+    data: {
+      title: "Seed Process"
+    }
+  },
+  {
+    path: "PP_Bag_Process",
+    component: PpBagProcessComponent,
+    data: {
+      title: "Seed Process"
+    }
+  },
+  {
+    path: "BL_Txn_Purchase_Bill_Complete",
+    component: CompacctPurchasebillGstComponent,
+    data: {
+      title: "Purchase Bill"
+    }
+  },
+  {
+    path: "Oil_Production",
+    component: OilProductionComponent,
+    data: {
+      title: "Oil Production"
+    }
+  },
+  {
+    path: "BNB_New_Lead",
+    component: CompacctBnbLeadComponent,
+    data: {
+      title: "Lead"
+    }
+  },
+  {
+    path: "EXP_Doc_Comm_Inv",
+    component: CommercialInvoiceComponent,
+    data: {
+      title: "EXP_Doc_Comm_Inv"
+    }
+  },
+  {
+    path: "Export_Charges",
+    component: CompacctBnbexportsComponent,
+    data: {
+      title: "Export Charge"
+    }
+  },
+  {
+    path: "Export_Transportation",
+    component: TransportationComponent,
+    data: {
+      title: "Export_Transportation"
+    }
+  },
+  {
+    path: "Exp_Doc_Sale_Contract",
+    component: SalesContractComponent,
+    data: {
+      title: "Exp Doc Sale Contract"
+    }
+  },
+  {
+    path: "BNB_BL_CRM_Lead_Browse",
+    component: CompacctBnbLeadbydateComponent,
+    data: {
+      title: "Lead Search By Date"
+    }
+  },
+  {
+    path: "Container_Booking",
+    component: ContainerBookingComponent,
+    data: {
+      title: "Container Booking"
+    }
+  },
+  {
+    path: "Hearing_Audiogram_Graph",
+    component: CompacctAudiogramComponent,
+    data: {
+      title: "Audiogram"
+    }
+  },
+  {
+    path: "Currency_Booking",
+    component: CurrencyBookingComponent,
+    data: {
+      title: "Currency Booking"
+    }
+  },
+  {
+    path: "BL_Txn_ST_Trf_Tank",
+    component: StockTransferTankComponent,
+    data: {
+      title: "Stock Trans For Tank"
+    }
+  },
+  {
+    path: "Machine_Uses",
+    component: MachineUsesComponent,
+    data: {
+      title: "Machine Uses"
+    }
+  },
+  {
+    path: "Master_Product_HA",
+    component: MasterProductHearingComponent,
+    data: {
+      title: "Master Product Hearing Aid"
+    }
+  },
+  {
+    path: "Renewal",
+    component: RenewalComponent,
+    data: {
+      title: "Renewal"
+    }
+  },
+  {
+    path: "Renewal_Type",
+    component: RenewalTypeComponent,
+    data: {
+      title: "Renewal Type"
+    }
+  },
+  {
+    path: "BL_CRM_Master_Consultancy_V2",
+    component: ConsultancyComponent,
+    data: {
+      title: "BL_CRM_Master_Consultancy_V2"
+    }
+  },
+  {
+    path: "Master_Accounting_Ledger_V2",
+    component: CompacctLedgerComponent,
+    data: {
+      title: "Accounting Ledger"
+    }
+  },
+  {
+    path: "Master_Product_Material_Type",
+    component: MasterRoyaleMaterialTypeComponent,
+    data: {
+      title: "Material Type"
+    }
+  },
+  {
+    path: 'GHC_Inward_Outward_Register',
+    component: InwardOutwardRegisterComponent,
+    data: {
+      title: 'GHC_Inward_Outward_Register'
+    }
+  },
+  {
+    path: "BL_CRM_Lead_Management_V2",
+    component: CompacctRoyaleLeadComponent,
+    data: {
+      title: "Lead"
+    }
+  },
+  {
+    path: 'GHC_Consultancy_Commision',
+    component: ConsultancyCommissionComponent,
+    data: {
+      title: 'Consultancy Commission'
+    }
+  },
+  {
+    path: 'GHC_Doctor_Commission_Calculator',
+    component: DoctorCommissionCalculatorComponent,
+    data: {
+      title: 'Doctor Commission Calculator'
+    }
+  },
+  {
+    path: 'Hearing_Adjustment_Voucher',
+    component: AdjustmentVoucherComponent,
+    data: {
+      title: 'Hearing Adjustment Voucher'
+    }
+  },
+  {
+    path: 'INV_Txn_Inward_Replacement',
+    component: InwardReplacementComponent,
+    data: {
+      title: 'Inward Replacement'
+    }
+  },
+  {
+    path: 'Hearing_Quotation',
+    component: ClinicTrialComponent,
+    data: {
+      title: 'Hearing Quotation'
+    }
+  },
+  {
+    path: 'CRM_Customer_Sales',
+    component: CustomerSalesComponent,
+    data: {
+      title: 'Customer Sales'
+    }
+  },
+  {
+    path: 'CRM_Stock_Report',
+    component: CompacctStockReportComponent,
+    data: {
+      title: 'Stock Report'
+    }
+  },
+  {
+    path: 'Tutopia_Walk_in_Lead_Creation',
+    component: TutoWslkinleadComponent,
+    data: {
+      title: 'Walk in Lead'
+    }
+  },
+  {
+    path: 'Tutopia_Pending_Subscription',
+    component: TutoPendsubscriptionComponent,
+    data: {
+      title: 'Subscription'
+    }
+  },
+  {
+    path: 'Tutopia_Receive_Voucher',
+    component: TutoReceiveVoucherComponent,
+    data: {
+      title: 'Confirm Voucher'
+    }
+  },
+  {
+    path: 'Send_Bulk_Email_Nepal',
+    component: BulkSmsNepalComponent,
+    data: {
+      title: 'Bulk Email'
+    }
+  },
+  {
+    path: 'Tutopia_Master_Teacher',
+    component: TutoMasterTeacherComponent,
+    data: {
+      title: 'Master Teacher'
+    }
+  },
+  {
+    path: 'Tutopia_Support_Question_Answer',
+    component: TutoMastereQNAComponent,
+    data: {
+      title: 'Support Question & Answer'
+    }
+  },
+  {
+    path: 'Tutopia_Support_Query',
+    component: TutoSupportQueryComponent,
+    data: {
+      title: 'Support Query & Reply'
+    }
+  },
+  {
+    path: 'Tutopia_Student_Search',
+    component: TutoStudentSearchComponent,
+    data: {
+      title: 'Student Search'
+    }
+  },
+  {
+    path: 'Tutopia_CRM_Lead',
+    component: TutoLeadFollowupComponent,
+    data: {
+      title: 'Followup Management'
+    }
+  },
+  {
+    path: 'Tutopia_Master_SKU',
+    component: TutoMasterSkuComponent,
+    data: {
+      title: 'Master SKU'
+    }
+  },
+  {
+    path: 'Tutopia_Mater_Class_Management',
+    component: TutoClassManagementComponent,
+    data: {
+      title: 'Class Management'
+    }
+  },
+  {
+    path: 'K4C_Outlet_Requisition',
+    component: K4cOutletRequistionComponent,
+    data: {
+      title: 'K4C_Outlet_Requisition'
+    }
+  },
+  {
+    path: 'K4C_Master_Cost_Center',
+    component: K4cMasterCostCenterComponent,
+    data: {
+      title: 'Master Cost Center'
+    }
+  },
+  {
+    path: 'K4C_Master_Product',
+    component: K4cMasterProductComponent,
+    data: {
+      title: 'Master Product'
+    }
+  }, {
+    path: 'Master_UOM',
+    component: MasterUomComponent,
+    data: {
+      title: 'Master UOM'
+    }
+  },
+  {
+    path: 'K4C_Production_Voucher',
+    component: K4CProductionVoucherComponent,
+    data: {
+      title: 'K4C Production Voucher'
+    }
+  },
+  {
+    path: 'K4C_Dispatch_to_Outlet',
+    component: K4CDispatchToOutletComponent,
+    data: {
+      title: 'Distribution Challan'
+    }
+  },
+  {
+    path: 'K4C_Outlet_Sale_Bill',
+    component: K4cOutletSaleBillComponent,
+    data: {
+      title: 'POS Bill'
+    }
+  },
+  {
+    path: 'K4C_Outlet_Advance_Order',
+    component: K4cOutletAdvanceOrderComponent,
+    data: {
+      title: 'Advance Order'
+    }
+  },
+  {
+    path: 'POS_BIll_Order',
+    component: K4cPosBillOrderComponent,
+    data: {
+      title: 'POS Bill Order'
+    }
+  }, {
+    path: 'Tutopia_Student_Order',
+    component: TutoOrderManagementComponent,
+    data: {
+      title: 'Subscription Order Management'
+    }
+  },
+  {
+    path: 'Tutopia_Direct_Order_Booking',
+    component: TutoOrderBookingComponent,
+    data: {
+      title: 'Direct Order Booking'
+    }
+  },
+  {
+    path: 'Tutopia_Order_Payment',
+    component: TutoOrderPaymentComponent,
+    data: {
+      title: 'Order Payment'
+    }
+  },
+  {
+    path: 'Tutopia_Acc_Cash_Bank_Confirm',
+    component: TutoAccCashBankConfirmComponent,
+    data: {
+      title: 'Cash Bank Confirm'
+    }
+  }, {
+    path: 'Tutopia_Dist_Cash_Confirm',
+    component: TutoCashConfirmComponent,
+    data: {
+      title: ' Cash Deposit Confirmation'
+    }
+  },
+  {
+    path: 'Tutopia_Finance_Peer_Loan_Confirmation',
+    component: TutoLoanConfirmationComponent,
+    data: {
+      title: ' Finance Peer Loan Confirmation'
+    }
+  }, {
+    path: 'Loan_EMI_Trf',
+    component: TutoLoamEmiTransferComponent,
+    data: {
+      title: 'Loan EMI Transfer'
+    }
+  },
+  {
+    path: 'Tutopia_CRM_Master_SalesTeam',
+    component: TutoMasterSalesteamComponent,
+    data: {
+      title: 'Channel Sales Team'
+    }
+  },
+  {
+    path: 'K4C_Factory_Return',
+    component: K4cFactoryReturnComponent,
+    data: {
+      title: 'k4C FACTORY RETURN'
+    }
+  },
+  {
+    path: 'K4C_Advance_Order_Production',
+    component: K4cAdvanceProductionComponent,
+    data: {
+      title: 'Advance Order Production'
+    }
+  },
+
+
+  {
+    path: 'K4C_Dispatch_Outlet_Adv_Order',
+    component: K4CDispatchOutletAdvOrderComponent,
+    data: {
+      title: 'Custom Order Distribution'
+    }
+  }, {
+    path: 'Tutopia_Support_Master',
+    component: TutoSupportMasterComponent,
+    data: {
+      title: 'Support Ticket Master'
+    }
+  }, {
+    path: 'DIPL_Support_Ticket',
+    component: DiplSupportTicketComponent,
+    data: {
+      title: 'Support Ticket'
+    }
+  }, {
+    path: 'DIPL_Service_Team',
+    component: DiplMasterSalesteamComponent,
+    data: {
+      title: 'Sales Team'
+    }
+  }, {
+    path: 'Create_Start_Production',
+    component: K4cCreateStartProductionComponent,
+    data: {
+      title: 'Create Start Production'
+    }
+  }, {
+    path: 'K4C_Cutoff',
+    component: K4cCutoffComponent,
+    data: {
+      title: 'Cutoff Time'
+    }
+  }, {
+    path: 'DIPL_Support_Call_Sheet',
+    component: DIPLSupportCallSheetComponent,
+    data: {
+      title: 'Support Call Sheet'
+    }
+  }, {
+    path: 'Factory_Requisition',
+    component: K4cFactoryRequisitionComponent,
+    data: {
+      title: 'Factory Requisition'
+    }
+  },
+  {
+    path: 'Internal_Stock_Transfer',
+    component: K4cInternalStockTransferComponent,
+    data: {
+      title: 'Internal Stock Transfer'
+    }
+  },
+  {
+    path: 'Department_Wise_Requisition',
+    component: K4cDepartmentWiseRequisitionComponent,
+    data: {
+      title: 'Department Wise Requisition'
+    }
+  }, {
+    path: 'Accept_Receive_Distribution_Challan',
+    component: ReceiveDistributionChallanComponent,
+    data: {
+      title: 'Browse Accept Challan'
+    }
+  },
+  {
+    path: 'Direct_Sale_Call_Track',
+    component: TutoDirectSaleCallTrackComponent,
+    data: {
+      title: 'Call Status'
+    }
+  },
+  {
+    path: 'Distribution_Challan_Status',
+    component: K4cDistributionChallanStatusComponent,
+    data: {
+      title: 'Distribution Challan Status'
+    }
+  },
+  {
+    path: 'Tutopia_Order_Bill_Browse',
+    component: TutoOrderBillBrowseComponent,
+    data: {
+      title: 'Order Bill Browse'
+    }
+  }, {
+    path: 'K4C_Outlet_Stock_Transfer',
+    component: OutletStockTransferComponent,
+    data: {
+      title: 'Outlet Stock Transfer'
+    }
+  }, {
+    path: 'CRM_Payment_Bank_Master',
+    component: CRMPaymentBankComponent,
+    data: {
+      title: 'Payment Bank Master'
+    }
+  }, {
+    path: 'Support_User_Management',
+    component: TutoSupportUserManagementComponent,
+    data: {
+      title: 'Support User Management'
+    }
+  },
+  {
+    path: 'Outlet_Stock_Movement',
+    component: OutletStockMovementComponent,
+    data: {
+      title: 'Outlet Stock Movement'
+    }
+  }, {
+    path: 'Production_Voucher_New',
+    component: K4cProductionVoucherNewComponent,
+    data: {
+      title: 'Production Voucher New'
+    }
+  }, {
+    path: 'Internal_Stock_Transfer_New',
+    component: K4cInternalStockTransferNewComponent,
+    data: {
+      title: 'Internal Stock Transfer New'
+    }
+  }, {
+    path: 'Tutopia_DS_Billing',
+    component: TutoDsBillComponent,
+    data: {
+      title: 'Direct Sale Billing'
+    }
+  }, {
+    path: 'Tutopia_DS_Payment_Link',
+    component: TutoPaymentLinkComponent,
+    data: {
+      title: 'Generate Payment Link'
+    }
+  },
+  {
+    path: 'Master_BOM_Reciepe',
+    component: K4cMasterBOMReciepeComponent,
+    data: {
+      title: 'Master BOM Reciepe'
+    }
+  },
+  {
+    path: 'Issue_Stock_Adjustment',
+    component: IssueStockAdjustmentComponent,
+    data: {
+      title: 'Issue Stock Adjustment'
+    }
+  },
+  {
+    path: 'Receive_Stock_Adjustment',
+    component: ReceiveStockAdjustmentComponent,
+    data: {
+      title: 'Receive Stock Adjustment'
+    }
+  },
+  {
+    path: 'Store_Item_Indent',
+    component: StoreItemIndentComponent,
+    data: {
+      title: 'Store Item Indent'
+    }
+  }, {
+    path: 'Speech_DoctorsAppointment',
+    component: HearingSpeechAppointmentComponent,
+    data: {
+      title: 'Speech Appointment'
+    }
+  },
+  {
+    path: 'Outlet_Txn_Bank_Deposit',
+    component: OutletTxnBankDepositComponent,
+    data: {
+      title: 'Outlet Txn Bank Deposit'
+    }
+  },
+  {
+    path: 'Factory_Indent_Advance_Order',
+    component: K4cFactoryIndentAdvanceComponent,
+    data: {
+      title: 'Indent Adv Order'
+    }
+  }, {
+    path: 'Master_UOM_Common',
+    component: MasterUOMCommonComponent,
+    data: {
+      title: 'Master UOM'
+    }
+  },
+  {
+    path: 'Raw_Material_Issue',
+    component: K4cRawMaterialIssueComponent,
+    data: {
+      title: 'Raw Material Issue'
+    }
+  },
+  {
+    path: 'Raw_Material_Indent',
+    component: K4cRawMaterialIndentComponent,
+    data: {
+      title: 'Raw Material Indent'
+    }
+  },
+  {
+    path: 'Outlet_Physical_Closing_Stock',
+    component: OutletPhysicalClosingStockComponent,
+    data: {
+      title: 'Outlet Physical Closing Stock'
+    }
+  }, {
+    path: 'Raw_Material_Stock_Transfer',
+    component: K4cRawMaterialStockTransferComponent,
+    data: {
+      title: 'Raw Material Stock Transfer'
+    }
+  },
+  {
+    path: 'K4C_Dispatch_to_Outlet_Store',
+    component: K4cDispatchOutletStoreComponent,
+    data: {
+      title: 'Dispatch to Outlet Store'
+    }
+  },
+  {
+    path: 'Purchase_Planing',
+    component: K4cPurchasePlaningComponent,
+    data: {
+      title: 'Purchase Planing'
+    }
+  },
+  {
+    path: 'K4C_Outlet_Stock_Report',
+    component: K4cOutletStockReportComponent,
+    data: {
+      title: 'Stock Report'
+    }
+  },
+  {
+    path: 'K4C_Day_End_Process',
+    component: K4cDayEndProcessComponent,
+    data: {
+      title: 'Day End Process'
+    }
+  }, {
+    path: 'Update_Expiry',
+    component: UpdateExpiryComponent,
+    data: {
+      title: 'Updated Expiry'
+    }
+  },
+  {
+    path: 'Closing_Stock_With_Expiry_Date',
+    component: ClosingStockWithExpiryDateComponent,
+    data: {
+      title: 'Closing Stock With Expiry'
+    }
+  },
+  {
+    path: 'BL_CRM_Master_SalesTeam_Field_Sales',
+    component: TutoSaleTreeFieldComponent,
+    data: {
+      title: 'Sales Tree Field Sales'
+    }
+  },
+  {
+    path: 'BL_CRM_Master_SalesTeam_Inside_Sales',
+    component: TutoSalesTreeInsideSalesComponent,
+    data: {
+      title: 'Sales Team Inside Sales'
+    }
+  }, {
+    path: 'Tutopia_CRM_Lead_Field_Sales',
+    component: TutoCrmLeadFieldSaleComponent,
+    data: {
+      title: 'Followup Management (Channel Sale)'
+    }
+  }, {
+    path: 'Tutoipa_BL_CRM_Temp_To_New_Lead',
+    component: TutoTempCrmLeadComponent,
+    data: {
+      title: 'Followup Management (Channel Sale)'
+    }
+  },
+  {
+    path: 'Tutopia_DS_Dashboard',
+    component: TutoDsDashboardComponent,
+    data: {
+      title: 'DS Dashboard'
+    }
+  },
+  {
+    path: 'Tutopia_Web_Demo_Followup',
+    component: TutoWebDemLeadFollowupComponent,
+    data: {
+      title: 'Web Demo Followup'
+    }
+  },
+  {
+    path: 'Tutopia_Audit_Appointment',
+    component: TutoAuditLeadFollowupComponent,
+    data: {
+      title: 'Audit Appointment'
+    }
+  }, {
+    path: 'Outlet_Closing_Stock_With_Batch',
+    component: OutletClosingStockWithBatchComponent,
+    data: {
+      title: 'Outlet Closing Stock With Batch'
+    }
+  },
+  {
+    path: 'Adv_Order_Internal_Stock_Transfer',
+    component: K4cAdvOrderInternalStockTransferComponent,
+    data: {
+      title: 'Advance Order Internal Stock Transfer'
+    }
+  }, {
+    path: 'Tutopia_Post_Sales_Audit',
+    component: TutoPostSaleAuditLeadFollowupComponent,
+    data: {
+      title: 'POST SALE AUDIT'
+    }
+  },
+  {
+    path: 'Tutopia_BDA_Report',
+    component: TutoBdaReportComponent,
+    data: {
+      title: 'BDA Report'
+    }
+  }, {
+    path: 'Tutopia_School_Request_Details',
+    component: TutoSchoolRequestDetailsComponent,
+    data: {
+      title: 'School Request'
+    }
+  }, {
+    path: 'BL_Txn_Civil_Running_Bill_Details',
+    component: CompacctRunningBillComponent,
+    data: {
+      title: 'Running Bill Details'
+    }
+  }, {
+    path: 'BL_Txn_Civil_Daily_Job',
+    component: CompacctCivildailyJobComponent,
+    data: {
+      title: 'Daily Progress Report (Civil) '
+    }
+  }, {
+    path: 'BL_CRM_Txn_Enq_Tender',
+    component: CompacctTenderComponent,
+    data: {
+      title: 'Tender '
+    }
+  }, {
+    path: 'BL_CRM_Lead_Interaction_Nepal',
+    component: CrmLeadOpportunitiesComponent,
+    data: {
+      title: 'All Opportunities '
+    }
+  }, {
+    path: 'BL_CRM_Lead_Details_Nepal',
+    component: CrmLeadTaskDetailsComponent,
+    data: {
+      title: 'Lead Details '
+    }
+  }, {
+    path: 'Stock_Adjustment_for_Store_Items',
+    component: K4cStockAdjustmentStoreItemsComponent,
+    data: {
+      title: 'Stock Adjustment For Store Items '
+    }
+  }, {
+    path: 'Tutopia_Web_Demo_Team',
+    component: TutoWebDemoTeamComponent,
+    data: {
+      title: 'Tutopia Web Demo Team '
+    }
+  }, {
+    path: 'Tutopia_Pre_Sale_Audit_Team',
+    component: TutoPreSaleAuditTeamComponent,
+    data: {
+      title: 'Tutopia Pre Sale Audit Team '
+    }
+  }, {
+    path: 'Tutopia_Post_Sale_Audit_Team',
+    component: TutoPostSaleAuditTeamComponent,
+    data: {
+      title: 'Tutopia Post Sale Audit Team '
+    }
+  },
+  {
+    path: 'Tutopia_Field_Sales_School',
+    component: TutoFieldSalesSchoolComponent,
+    data: {
+      title: 'Tutopia Field Sales School '
+    }
+  }, {
+    path: 'Raw_SemiFinished_Nonsaleable_Closing_Stock',
+    component: K4cRsnsClosingStockComponent,
+    data: {
+      title: 'Raw SemiFinished Nonsaleable Closing Stock '
+    }
+  },
+  {
+    path: 'Project_Estimate',
+    component: HarbaProjectEstimateComponent,
+    data: {
+      title: 'Project Estimate'
+    }
+  },
+  {
+    path: 'Direct_Payment_Followup_Nepal',
+    component: DirectPaymentFollowupNepalComponent,
+    data: {
+      title: 'Direct Payment Followup'
+    }
+  },
+  {
+    path: 'Franchise_Sale_Bill',
+    component: K4cFranchiseSaleBillComponent,
+    data: {
+      title: 'Franchise Sale Bill'
+    }
+  },
+  {
+    path: 'Tender_Estimate',
+    component: TenderEstimateComponent,
+    data: {
+      title: 'Tender Estimate'
+    }
+  },
+  {
+    path: 'BL_CRM_Master_Package_New',
+    component: HearingPackageMasterComponent,
+    data: {
+      title: 'Package Master'
+    }
+  },
+  {
+    path: 'BL_CRM_TXN_TASK',
+    component: CompacctTxnTaskComponent,
+    data: {
+      title: 'Txn Task'
+    }
+  },
+  {
+    path: 'Tutopia_Manual_Payment_Collection',
+    component: TutoManualPaymentCollectionComponent,
+    data: {
+      title: 'Manual Payment Collection'
+    }
+  },
+  {
+    path: 'Outlet_Sale_Bill_WithOut_batch_Select',
+    component: OutletSaleBillWithoutBatchSelectComponent,
+    data: {
+      title: 'Take Away (Auto Batch)'
+    }
+  },
+  {
+    path: 'Outlet_Stock_Transfer_Atuto_Batch',
+    component: OutletStockTransferAutoBatchComponent,
+    data: {
+      title: 'Outlet Stock Transfer(Auto Batch)'
+    }
+  },
+  {
+
+    path: 'Bill_Edit_From_Admin',
+    component: BillEditFromAdminComponent,
+    data: {
+      title: 'Sale Bill'
+    }
+  },
+  {
+    path: 'BL_CRM_Txn_Enq_Tender_Harbauer',
+    component: TxnEnqTenderHarbauerComponent,
+    data: {
+      title: 'Txn Enq Tender'
+    }
+  },
+  {
+    path: 'Tutopia_Upload_Data_Support',
+    component: TutoUploadDataSupportComponent,
+    data: {
+      title: 'Upload Data Support'
+    }
+  },
+  {
+    path: 'Engg_Nepal_Machine_Master',
+    component: EnggNepalMachineMasterComponent,
+    data: {
+      title: 'Machine Master'
+    }
+  },
+  {
+    path: 'Engg_Nepal_Spare_Parts',
+    component: EnggNepalSparePartsComponent,
+    data: {
+      title: 'Spare Parts And Ink Master'
+    }
+  },
+  {
+    path: 'BL_CRM_Txn_Enq_Tender_Budget',
+    component: TenderBudgetComponent,
+    data: {
+      title: 'Tender Budget'
+    }
+  },
+  {
+    path: 'BL_CRM_Txn_Enq_Tender_Harbauer_View',
+    component: TenderHarbauerViewComponent,
+    data: {
+      title: 'Tender Edit (GOVT.)'
+    }
+  },
+  {
+    path: 'Master_Accounting_Subledger_Nepal',
+    component: NepalMasterSubledgerComponent,
+    data: {
+      title: 'Master Subledger'
+    }
+  },
+  {
+    path: 'Harbauer_Master_Product_mechanical',
+    component: HarbauerMasterProductMechanicalComponent,
+    data: {
+      title: 'Master Product mechanical'
+    }
+  },
+  {
+    path: 'Outlet_Group_Report',
+    component: OutletGroupReportComponent,
+    data: {
+      title: 'Group Report'
+    }
+  },
+  {
+    path: 'BL_Txn_K4C_Crate_IN_OUT',
+    component: K4cCrateInOuComponent,
+    data: {
+      title: 'BL Txn K4C Crate IN OUT'
+    }
+  },
+  {
+    path: 'BL_CRM_ENGG_Master_Nepal',
+    component: BlCrmEnggMasterNepalComponent,
+    data: {
+      title: 'BL CRM ENGG Master Nepal'
+    }
+  },
+  {
+    path: 'BL_CRM_Txn_Enq_Tender_Harbauer_View_Actual',
+    component: TenderHarbauerActualViewComponent,
+    data: {
+      title: 'Tender View (GOVT.)'
+    }
+  },
+  {
+    path: 'Engg_CRM_Installed_Machine',
+    component: EnggCrmInstalledMachineComponent,
+    data: {
+      title: 'Installed Machine'
+    }
+  },
+  {
+    path: 'Engg_CRM_Installed_Machine_Service_Contract',
+    component: EnggCrmInstalledMachineServiceContractComponent,
+    data: {
+      title: 'Service Contract'
+    }
+  },
+  {
+    path: 'BL_CRM_Txn_Enq_Budget_Aproval',
+    component: TenderBudgetAprovalComponent,
+    data: {
+      title: 'Budget Approval'
+    }
+  },
+  {
+    path: 'Support_Ticket_Nepal',
+    component: SupportTicketNepalComponent,
+    data: {
+      title: 'Support Ticket'
+    }
+  },
+  {
+    path: 'Stock_Transfer_To_Store',
+    component: StockTransferToStoreComponent,
+    data: {
+      title: 'Stock Transfer To Store'
+    }
+  },
+  {
+    path: 'Harbauer_Master_Product_Electrical',
+    component: HarbMasterProductElectricalComponent,
+    data: {
+      title: 'Master Product Electrical'
+    }
+  },
+  {
+    path: 'BL_CRM_Txn_Enq_Tender_Budget_Single',
+    component: TenderSingleSchBudgetComponent,
+    data: {
+      title: 'Single Scheme Budget'
+    }
+  },
+  {
+    path: 'BL_CRM_Txn_Enq_Tender_Budget_Multiple',
+    component: TenderMultipleSchBudgetComponent,
+    data: {
+      title: 'Multiple Scheme Budget'
+    }
+  },
+  {
+    path: 'Harbauer_Master_Product_Civil',
+    component: HarbMasterProductCivilComponent,
+    data: {
+      title: 'Master Product Civil'
+    }
+  },
+  {
+    path: 'Support_Ticket_Pending_Calls_Nepal',
+    component: SupportTicketPendingCallsNepalComponent,
+    data: {
+      title: 'Pending Calls'
+    }
+  },
+  {
+    path: 'Semi_Finished_Production_Voucher',
+    component: SemiFinishedProductionVoucherComponent,
+    data: { title: 'Production_Voucher (Semi Finished)' }
+  },
+  {
+    path: 'Credit_Note',
+    component: K4cCreditNoteBrowseComponent,
+    data: { title: 'Credit Note' }
+  },
+  {
+    path: 'Tutopia_Support_Calender_Dashboard',
+    component: TutoSupportCalenderDashboardComponent,
+    data: {
+      title: 'Calender Dashboard'
+    }
+  },
+  {
+    path: 'Non_Saleable_Closing_Stock_Outlet',
+    component: NonSaleableClosingStockComponent,
+    data: {
+      title: 'Non Saleable Closing Stock'
+    }
+  },
+  {
+    path: 'Acc_Txn_Op_Balance_NEW',
+    component: AccOpeningBalcManagementComponent,
+    data: {
+      title: 'Account Opening Balance Mangement'
+    }
+  },
+  {
+    path: 'BL_CRM_Engineering_Quotation_Nepal',
+    component: EngineeringQuotationNepalComponent,
+    data: {
+      title: 'Engineering Quotation'
+    }
+  },
+  {
+    path: 'BL_Txn_GRN_View_With_Purchase_Bill',
+    component: GrnViewPurchaseBillComponent,
+    data: {
+      title: 'GRN View with Purchase Bill'
+    }
+  },
+  {
+    path: 'BL_CRM_Txn_Enq_Harbaur_Product_Planning',
+    component: ProductsPlaningComponent,
+    data: {
+      title: 'Bill Of Materials'
+    }
+  },
+  {
+    path: 'BL_CRM_TXN_TASK_GNATT',
+    component: CompacctTxnTaskGanttComponent,
+    data: {
+      title: 'Project Task'
+    }
+  },
+  {
+    path: 'User_Absent',
+    component: UserAbsentComponent,
+    data: {
+      title: 'User Absent'
+    }
+  },
+  {
+    path: 'Tutopia_BDA_Joining',
+    component: TutoBdaJoiningComponent,
+    data: {
+      title: 'BDA Joining'
+    }
+  },
+  {
+    path: 'Tutopia_ASP_Unavailability',
+    component: TutoAspUnavaliblityComponent,
+    data: {
+      title: 'ASP Unavailability'
+    }
   },
   {
     path: 'Retail_Txn_SALE_Bill_cum_challan_GST_V2',
@@ -1654,98 +1655,98 @@ const layoutRoutes: Routes = [{
     }
   },
   {
-      path: 'Master_Company',
-      component: MasterCompanyComponent,
-      data: {
-        title: 'Master Company'
-      }
-    },
-      {
-      path: 'User_Master',
-      component: UserMasterComponent,
-      data: {
-        title: 'User Master'
-
-      }
+    path: 'Master_Company',
+    component: MasterCompanyComponent,
+    data: {
+      title: 'Master Company'
+    }
   },
   {
-  path: 'Journal',
-  component: JournalVoucherComponent,
-  data: {
-    title: 'journal'
+    path: 'User_Master',
+    component: UserMasterComponent,
+    data: {
+      title: 'User Master'
 
-  }
+    }
   },
   {
-  path: 'Product_Category_Update',
-  component: K4cProductCategoryUpdateComponent,
-  data: {
-    title: 'Product Category Update'
+    path: 'Journal',
+    component: JournalVoucherComponent,
+    data: {
+      title: 'journal'
 
-  }
-},
-{
-path: 'Purchase_Order',
-component: PurchaseOrderComponent,
-data: {
-  title: 'Purchase Order'
- }
-},
-{
-  path: 'Asp_Max_Appo',
-  component: TutoAspMaxAppoComponent,
-  data: {
-    title: 'Asp Max Appo'
-   }
+    }
+  },
+  {
+    path: 'Product_Category_Update',
+    component: K4cProductCategoryUpdateComponent,
+    data: {
+      title: 'Product Category Update'
+
+    }
+  },
+  {
+    path: 'Purchase_Order',
+    component: PurchaseOrderComponent,
+    data: {
+      title: 'Purchase Order'
+    }
+  },
+  {
+    path: 'Asp_Max_Appo',
+    component: TutoAspMaxAppoComponent,
+    data: {
+      title: 'Asp Max Appo'
+    }
   },
   {
     path: 'Tutopia_BDA_Attendance',
     component: TutoBdaAttendanceComponent,
     data: {
       title: 'Tutopia BDA Attendance'
-     }
-    },
-    {
-      path: 'HR_Leave_Opening_Issue_Balance',
-      component: HrLeaveOpeningComponent,
-      data: {
-        title: 'HR Leave Opening Issue Balance'
-      }
-    },
-    {
-      path: 'Tutopia_BDA_Wise_Target',
-      component: TutoBdaWiseTargetComponent,
-      data: {
-        title: 'Tutopia BDA Wise Target'
-      }
-    },
-    {
-      path: 'Sales_Tree',
-      component: TutoSalesTreeComponent,
-      data: {
-        title: 'Sales Tree'
-      }
-    },
-    {
-      path: 'GRN',
-      component: GrnComponent,
-      data: {
-        title: 'GRN'
-      }
-    },
-   {
-     path: 'Txn_Requisition',
-     component: MiclRequisitionComponent,
-     data: {
-     title: 'Requisition'
     }
-   },
-   {
+  },
+  {
+    path: 'HR_Leave_Opening_Issue_Balance',
+    component: HrLeaveOpeningComponent,
+    data: {
+      title: 'HR Leave Opening Issue Balance'
+    }
+  },
+  {
+    path: 'Tutopia_BDA_Wise_Target',
+    component: TutoBdaWiseTargetComponent,
+    data: {
+      title: 'Tutopia BDA Wise Target'
+    }
+  },
+  {
+    path: 'Sales_Tree',
+    component: TutoSalesTreeComponent,
+    data: {
+      title: 'Sales Tree'
+    }
+  },
+  {
+    path: 'GRN',
+    component: GrnComponent,
+    data: {
+      title: 'GRN'
+    }
+  },
+  {
+    path: 'Txn_Requisition',
+    component: MiclRequisitionComponent,
+    data: {
+      title: 'Requisition'
+    }
+  },
+  {
     path: 'MICL_Dispatch_Challan',
     component: MiclDispatchChallanComponent,
     data: {
-    title: 'MICL Issue Material'
-   }
+      title: 'MICL Issue Material'
+    }
   },
   {
     path: 'Leave_Application',
@@ -1759,876 +1760,876 @@ data: {
     component: SubledgerForAccountsComponent,
     data: {
       title: 'Subledger For Accounts'
-  }
-},
-{
-  path: 'Master_Product_General_Consumables',
-  component: MasterProductGeneralConsumablesComponent,
-  data: {
-    title: 'Master Product General Consumables'
-}
-},
-{
-  path: 'BL_CRM_TXN_TASK_LIST',
-  component: HarbaTaskListComponent,
-  data: {
-    title: 'Task List'
-}
-},
-{
-  path: 'Purchase_Bill_From_GRN',
-  component: PurchaseBillFromGrnComponent,
-  data: {
-    title: 'Purchase Bill From GRN'
-}
-},
-{
-  path: 'RDB_Entry',
-  component: RdbComponent,
-  data: {
-    title: 'RDB Entry'
-  }
-},
-{
-  path: 'BDA_Wise_Target_Achievement',
-  component: BdaWiseTargetAchievementComponent,
-  data: {
-    title: 'BDA Wise Target Achievement'
-}
-},
-{
-  path: 'Product_Master',
-  component: ProductMasterComponent,
-  data: {
-    title: 'Product Master'
-}
-},
-{
-  path: 'BSHPL_Ameyo_KB',
-  component: BSHPAmeyoKBComponent,
-  data: {
-    title: 'Follow UP'
-}
-},
-{
-  path: 'BSHPL_Ameyo_Customer',
-  component: BSHPLAmeyoCustomerComponent,
-  data: {
-    title: 'Customar Detalis'
-}
-},
-{
-  path: 'Sub_Ledger',
-  component: SubLedgerComponent,
-  data: {
-    title: 'Sub Ledger'
-}
-},
-{
-  path: 'Tax_Category',
-  component: TaxCategoryComponent,
-  data: {
-    title: 'Tax Category'
-}
-},
-{
-  path: 'Conversion_of_Product',
-  component: K4cConversionOfProductComponent,
-  data: {
-    title: 'Conversion of Product'
-}
-},
-{
-  path: 'Purchase_Bill',
-  component: PurchaseBillComponent,
-  data: {
-    title: 'Purchase Bill'
-}
-},
-{
-  path: 'Financial_Voucher',
-  component: FinancialVoucherComponent,
-  data: {
-    title: 'Financial Voucher'
-}
-},
-{
-  path: 'Wastage',
-  component: WastageComponent,
-  data: {
-    title: 'Wastage'
-}
-},
-{
-  path: 'HIPL_Payment_Requisition',
-  component: HIPLPaymentRequisitionComponent,
-  data: {
-    title: 'HIPL Payment Requisition'
-}
-},
-{
-  path: 'CC_Saha_Profund',
-  component: CCSahaProfundComponent,
-  data: {
-    title: 'CC Saha Profund'
-}
-},
-{
-  path: 'REP_Stock_Report',
-  component: REPStockReportComponent,
-  data: {
-    title: 'Stock Report'
-}
-},
-{
-path: 'Contra_Voucher',
-component: ContractVoucherV2Component,
-data: {
-title: 'Contra Voucher'
-}
-},
-{
-path: 'Issue_Challan',
-  component: IssueChallanComponent,
-data: {
-  title: 'Issue Challan'
-}
-},
-{
-  path: 'HR_Txn_Special_Allowance_Deduction',
-  component: HRTxnSpecialAllowanceDeductionComponent,
-  data: {
-    title: 'HR Txn Special Allowance Deduction'
-}
-},
-{
-  path: 'Process_Salary',
-  component: ProcessSalaryComponent,
-  data: {
-    title: 'Process Salary'
-}
-},
-{
-  path: 'Leave_Approval',
-  component: LeaveApprovalComponent,
-  data: {
-    title: 'Leave Approval'
-}
-},
-{
-  path: 'Consumption',
-  component: ConsumptionComponent,
-  data: {
-    title: 'Consumption'
-}
-},
-{
-  path: 'Debit_Note_WO_Stock',
-  component: DebitNoteWoStockComponent,
-  data: {
-    title: 'Debit Note Without Stock'
-}
-},
-{
-  path: 'Financial_Reminder',
-  component: FinancialReminderComponent,
-  data: {
-    title: 'Financial Reminder'
-}
-},
-{
-path: 'Inflow_Planing',
-component: InflowPlaningComponent,
-data: {
-title: 'Inflow Planing'
-}
-},
-{
-path: 'Work_Order',
-component: WorkOrderComponent,
-data: {
-title: 'Work Order'
-}
-},
-{
-path: 'Returnable_Gate_Pass',
-component: ReturnableGatePassComponent,
-data: {
-title: 'Returnable Gate Pass '
-}
-},
-{
-path: 'Repair_And_Maintenance_RDB',
-component: RepairAndMaintenanceRdbComponent,
-data: {
-title: 'Repair And Maintenance RDB'
-}
-},
-{
-path: 'Production_Closing_Stock',
-component: K4cProductionClosingStockComponent,
-data: {
-title: 'Production Closing Stock'
-}
-},
-{
-path: 'Employee_Salary_Master_MICL',
-component: EmployeeSalaryMasterMiclComponent,
-data: {
-  title: 'Employee Salary Master'
-}
-},
-{
-path: 'Employee_Salary_Master_Harbauer',
-  component: HrEmployeeSalaryMasterHarbComponent,
-  data: {
-    title: 'Employee Salary_Master'
-}
-},
-{
-  path: 'Repair_And_Maintenance_GRN',
+    }
+  },
+  {
+    path: 'Master_Product_General_Consumables',
+    component: MasterProductGeneralConsumablesComponent,
+    data: {
+      title: 'Master Product General Consumables'
+    }
+  },
+  {
+    path: 'BL_CRM_TXN_TASK_LIST',
+    component: HarbaTaskListComponent,
+    data: {
+      title: 'Task List'
+    }
+  },
+  {
+    path: 'Purchase_Bill_From_GRN',
+    component: PurchaseBillFromGrnComponent,
+    data: {
+      title: 'Purchase Bill From GRN'
+    }
+  },
+  {
+    path: 'RDB_Entry',
+    component: RdbComponent,
+    data: {
+      title: 'RDB Entry'
+    }
+  },
+  {
+    path: 'BDA_Wise_Target_Achievement',
+    component: BdaWiseTargetAchievementComponent,
+    data: {
+      title: 'BDA Wise Target Achievement'
+    }
+  },
+  {
+    path: 'Product_Master',
+    component: ProductMasterComponent,
+    data: {
+      title: 'Product Master'
+    }
+  },
+  {
+    path: 'BSHPL_Ameyo_KB',
+    component: BSHPAmeyoKBComponent,
+    data: {
+      title: 'Follow UP'
+    }
+  },
+  {
+    path: 'BSHPL_Ameyo_Customer',
+    component: BSHPLAmeyoCustomerComponent,
+    data: {
+      title: 'Customar Detalis'
+    }
+  },
+  {
+    path: 'Sub_Ledger',
+    component: SubLedgerComponent,
+    data: {
+      title: 'Sub Ledger'
+    }
+  },
+  {
+    path: 'Tax_Category',
+    component: TaxCategoryComponent,
+    data: {
+      title: 'Tax Category'
+    }
+  },
+  {
+    path: 'Conversion_of_Product',
+    component: K4cConversionOfProductComponent,
+    data: {
+      title: 'Conversion of Product'
+    }
+  },
+  {
+    path: 'Purchase_Bill',
+    component: PurchaseBillComponent,
+    data: {
+      title: 'Purchase Bill'
+    }
+  },
+  {
+    path: 'Financial_Voucher',
+    component: FinancialVoucherComponent,
+    data: {
+      title: 'Financial Voucher'
+    }
+  },
+  {
+    path: 'Wastage',
+    component: WastageComponent,
+    data: {
+      title: 'Wastage'
+    }
+  },
+  {
+    path: 'HIPL_Payment_Requisition',
+    component: HIPLPaymentRequisitionComponent,
+    data: {
+      title: 'HIPL Payment Requisition'
+    }
+  },
+  {
+    path: 'CC_Saha_Profund',
+    component: CCSahaProfundComponent,
+    data: {
+      title: 'CC Saha Profund'
+    }
+  },
+  {
+    path: 'REP_Stock_Report',
+    component: REPStockReportComponent,
+    data: {
+      title: 'Stock Report'
+    }
+  },
+  {
+    path: 'Contra_Voucher',
+    component: ContractVoucherV2Component,
+    data: {
+      title: 'Contra Voucher'
+    }
+  },
+  {
+    path: 'Issue_Challan',
+    component: IssueChallanComponent,
+    data: {
+      title: 'Issue Challan'
+    }
+  },
+  {
+    path: 'HR_Txn_Special_Allowance_Deduction',
+    component: HRTxnSpecialAllowanceDeductionComponent,
+    data: {
+      title: 'HR Txn Special Allowance Deduction'
+    }
+  },
+  {
+    path: 'Process_Salary',
+    component: ProcessSalaryComponent,
+    data: {
+      title: 'Process Salary'
+    }
+  },
+  {
+    path: 'Leave_Approval',
+    component: LeaveApprovalComponent,
+    data: {
+      title: 'Leave Approval'
+    }
+  },
+  {
+    path: 'Consumption',
+    component: ConsumptionComponent,
+    data: {
+      title: 'Consumption'
+    }
+  },
+  {
+    path: 'Debit_Note_WO_Stock',
+    component: DebitNoteWoStockComponent,
+    data: {
+      title: 'Debit Note Without Stock'
+    }
+  },
+  {
+    path: 'Financial_Reminder',
+    component: FinancialReminderComponent,
+    data: {
+      title: 'Financial Reminder'
+    }
+  },
+  {
+    path: 'Inflow_Planing',
+    component: InflowPlaningComponent,
+    data: {
+      title: 'Inflow Planing'
+    }
+  },
+  {
+    path: 'Work_Order',
+    component: WorkOrderComponent,
+    data: {
+      title: 'Work Order'
+    }
+  },
+  {
+    path: 'Returnable_Gate_Pass',
+    component: ReturnableGatePassComponent,
+    data: {
+      title: 'Returnable Gate Pass '
+    }
+  },
+  {
+    path: 'Repair_And_Maintenance_RDB',
+    component: RepairAndMaintenanceRdbComponent,
+    data: {
+      title: 'Repair And Maintenance RDB'
+    }
+  },
+  {
+    path: 'Production_Closing_Stock',
+    component: K4cProductionClosingStockComponent,
+    data: {
+      title: 'Production Closing Stock'
+    }
+  },
+  {
+    path: 'Employee_Salary_Master_MICL',
+    component: EmployeeSalaryMasterMiclComponent,
+    data: {
+      title: 'Employee Salary Master'
+    }
+  },
+  {
+    path: 'Employee_Salary_Master_Harbauer',
+    component: HrEmployeeSalaryMasterHarbComponent,
+    data: {
+      title: 'Employee Salary_Master'
+    }
+  },
+  {
+    path: 'Repair_And_Maintenance_GRN',
     component: RepairAndMantainceGRNComponent,
     data: {
       title: 'Repair and Maintenance GRN '
-}
-},
-{
-  path: 'HR_Employee_Master',
-  component:HREmployeeMasterComponent,
-  data: {
-    title: 'Employee Master'
-}
-},
-{
-  path: 'Project_Bill',
-  component:HarbProjectBillComponent,
-  data: {
-    title: 'Sale Bill Project'
-}
-},
-{
-  path: 'Nepal_Subledger_Alias_Category',
-  component:NepalSubledgerAliasCategoryComponent,
-  data: {
-    title: 'Subledger Slias Category'
-}
-},
-{
-  path: 'Patient_Coupon',
-  component:PatientCouponComponent,
-  data: {
-    title: 'Patient Coupon'
-}
-},
-{
-  path: 'Hearing_Case_History',
+    }
+  },
+  {
+    path: 'HR_Employee_Master',
+    component: HREmployeeMasterComponent,
+    data: {
+      title: 'Employee Master'
+    }
+  },
+  {
+    path: 'Project_Bill',
+    component: HarbProjectBillComponent,
+    data: {
+      title: 'Sale Bill Project'
+    }
+  },
+  {
+    path: 'Nepal_Subledger_Alias_Category',
+    component: NepalSubledgerAliasCategoryComponent,
+    data: {
+      title: 'Subledger Slias Category'
+    }
+  },
+  {
+    path: 'Patient_Coupon',
+    component: PatientCouponComponent,
+    data: {
+      title: 'Patient Coupon'
+    }
+  },
+  {
+    path: 'Hearing_Case_History',
     component: HearingCaseHistoryComponent,
     data: {
       title: 'Hearing Case History'
-}
-},
-{
-  path: 'Good_Receive_Details',
+    }
+  },
+  {
+    path: 'Good_Receive_Details',
     component: GoodReceiveDetailsComponent,
     data: {
       title: 'Good Receive Details'
-}
-},
-{
-  path: 'Master_Holiday',
-  component:MasterHolidayComponent,
-  data: {
-    title: 'Master Holiday'
-}
-},
-{
-  path: 'MICL_Dispatch_Challan_Chargeable',
+    }
+  },
+  {
+    path: 'Master_Holiday',
+    component: MasterHolidayComponent,
+    data: {
+      title: 'Master Holiday'
+    }
+  },
+  {
+    path: 'MICL_Dispatch_Challan_Chargeable',
     component: MICLDispatchChallanChargeableComponent,
     data: {
       title: 'MICL Dispatch Challan Chargeable '
-}
-},
-{
-  path: 'Daily_Attendance_Sheet',
+    }
+  },
+  {
+    path: 'Daily_Attendance_Sheet',
     component: DailyAttendanceSheetComponent,
     data: {
       title: 'Daily Attendance Sheet '
-}
-},
-{
-  path: 'BL_CRM_Master_Consultancy_V3',
+    }
+  },
+  {
+    path: 'BL_CRM_Master_Consultancy_V3',
     component: MasterConsultancyV3Component,
     data: {
       title: 'BL CRM Master Consultancy '
-}
-},
-{
-  path: 'MICL_Journal_Voucher',
-  component:MICLJournalVoucherComponent,
-  data: {
-    title: 'MICL Journal Voucher'
-}
-},
-{
-  path: 'PO_Authorization',
+    }
+  },
+  {
+    path: 'MICL_Journal_Voucher',
+    component: MICLJournalVoucherComponent,
+    data: {
+      title: 'MICL Journal Voucher'
+    }
+  },
+  {
+    path: 'PO_Authorization',
     component: POAuthorizationComponent,
     data: {
       title: 'PO Authorization '
-}
-},
-{
-  path: 'BL_Txn_Branch_Requisition',
+    }
+  },
+  {
+    path: 'BL_Txn_Branch_Requisition',
     component: BranchRequisitionComponent,
     data: {
       title: 'Branch_Requisition'
-}
-},
-{
-  path: 'Requisition_Authorization',
-  component: RequisitionAuthorizationComponent,
-  data: {
-    title: 'Requisition Authorization'
-}
-},
-{
-  path: 'BOM_Authorization',
+    }
+  },
+  {
+    path: 'Requisition_Authorization',
+    component: RequisitionAuthorizationComponent,
+    data: {
+      title: 'Requisition Authorization'
+    }
+  },
+  {
+    path: 'BOM_Authorization',
     component: BOMAuthorizationComponent,
     data: {
       title: 'BOM Authorization '
-}
-},
-{
-  path: 'Project_Plan_Approve',
-  component: ProjectPlanApproveComponent,
-  data: {
-    title: 'Project Plan Approve'
-}
-}, 
-{
-  path: 'PO_Authorization_Harbauer',
-  component: POAuthorizationHarbauerComponent,
-  data: {
-    title: 'PO Authorization Harbauer'
-}
-},
-{
-  path: 'Harbauer_Project_Design_Approval',
-  component: HarbProjectDesignApprovalComponent,
-  data: {
-    title: 'Project Design Approval'
-}
-},
-{
-  path: 'Nepal_Bl_Txn_Requisition_From_Salesman',
+    }
+  },
+  {
+    path: 'Project_Plan_Approve',
+    component: ProjectPlanApproveComponent,
+    data: {
+      title: 'Project Plan Approve'
+    }
+  },
+  {
+    path: 'PO_Authorization_Harbauer',
+    component: POAuthorizationHarbauerComponent,
+    data: {
+      title: 'PO Authorization Harbauer'
+    }
+  },
+  {
+    path: 'Harbauer_Project_Design_Approval',
+    component: HarbProjectDesignApprovalComponent,
+    data: {
+      title: 'Project Design Approval'
+    }
+  },
+  {
+    path: 'Nepal_Bl_Txn_Requisition_From_Salesman',
     component: NepalRequisitionFromSalesmanComponent,
     data: {
       title: 'Requisition From Salesman'
-}
-},
-{
-  path: 'Nepal_BL_Txn_Purchase_Request',
+    }
+  },
+  {
+    path: 'Nepal_BL_Txn_Purchase_Request',
     component: NepalPurchaseRequestComponent,
     data: {
       title: 'Purchase Request'
-}
-},
-{
-  path: "Project_Dashboard",
-  loadChildren: () =>
-    import(
-      "./common/Harbauer/project-dashboard/project-dashboard.module"
-    ).then(m => m.ProjectDashboardModule),
-  data: {
-    title: "Project Dashboard"
-  }
-},
-{
-  path: 'Meterial_Inspection_Of_RDB',
+    }
+  },
+  {
+    path: "Project_Dashboard",
+    loadChildren: () =>
+      import(
+        "./common/Harbauer/project-dashboard/project-dashboard.module"
+      ).then(m => m.ProjectDashboardModule),
+    data: {
+      title: "Project Dashboard"
+    }
+  },
+  {
+    path: 'Meterial_Inspection_Of_RDB',
     component: MeterialInspectionOfRDBComponent,
     data: {
       title: 'Meterial Inspection Of RDB'
-}
-},
-{
-  path: 'BL_Txn_Work_Order_Sale_Bill',
-  component: BLTxnWorkOrderSaleBillComponent,
-  data: {
-    title: 'BL Txn Work Order Sale Bill'
-}
-},
-{
-  path: 'HR_Event_Upload',
-  component: HREventUploadComponent,
-  data: {
-    title: 'HR Event Upload'
-}
-},
-{
-  path: 'Master_Sub_Contractor',
+    }
+  },
+  {
+    path: 'BL_Txn_Work_Order_Sale_Bill',
+    component: BLTxnWorkOrderSaleBillComponent,
+    data: {
+      title: 'BL Txn Work Order Sale Bill'
+    }
+  },
+  {
+    path: 'HR_Event_Upload',
+    component: HREventUploadComponent,
+    data: {
+      title: 'HR Event Upload'
+    }
+  },
+  {
+    path: 'Master_Sub_Contractor',
     component: MasterSubContractorComponent,
     data: {
       title: 'Master Sub Contractor'
-}
-},
-{
-  path: 'Sub_Contractor_Employee_Master',
-  component: SubContractorEmployeeMasterComponent,
-  data: {
-    title: 'Sub Contractor Employee Master'
-}
-},
-{
-  path: 'Sub_Contractor_Attendance',
-  component: SubContractorAttendanceComponent,
-  data: {
-    title: 'Sub Contractor Attendance'
-}
-},
-{
-  path: 'Non_Returnable_Gate_Pass',
-  component: NonReturnableGatePassComponent,
-  data: {
-    title: 'Non Returnable Gate Pass'
-}
-},
-{
-  path: 'Master_Raw_Material',
-  component: MiclRawMaterialComponent,
-  data: {
-    title: 'Master Raw Material'
-}
-},
-{
-   path: 'Nepal_BL_Txn_Purchase_Request_Vendor_Selection',
-   component: NepalPurchaseRequestVendorSelectionComponent,
-   data: {
-     title: 'Vendor Selection'
-}
-},
-{
-  path: 'Nepal_BL_Txn_Purchase_Request_Negotiate_Price',
-  component: NepalPurchaseRequestNegotiatePriceComponent,
-  data: {
-    title: 'Purchase Request Negotiate Price'
-}
-},
-{        
-path: 'Master_Consumable',
-  component: MICLMasterConsumbleComponent,
-  data: {
-    title: 'Master Consumable'
-}
-},
-{        
-path: 'MICL_Cost_Center_Master',
-  component: MICLCostCenterMasterComponent,
-  data: {
-    title: 'MICL Cost Center Master'
-}
-},
-{
-  path: 'JOH_Ear_Mold',
-  component: JOHEarMoldComponent,
-  data: {
-    title: 'JOH Ear Mold'
-}
-},
-{
-  path: 'Subledger_Report_For_Franchise',
-  component: SubledgerReportForFranchiseComponent,
-  data: {
-    title: 'Subledger Report For Franchise'
-}
-},
-{
-  path: 'K4C_Stock_Details',
-  component: K4CStockDetailsComponent,
-  data: {
-    title: 'K4C Stock Details'
-}
-    },
-{
-  path: 'Raw_Material_Receive',
-  component: RawMaterialReceiveComponent,
-  data: {
-    title: 'Raw Material Receive'
-}
-    },
+    }
+  },
+  {
+    path: 'Sub_Contractor_Employee_Master',
+    component: SubContractorEmployeeMasterComponent,
+    data: {
+      title: 'Sub Contractor Employee Master'
+    }
+  },
+  {
+    path: 'Sub_Contractor_Attendance',
+    component: SubContractorAttendanceComponent,
+    data: {
+      title: 'Sub Contractor Attendance'
+    }
+  },
+  {
+    path: 'Non_Returnable_Gate_Pass',
+    component: NonReturnableGatePassComponent,
+    data: {
+      title: 'Non Returnable Gate Pass'
+    }
+  },
+  {
+    path: 'Master_Raw_Material',
+    component: MiclRawMaterialComponent,
+    data: {
+      title: 'Master Raw Material'
+    }
+  },
+  {
+    path: 'Nepal_BL_Txn_Purchase_Request_Vendor_Selection',
+    component: NepalPurchaseRequestVendorSelectionComponent,
+    data: {
+      title: 'Vendor Selection'
+    }
+  },
+  {
+    path: 'Nepal_BL_Txn_Purchase_Request_Negotiate_Price',
+    component: NepalPurchaseRequestNegotiatePriceComponent,
+    data: {
+      title: 'Purchase Request Negotiate Price'
+    }
+  },
+  {
+    path: 'Master_Consumable',
+    component: MICLMasterConsumbleComponent,
+    data: {
+      title: 'Master Consumable'
+    }
+  },
+  {
+    path: 'MICL_Cost_Center_Master',
+    component: MICLCostCenterMasterComponent,
+    data: {
+      title: 'MICL Cost Center Master'
+    }
+  },
+  {
+    path: 'JOH_Ear_Mold',
+    component: JOHEarMoldComponent,
+    data: {
+      title: 'JOH Ear Mold'
+    }
+  },
+  {
+    path: 'Subledger_Report_For_Franchise',
+    component: SubledgerReportForFranchiseComponent,
+    data: {
+      title: 'Subledger Report For Franchise'
+    }
+  },
+  {
+    path: 'K4C_Stock_Details',
+    component: K4CStockDetailsComponent,
+    data: {
+      title: 'K4C Stock Details'
+    }
+  },
+  {
+    path: 'Raw_Material_Receive',
+    component: RawMaterialReceiveComponent,
+    data: {
+      title: 'Raw Material Receive'
+    }
+  },
 
-{
-  path: 'Purchase_Order_Raw_Material',
+  {
+    path: 'Purchase_Order_Raw_Material',
     component: PurchaseOrderRawMaterialComponent,
     data: {
       title: 'Purchase Order Raw Material'
-}
-},
-{
-  path: 'Raw_Material_Requisition',
+    }
+  },
+  {
+    path: 'Raw_Material_Requisition',
     component: RawMaterialRequisitionComponent,
     data: {
       title: 'Raw Material Requisition'
-}
-},
-{
-  path: 'MICL_Raw_Material_Issue',
+    }
+  },
+  {
+    path: 'MICL_Raw_Material_Issue',
     component: MiclRawMaterialIssueComponent,
     data: {
       title: 'Raw Material Issue'
-}
-    },
-{
-  path: 'Nepal_BL_Txn_Purchase_Order',
-  component: NepalBLTxnPurchaseOrderComponent,
-  data: {
-    title: 'Purchase Order'
-}
-},
-{
-  path: 'JOH_Realistic_Expectation_Form',
+    }
+  },
+  {
+    path: 'Nepal_BL_Txn_Purchase_Order',
+    component: NepalBLTxnPurchaseOrderComponent,
+    data: {
+      title: 'Purchase Order'
+    }
+  },
+  {
+    path: 'JOH_Realistic_Expectation_Form',
     component: JOHRealisticExpectationFormComponent,
     data: {
       title: 'JOH Realistic Expectation Form '
-}
-},
-{
-  path: 'Furnace_MIS_Input',
+    }
+  },
+  {
+    path: 'Furnace_MIS_Input',
     component: FurnaceMisInputComponent,
     data: {
       title: 'Furnace MIS Input'
-}
-},
-{
-  path: 'MICL_Raw_Material_Issue_New',
+    }
+  },
+  {
+    path: 'MICL_Raw_Material_Issue_New',
     component: MiclRawMaterialIssueNewComponent,
     data: {
       title: 'Raw Material Issue'
-}
-},
-{
-  path: 'Requisition_For_Issue_Chargeable',
+    }
+  },
+  {
+    path: 'Requisition_For_Issue_Chargeable',
     component: RequisitionForIssueChargeableComponent,
     data: {
       title: 'Issue Chargeable Requisition'
-}
-},
-{
-  path: 'JOH_Validation_Process',
+    }
+  },
+  {
+    path: 'JOH_Validation_Process',
     component: JohValidationProcessComponent,
     data: {
       title: 'JOH Validation Process'
-}
-},
-{
-  path: 'Return_Material',
+    }
+  },
+  {
+    path: 'Return_Material',
     component: ReturnMaterialComponent,
     data: {
       title: 'Return Material'
-}
-},
-{
-  path: 'Premix_Inventory',
+    }
+  },
+  {
+    path: 'Premix_Inventory',
     component: K4cPremixInventoryComponent,
     data: {
       title: 'Premix Production'
-}
-},
-{
-  path: 'Premix_Stock_Transfer',
+    }
+  },
+  {
+    path: 'Premix_Stock_Transfer',
     component: K4cPremixStockTransferComponent,
     data: {
       title: 'Premix Stock Transfer'
-}
-    },
-{
-  path: 'Nepal_BL_Txn_Purchase_Order_Approve',
+    }
+  },
+  {
+    path: 'Nepal_BL_Txn_Purchase_Order_Approve',
     component: NepalBLTxnPurchaseOrderApproveComponent,
     data: {
       title: 'Nepal BL Txn Purchase Order Approve'
-}
-},
-{
-  path: 'DoctorsAppointmentNew',
+    }
+  },
+  {
+    path: 'DoctorsAppointmentNew',
     component: DoctorAppointmentComponent,
     data: {
       title: 'Doctor Appointment'
-}
-},
-{
-  path: 'MICL_Purchase_Bill',
+    }
+  },
+  {
+    path: 'MICL_Purchase_Bill',
     component: MiclPurchaseBillComponent,
     data: {
       title: 'Purchase Bill'
-}
-},
-{
-  path: 'DoctorsAppointmentNew_ABR',
+    }
+  },
+  {
+    path: 'DoctorsAppointmentNew_ABR',
     component: DoctorsAppointmentNewABRComponent,
     data: {
       title: 'Doctor Appointment New ABR'
-}
-},
-{
-  path: 'K4C_Bill_Date_Update',
+    }
+  },
+  {
+    path: 'K4C_Bill_Date_Update',
     component: K4CBillDateUpdateComponent,
     data: {
       title: 'K4C Bill Date Update'
-}
-},
-{
-  path: 'DoctorsAppointmentNew_Impedance_Audiometry',
+    }
+  },
+  {
+    path: 'DoctorsAppointmentNew_Impedance_Audiometry',
     component: DoctorApptNewImpedanceAudiometryComponent,
     data: {
       title: 'Doctors Appointment New Impedance Audiometry'
-}
-},
-{
-  path: 'Nepal_BL_Txn_Purchase_Order_Status_Master',
+    }
+  },
+  {
+    path: 'Nepal_BL_Txn_Purchase_Order_Status_Master',
     component: NepalPurchaseOrderStatusMasterComponent,
     data: {
       title: 'PO To-Do Master'
-}
-},
-{
-  path: 'Daily_Attendance_For_Contractor',
+    }
+  },
+  {
+    path: 'Daily_Attendance_For_Contractor',
     component: DailyAttendanceForContractorComponent,
     data: {
       title: 'Daily Attendance For Contractor'
-}
-},
-{
-  path: 'Nepal_BL_Txn_Purchase_Order_Document_Master',
+    }
+  },
+  {
+    path: 'Nepal_BL_Txn_Purchase_Order_Document_Master',
     component: NepalPurchaseOrderDocumenMasterComponent,
     data: {
       title: 'PO Document Master'
-}
-},
-{
-  path: 'Raw_Material_Stock_Report',
+    }
+  },
+  {
+    path: 'Raw_Material_Stock_Report',
     component: RawMaterialStockReportComponent,
     data: {
       title: 'Raw Material Stock Report'
-}
-},
-{
-  path: 'BSHPL_HF_FollowUP',
+    }
+  },
+  {
+    path: 'BSHPL_HF_FollowUP',
     component: BSHPLHfFollowUpComponent,
     data: {
       title: 'BSHPL HF FollowUP'
-}
-},
-{
-  path: 'Doctors_Appointment_New_OAE',
+    }
+  },
+  {
+    path: 'Doctors_Appointment_New_OAE',
     component: DoctorsAppointmentNewOAEComponent,
     data: {
       title: 'Doctors Appointment New OAE'
-}
-},
-{
-  path: 'Doctors_Appointment_New_Special_Tests',
+    }
+  },
+  {
+    path: 'Doctors_Appointment_New_Special_Tests',
     component: DoctorsAppointmentNewSpTestComponent,
     data: {
       title: 'Doctors Appointment New Special Tests'
-}
-},
-{
-  path: 'Doctors_Appointment_New_Glycerol_Test',
+    }
+  },
+  {
+    path: 'Doctors_Appointment_New_Glycerol_Test',
     component: DoctorsAppointmentNewGlycerolTestComponent,
     data: {
       title: 'Doctors Appointment New Glycerol Test'
-}
-},
-{
-  path: 'Accept_Return_Material',
+    }
+  },
+  {
+    path: 'Accept_Return_Material',
     component: AcceptReturnMaterialComponent,
     data: {
       title: 'Accept Return Material'
-}
-},
-{
-  path: 'E_Invoice_Confirmation_Form',
+    }
+  },
+  {
+    path: 'E_Invoice_Confirmation_Form',
     component: EInvoiceConfirmationFormComponent,
     data: {
       title: 'E Invoice Confirmation Form'
-}
-},
-{
-  path: 'Finish_Master_Product',
+    }
+  },
+  {
+    path: 'Finish_Master_Product',
     component: MiclFinishMasterProductComponent,
     data: {
       title: 'Finish Master Product'
-}
-},
-{
-  path: 'Doctors_Appointment_New_Tinnitus_Report',
+    }
+  },
+  {
+    path: 'Doctors_Appointment_New_Tinnitus_Report',
     component: DoctorsAppointmentNewTinnitusReportComponent,
     data: {
       title: 'Doctors Appointment New Tinnitus Report'
-}
-},
-{
-  path: 'Doctors_Appointment_New_Tinnitus_Therapy_Tracker',
+    }
+  },
+  {
+    path: 'Doctors_Appointment_New_Tinnitus_Therapy_Tracker',
     component: DoctorsAppointmentNewTinnitusTherapyTrackerComponent,
     data: {
       title: 'Doctors Appointment New Therapy Tracker'
-}
-},
-{
-  path: 'Wastage_Master_Product',
+    }
+  },
+  {
+    path: 'Wastage_Master_Product',
     component: MiclWastageMasterProductComponent,
     data: {
       title: 'Wastage Master Product'
-}
-},
-{
-  path: 'Doctors_Appointment_New_Tinnitus_Evaluation',
+    }
+  },
+  {
+    path: 'Doctors_Appointment_New_Tinnitus_Evaluation',
     component: DoctorsAppointmentNewTinnitusEvaluationComponent,
     data: {
       title: 'Doctors Appointment New Tinnitus Evaluation'
-}
-},
-{
-  path: 'Doctors_Appointment_New_Tinnitus_Handicap',
+    }
+  },
+  {
+    path: 'Doctors_Appointment_New_Tinnitus_Handicap',
     component: DoctorsAppointmentNewTinnitusHandicapComponent,
     data: {
       title: 'Doctors Appointment New Tinnitus Handicap'
-}
-},
-{
-  path: 'Tinnitus_Therapy_Tracker_Dashboard',
+    }
+  },
+  {
+    path: 'Tinnitus_Therapy_Tracker_Dashboard',
     component: TinnitusTherapyTrackerDashboardComponent,
     data: {
       title: 'Tinnitus Therapy Tracker Dashboard'
-}
-},
-{
-  path: 'Tinnitus_Evauation_Report_Dashboard',
+    }
+  },
+  {
+    path: 'Tinnitus_Evauation_Report_Dashboard',
     component: TinnitusEvauationReportDashboardComponent,
     data: {
       title: 'Tinnitus Evaluation Report Dashboard'
-}
-},
-{
-  path: 'Print_Tinnitus_Therapy_Tracker_Dashboard',
+    }
+  },
+  {
+    path: 'Print_Tinnitus_Therapy_Tracker_Dashboard',
     component: PrintTinnitusTherapyTrackerDashboardComponent,
     data: {
       title: 'Print Tinnitus Therapy Tracker Dashboard'
-}
-},
-{
-  path: 'Print_Tinnitus_Evauation_Report_Dashboard',
+    }
+  },
+  {
+    path: 'Print_Tinnitus_Evauation_Report_Dashboard',
     component: PrintTinnitusEvauationReportDashboardComponent,
     data: {
       title: 'Print Tinnitus Evauation Report Dashboard'
-}
-},
-{
-  path: 'Outward_Challan',
+    }
+  },
+  {
+    path: 'Outward_Challan',
     component: OutwardChallanComponent,
     data: {
       title: 'Outward Challan'
-}
-},
-{
-  path: 'Nepal_BL_Txn_Vendor_Interaction',
+    }
+  },
+  {
+    path: 'Nepal_BL_Txn_Vendor_Interaction',
     component: NepalVendorInteractionComponent,
     data: {
       title: 'Vendor Interaction Managemnet'
-}
-},
-{
-  path: 'Premix_Item_Closing_Stock',
+    }
+  },
+  {
+    path: 'Premix_Item_Closing_Stock',
     component: K4cPremixItemClosingStockComponent,
     data: {
       title: 'Premix Item Closing Stock'
-}
-},
-{
-  path: 'MICL_Sale_Bill',
+    }
+  },
+  {
+    path: 'MICL_Sale_Bill',
     component: SaleBillComponent,
     data: {
       title: 'Sale Bill'
-}
-},
-{
-  path: 'BL_Txn_Sale_Bill_From_Challan',
+    }
+  },
+  {
+    path: 'BL_Txn_Sale_Bill_From_Challan',
     component: SaleBillComponent,
     data: {
       title: 'Sale Bill From Challan'
-}
-},
-{
-  path: 'Doctors_Appo_New_Fluency_Evaluation',
+    }
+  },
+  {
+    path: 'Doctors_Appo_New_Fluency_Evaluation',
     component: DoctorsAppoNewFluencyEvaluationComponent,
     data: {
       title: 'FLUENCY EVALUATION REPORT'
-}
-},
-{
-  path: 'Print_Speech_Evauation_Report_Dashboard',
+    }
+  },
+  {
+    path: 'Print_Speech_Evauation_Report_Dashboard',
     component: PrintSpeechEvauationReportDashboardComponent,
     data: {
       title: 'Print Speech Evauation Report Dashboard'
-}
-},
-{
-  path: 'Speech_Evauation_Report_Dashboard',
+    }
+  },
+  {
+    path: 'Speech_Evauation_Report_Dashboard',
     component: SpeechEvauationReportDashboardComponent,
     data: {
       title: 'Speech Evauation Report Dashboard'
-}
-},
-{
-  path: 'Doctors_Appo_New_Child_Speech_Evaluation',
+    }
+  },
+  {
+    path: 'Doctors_Appo_New_Child_Speech_Evaluation',
     component: DoctorsAppoNewChildSpeechEvaluationComponent,
     data: {
       title: 'CHILD SPEECH AND LANGUAGE EVALUATION REPORT'
-}
-},
-{
-  path: 'Doctors_Appo_New_Adult_Speech_Evaluation',
-    component:DoctorsAppoNewAdultSpeechEvaluationComponent,
+    }
+  },
+  {
+    path: 'Doctors_Appo_New_Adult_Speech_Evaluation',
+    component: DoctorsAppoNewAdultSpeechEvaluationComponent,
     data: {
       title: 'ADULT SPEECH AND LANGUAGE EVALUATION REPORT'
-}
-},
-{
-  path: 'Sale_Bill_Nnew',
-    component:SaleBillNewComponent,
+    }
+  },
+  {
+    path: 'Sale_Bill_Nnew',
+    component: SaleBillNewComponent,
     data: {
       title: 'Sale_Bill_New'
-}
-},
-{
-  path: 'Doctors_Appointment_New_Fine_Tuning',
-    component:DoctorsAppointmentNewFineTuningComponent,
+    }
+  },
+  {
+    path: 'Doctors_Appointment_New_Fine_Tuning',
+    component: DoctorsAppointmentNewFineTuningComponent,
     data: {
       title: 'Doctors Appointment New Fine Tuning'
-}
-},
-{
-path: 'Doctors_Appointment_New_Fine_Tuning_Hearing',
+    }
+  },
+  {
+    path: 'Doctors_Appointment_New_Fine_Tuning_Hearing',
     component: DoctorsAppointmentNewFineTuningHearingComponent,
     data: {
       title: 'ADJUSTMENT AND FINE TUNING OF HEARING AIDS'
-}
-},
-{
-  path: 'Google_Review',
-    component:GoogleReviewComponent,
+    }
+  },
+  {
+    path: 'Google_Review',
+    component: GoogleReviewComponent,
     data: {
       title: 'Google Review'
     }
   },
   {
-   path: 'BL_Txn_Purchase_Bill_GST_One_SP',
-    component:PurchaseBillGSTOneSPComponent,
+    path: 'BL_Txn_Purchase_Bill_GST_One_SP',
+    component: PurchaseBillGSTOneSPComponent,
     data: {
       title: 'Purchase Bill GST'
     }
   },
   {
-   path: 'Purchase_Order_Harbauer',
-    component:PurchaseOrderHarbauerComponent,
+    path: 'Purchase_Order_Harbauer',
+    component: PurchaseOrderHarbauerComponent,
     data: {
       title: 'Purchase Order'
     }
@@ -2637,814 +2638,821 @@ path: 'Doctors_Appointment_New_Fine_Tuning_Hearing',
     path: 'Parameter_Master',
     component: ParameterMasterComponent,
     data: {
-        title: 'Parameter Master'
-    } 
+      title: 'Parameter Master'
+    }
   },
   {
     path: 'Doctors_Appo_Therapy_Plan',
-      component:DoctorsAppoTherapPlanComponent,
-      data: {
-        title: 'Therapy Plan'
-  }
+    component: DoctorsAppoTherapPlanComponent,
+    data: {
+      title: 'Therapy Plan'
+    }
   },
   {
     path: 'MICL_RAW_MATERIAL_QA',
     component: MICLRawMaterialQAComponent,
     data: {
-        title: 'MICL RAW MATERIAL QA'
-    } 
+      title: 'MICL RAW MATERIAL QA'
+    }
   },
   {
     path: 'BL_Txn_GRN_Np',
     component: BLTxnGrnNPComponent,
     data: {
-        title: 'GRN'
-    } 
+      title: 'GRN'
+    }
   },
   {
     path: 'HR_Late_Arrival_Early_Departure',
     component: HrLateArrivalEarlyDepartureComponent,
     data: {
-        title: 'HR Late Arrival Early Departure'
-    } 
+      title: 'HR Late Arrival Early Departure'
+    }
   },
   {
     path: 'swiggy_zomato_file_upload',
     component: K4cSwiggyZomatoFileUploadComponent,
     data: {
-        title: 'CSV UPLOAD'
-    } 
+      title: 'CSV UPLOAD'
+    }
   },
   {
     path: 'HR_Loan_Application',
     component: HrLoanApplicationComponent,
     data: {
-        title: 'Loan Application'
-    } 
+      title: 'Loan Application'
+    }
   },
   {
     path: 'Therapy_Attendance_Entry',
-      component: TherapyAttendanceEntryComponent,
-      data: {
-        title: 'Therapy Attendance Entry'
-  }
+    component: TherapyAttendanceEntryComponent,
+    data: {
+      title: 'Therapy Attendance Entry'
+    }
   },
   {
     path: 'NP_Sup_Tkt_Customer_Account_Creation',
-      component: NepalSupTktCustomerAccountCreationComponent,
-      data: {
-        title: 'Customer Account Creation'
-  }
+    component: NepalSupTktCustomerAccountCreationComponent,
+    data: {
+      title: 'Customer Account Creation'
+    }
   },
   {
     path: 'Finshore_Create_Project',
-      component: FinsCreateProjectComponent,
-      data: {
-        title: 'Create Project'
-  }
+    component: FinsCreateProjectComponent,
+    data: {
+      title: 'Create Project'
+    }
   },
   {
     path: 'Finshore_Browse_Project',
-      component: FinsBrowseProjectComponent,
-      data: {
-        title: 'Browse Project'
-  }
+    component: FinsBrowseProjectComponent,
+    data: {
+      title: 'Browse Project'
+    }
   },
   {
     path: 'Stock_Interchange',
-      component: StockInterchangeComponent,
-      data: {
-        title: 'Stock Interchange'
-  }
+    component: StockInterchangeComponent,
+    data: {
+      title: 'Stock Interchange'
+    }
   },
   {
     path: 'Sale_Order',
-      component: SaleOrderComponent,
-      data: {
-        title: 'Sale Order'
-  }
+    component: SaleOrderComponent,
+    data: {
+      title: 'Sale Order'
+    }
   },
   {
     path: 'QC_APPROVAL',
-      component: QcApprovalComponent,
-      data: {
-        title: 'QC APPROVAL'
-  }
+    component: QcApprovalComponent,
+    data: {
+      title: 'QC APPROVAL'
+    }
   },
   {
     path: 'BL_Txn_Patient_Create_Brunch',
     component: PatientCreateBrunchComponent,
     data: {
-    title: 'Patient Create Branch'
+      title: 'Patient Create Branch'
     }
   },
   {
     path: 'HR_Loan_Approval',
     component: HrLoanApprovalComponent,
     data: {
-    title: 'Loan Approval'
+      title: 'Loan Approval'
     }
   },
   {
     path: 'Createt_Desktop_Cookies',
     component: CreateCookieComponent,
     data: {
-    title: 'Createt Desktop Cookies'
+      title: 'Createt Desktop Cookies'
     }
   },
   {
     path: 'NP_Sup_Tkt_Sales_Return_Request',
     component: NPSupTktSalesReturnRequestComponent,
     data: {
-    title: 'Sales Return Request'
+      title: 'Sales Return Request'
     }
   },
   {
     path: 'MICL_Coupon_Issue',
     component: MICLCouponIssueComponent,
     data: {
-    title: 'Coupon Issue'
+      title: 'Coupon Issue'
     }
-    },
-    {
-      path: 'MICL_Coupon_Creation',
-        component: CouponCreationComponent,
-        data: {
-          title: 'Coupon Creation'
+  },
+  {
+    path: 'MICL_Coupon_Creation',
+    component: CouponCreationComponent,
+    data: {
+      title: 'Coupon Creation'
     }
-    },
-    {
-      path: 'MICL_Coupon_Expenses',
-        component: CouponExpensesComponent,
-        data: {
-          title: 'Coupon Expenses'
+  },
+  {
+    path: 'MICL_Coupon_Expenses',
+    component: CouponExpensesComponent,
+    data: {
+      title: 'Coupon Expenses'
     }
-    },
-    {
-      path: 'MICL_Coupon_Utilization',
-        component: CouponUtilizationComponent,
-        data: {
-          title: 'Coupon Utilization'
+  },
+  {
+    path: 'MICL_Coupon_Utilization',
+    component: CouponUtilizationComponent,
+    data: {
+      title: 'Coupon Utilization'
     }
-    },
-    {
-      path: 'NP_Sup_Tkt_Sales_Return_Approve',
-        component: NepalSupTktSalesReturnApproveComponent,
-        data: {
-          title: 'Sales Return Approve'
+  },
+  {
+    path: 'NP_Sup_Tkt_Sales_Return_Approve',
+    component: NepalSupTktSalesReturnApproveComponent,
+    data: {
+      title: 'Sales Return Approve'
     }
-    },
-    {
-      path: 'BSHPL_Audiologist_Appo',
-      component: BSHPLAudiologistAppoComponent,
-      data: {
-          title: 'BSHPL Audiologist Appointment'
-      } 
-    },
-    {
-      path: 'Txn_Audiologist_Appo',
-      component: BSHPLAudiologistAppoComponent,
-      data: {
-          title: 'Audiologist Appo'
-      } 
-    },
-    {
-      path: 'Employee_Master_Contractor',
-        component: EmployeeMasterContractorComponent,
-        data: {
-          title: 'Employee Master Contractor'
+  },
+  {
+    path: 'BSHPL_Audiologist_Appo',
+    component: BSHPLAudiologistAppoComponent,
+    data: {
+      title: 'BSHPL Audiologist Appointment'
     }
-    },
-    {
-      path: 'Letter_of_Intent',
-      component: LetterOfIntentComponent,
-      data: {
-          title: 'Letter of Intent'
-      } 
-    },
-    {
-      path: 'Proforma_Invoice',
-      component: ProformaInvoiceComponent,
-      data: {
-          title: 'Proforma Invoice'
-      } 
-    },
-    {
-      path: 'Sales_MIS',
-      component: SalesMisComponent,
-      data: {
-          title: 'Sales MIS'
-      } 
-    },
-    {
-      path: 'View_Outcomes_',
-      component: ViewOutcomesComponent,
-      data: {
-          title: 'View Outcomes'
-      } 
-    },
-    {
-      path: 'BL_Txn_Hearing_Transfer_Trn',
-        component: TransferTransectionComponent,
-        data: {
-          title: 'Transfer Transection'
+  },
+  {
+    path: 'Txn_Audiologist_Appo',
+    component: BSHPLAudiologistAppoComponent,
+    data: {
+      title: 'Audiologist Appo'
     }
-    },
-    {
-      path: 'Txn_Requisition_Harbauer',
-        component: HarbTxnRequisitionComponent,
-        data: {
-          title: 'Requisition'
+  },
+  {
+    path: 'Employee_Master_Contractor',
+    component: EmployeeMasterContractorComponent,
+    data: {
+      title: 'Employee Master Contractor'
     }
-    },
-    {
-      path: 'Purchase_Order_Harbauer_Terms',
-        component: PurchaseOrderHarbauerTermsComponent,
-        data: {
-          title: 'Purchase Order Harbauer Terms'
+  },
+  {
+    path: 'Letter_of_Intent',
+    component: LetterOfIntentComponent,
+    data: {
+      title: 'Letter of Intent'
     }
-    },
-    {
-      path: 'CR_Audiologist_Target',
-        component: AudiologistTargetComponent,
-        data: {
-          title: 'Audiologist Target'
+  },
+  {
+    path: 'Proforma_Invoice',
+    component: ProformaInvoiceComponent,
+    data: {
+      title: 'Proforma Invoice'
     }
-    },
-    {
-      path: 'Common_Purchase_Bill_GST',
-        component: CommonPurchaseBillGstComponent,
-        data: {
-          title: 'Purchase Bill GST'
+  },
+  {
+    path: 'Sales_MIS',
+    component: SalesMisComponent,
+    data: {
+      title: 'Sales MIS'
     }
-    },
-    {
-      path: 'Full_And_Final_Settlement',
-        component: FullAndFinalSettlementComponent,
-        data: {
-          title: 'Full And Final Settlement'
+  },
+  {
+    path: 'View_Outcomes_',
+    component: ViewOutcomesComponent,
+    data: {
+      title: 'View Outcomes'
     }
-    },
-    {
-      path: 'NP_Sup_Tkt_Sales_Return_Warehouse',
-        component: NPSupTktSalesReturnWarehouseComponent,
-        data: {
-          title: 'Sup Tkt Sales Return Warehouse'
+  },
+  {
+    path: 'BL_Txn_Hearing_Transfer_Trn',
+    component: TransferTransectionComponent,
+    data: {
+      title: 'Transfer Transection'
     }
-    },
-     {
-      path: 'NP_Sup_Tkt_Sales_Return_Accounts',
-        component: NPSupTktSalesReturnAccountsComponent,
-        data: {
-          title: 'Sup Tkt Sales Return Accounts'
+  },
+  {
+    path: 'Txn_Requisition_Harbauer',
+    component: HarbTxnRequisitionComponent,
+    data: {
+      title: 'Requisition'
     }
-    },
-     {
-      path: 'Employee_Salary_Master_JOH',
-        component: EmployeeSalaryMasterJohComponent,
-        data: {
-          title: 'Employee Salary Master'
+  },
+  {
+    path: 'Purchase_Order_Harbauer_Terms',
+    component: PurchaseOrderHarbauerTermsComponent,
+    data: {
+      title: 'Purchase Order Harbauer Terms'
     }
-    },
-    {
-      path: 'BL_CRM_Old_Project_Master',
-        component: OldProjectMasterComponent,
-        data: {
-          title: 'Old Project Master'
+  },
+  {
+    path: 'CR_Audiologist_Target',
+    component: AudiologistTargetComponent,
+    data: {
+      title: 'Audiologist Target'
     }
-    },
-    {
-      path: 'BL_CRM_Master_Project_Team',
-        component: MasterProjectTeamComponent,
-        data: {
-          title: 'Project Team'
+  },
+  {
+    path: 'Common_Purchase_Bill_GST',
+    component: CommonPurchaseBillGstComponent,
+    data: {
+      title: 'Purchase Bill GST'
     }
-    },
-    {
-      path: 'MICL_HR_Coupon_Report',
-        component: HrCouponReportComponent,
-        data: {
-          title: 'HR Coupon Report'
+  },
+  {
+    path: 'Full_And_Final_Settlement',
+    component: FullAndFinalSettlementComponent,
+    data: {
+      title: 'Full And Final Settlement'
     }
-    },
-    {
-      path: 'Daily_Attendance_JOH',
-        component: JohDailyAttendanceComponent,
-        data: {
-          title: 'Daily Attendance JOH'
+  },
+  {
+    path: 'NP_Sup_Tkt_Sales_Return_Warehouse',
+    component: NPSupTktSalesReturnWarehouseComponent,
+    data: {
+      title: 'Sup Tkt Sales Return Warehouse'
     }
-    },
-    {
-      path: 'Candidate_Interview_Process',
-        component: CandidateInterviewProcessComponent,
-        data: {
-          title: 'Candidate Interview Process'
+  },
+  {
+    path: 'NP_Sup_Tkt_Sales_Return_Accounts',
+    component: NPSupTktSalesReturnAccountsComponent,
+    data: {
+      title: 'Sup Tkt Sales Return Accounts'
     }
-    },
-    {
-      path: 'Consultancy_Payment',
-        component: ConsultancyPaymentComponent,
-        data: {
-          title: 'Consultancy Payment'
+  },
+  {
+    path: 'Employee_Salary_Master_JOH',
+    component: EmployeeSalaryMasterJohComponent,
+    data: {
+      title: 'Employee Salary Master'
     }
-    },
-    {
-      path: 'Appraisal_Form',
-        component: AppraisalFormComponent,
-        data: {
-          title: 'Appraisal Form'
+  },
+  {
+    path: 'BL_CRM_Old_Project_Master',
+    component: OldProjectMasterComponent,
+    data: {
+      title: 'Old Project Master'
     }
-    },
-    {
-      path: 'PendingOutcome',
-        component: PendingOutcomesComponent,
-        data: {
-          title: 'Pending Outcome'
+  },
+  {
+    path: 'BL_CRM_Master_Project_Team',
+    component: MasterProjectTeamComponent,
+    data: {
+      title: 'Project Team'
     }
-    },
-    {
-      path: 'BL_Txn_Product_Return_From_Project',
-        component: BLTxnProductReturnFromProjectComponent,
-        data: {
-          title: 'Product Return From Project'
+  },
+  {
+    path: 'MICL_HR_Coupon_Report',
+    component: HrCouponReportComponent,
+    data: {
+      title: 'HR Coupon Report'
     }
-    },
-    {
-      path: 'MasterCompanyUpdate_V2',
-        component: MasterCompanyUpdateComponent,
-        data: {
-          title: 'Master Company Update'
+  },
+  {
+    path: 'Daily_Attendance_JOH',
+    component: JohDailyAttendanceComponent,
+    data: {
+      title: 'Daily Attendance JOH'
     }
-    },
-    {
-      path: 'BL_Txn_Projectwise_Report',
-        component: BlTxnProjectwiseReportComponent,
-        data: {
-          title: 'Project wise Report'
+  },
+  {
+    path: 'Candidate_Interview_Process',
+    component: CandidateInterviewProcessComponent,
+    data: {
+      title: 'Candidate Interview Process'
     }
-    },
-     {
-      path: 'Bl_CRM_WP_MST_Template',
-        component: BlCRMWPMSTTemplateComponent,
-        data: {
-          title: 'Bl CRM WP MST Template'
+  },
+  {
+    path: 'Consultancy_Payment',
+    component: ConsultancyPaymentComponent,
+    data: {
+      title: 'Consultancy Payment'
     }
-    },
-    {
-      path: 'Accept_Raw_Material_Stock_Transfer',
-        component: K4cAcceptRawMaterialStockTransferComponent,
-        data: {
-          title: 'Accept Raw Material Stock Transfer'
+  },
+  {
+    path: 'Appraisal_Form',
+    component: AppraisalFormComponent,
+    data: {
+      title: 'Appraisal Form'
     }
-    },
-    {
-      path: 'Attendance_Regularization',
-        component: AttendanceRegularizationComponent,
-        data: {
-          title: 'Attendance Regularization'
+  },
+  {
+    path: 'PendingOutcome',
+    component: PendingOutcomesComponent,
+    data: {
+      title: 'Pending Outcome'
     }
-    },
-    {
-      path: 'Approve_Attendance_Regularization',
-        component: ApproveAttendanceRegularizationComponent,
-        data: {
-          title: 'Approve Attendance Regularization'
+  },
+  {
+    path: 'BL_Txn_Product_Return_From_Project',
+    component: BLTxnProductReturnFromProjectComponent,
+    data: {
+      title: 'Product Return From Project'
     }
-    },
-    {
-      path: 'Employee_Transfer',
-        component: EmployeeTransferComponent,
-        data: {
-          title: 'Employee Transfer'
+  },
+  {
+    path: 'MasterCompanyUpdate_V2',
+    component: MasterCompanyUpdateComponent,
+    data: {
+      title: 'Master Company Update'
     }
-    },
-    {
-      path: 'Hearing_CRM_Lead_Followup',
-        component: HearingCRMLeadFollowupComponent,
-        data: {
-          title: 'Hearing CRM Lead Followup'
+  },
+  {
+    path: 'BL_Txn_Projectwise_Report',
+    component: BlTxnProjectwiseReportComponent,
+    data: {
+      title: 'Project wise Report'
     }
-    },
-    {
-      path: 'HR_Requisition_Form',
-        component: HrRequisitionFormComponent,
-        data: {
-          title: 'Hr Requisition Form'
+  },
+  {
+    path: 'Bl_CRM_WP_MST_Template',
+    component: BlCRMWPMSTTemplateComponent,
+    data: {
+      title: 'Bl CRM WP MST Template'
     }
-    },
-    {
-      path: 'Approve_HR_Requisition_Form',
-        component: ApproveHrRequisitionFormComponent,
-        data: {
-          title: 'Approve Hr Requisition Form'
+  },
+  {
+    path: 'Accept_Raw_Material_Stock_Transfer',
+    component: K4cAcceptRawMaterialStockTransferComponent,
+    data: {
+      title: 'Accept Raw Material Stock Transfer'
     }
-    },
-    {
-      path: 'Hearing_Advance_Order_V3',
-        component: RetailAdvanceOrderComponent,
-        data: {
-          title: 'Advance Order'
+  },
+  {
+    path: 'Attendance_Regularization',
+    component: AttendanceRegularizationComponent,
+    data: {
+      title: 'Attendance Regularization'
     }
-    },
-    {
-      path: 'CR_Salesman_Target',
-      component: SalesmanTargetComponent,
-      data: {
-        title: 'Salesman Target'
-      }
-    },
-    {
-      path: 'HR_ATTN_DETAILS',
-        component: HRAttnDetalisComponent,
-        data: {
-          title: 'Attendance Detalis'
+  },
+  {
+    path: 'Approve_Attendance_Regularization',
+    component: ApproveAttendanceRegularizationComponent,
+    data: {
+      title: 'Approve Attendance Regularization'
     }
-    },
-    {
-      path: 'Employee_Bonus',
-        component: EmployeeBonusComponent,
-        data: {
-          title: 'Employee Bonus'
+  },
+  {
+    path: 'Employee_Transfer',
+    component: EmployeeTransferComponent,
+    data: {
+      title: 'Employee Transfer'
     }
-    },
-    {
-      path: 'HR_Recruitment_Tracker',
-        component: HrRecruitmentTrackerComponent,
-        data: {
-          title: 'HR Recruitment Tracker'
+  },
+  {
+    path: 'Hearing_CRM_Lead_Followup',
+    component: HearingCRMLeadFollowupComponent,
+    data: {
+      title: 'Hearing CRM Lead Followup'
     }
-    },
-    {
-      path: 'Employee_Synchronise_With_App',
-        component: EmployeeSynchroniseWithAppComponent,
-        data: {
-          title: 'Employee Synchronise With App'
+  },
+  {
+    path: 'HR_Requisition_Form',
+    component: HrRequisitionFormComponent,
+    data: {
+      title: 'Hr Requisition Form'
     }
-    },
-    {
-      path: 'REP_Stock_Report_HBR',
-        component: REPStockReportHBRComponent,
-        data: {
-          title: 'REP Stock Report Harbauer'
+  },
+  {
+    path: 'Approve_HR_Requisition_Form',
+    component: ApproveHrRequisitionFormComponent,
+    data: {
+      title: 'Approve Hr Requisition Form'
     }
-    },
-    {
-      path: 'Slag_To_RM_Stock_Transfer',
-        component: SlagToRmStockTransferComponent,
-        data: {
-          title: 'Slag To RM Stock Transfer'
+  },
+  {
+    path: 'Hearing_Advance_Order_V3',
+    component: RetailAdvanceOrderComponent,
+    data: {
+      title: 'Advance Order'
     }
-    },
-    {
-      path: 'Common_Stock_Transfer',
-        component: CommonStockTransferComponent,
-        data: {
-          title: 'Stock Transfer'
+  },
+  {
+    path: 'CR_Salesman_Target',
+    component: SalesmanTargetComponent,
+    data: {
+      title: 'Salesman Target'
     }
-    },
-    {
-      path: 'Bill_No_Change',
-        component: BillNoChangeComponent,
-        data: {
-          title: 'Bill Number Change'
+  },
+  {
+    path: 'HR_ATTN_DETAILS',
+    component: HRAttnDetalisComponent,
+    data: {
+      title: 'Attendance Detalis'
     }
-    },
-    {
-      path: 'BL_Txn_Costcenter_Target_For_Joh',
-        component: CostcenterTargetJohComponent,
-        data: {
-          title: 'Costcenter Target'
+  },
+  {
+    path: 'Employee_Bonus',
+    component: EmployeeBonusComponent,
+    data: {
+      title: 'Employee Bonus'
     }
-    },
-    {
-      path: 'Leave_Register',
-        component: LeaveRegisterComponent,
-        data: {
-          title: 'Leave Register'
+  },
+  {
+    path: 'HR_Recruitment_Tracker',
+    component: HrRecruitmentTrackerComponent,
+    data: {
+      title: 'HR Recruitment Tracker'
     }
-    },
-    {
-      path: 'HR_Reports',
-        component: HrReportsComponent,
-        data: {
-          title: 'HR Reports'
+  },
+  {
+    path: 'Employee_Synchronise_With_App',
+    component: EmployeeSynchroniseWithAppComponent,
+    data: {
+      title: 'Employee Synchronise With App'
     }
-    },
-    {
-      path: 'Fins_Sub_Ledger',
-        component: FinsSubLedgerComponent,
-        data: {
-          title: 'Sub Ledger'
+  },
+  {
+    path: 'REP_Stock_Report_HBR',
+    component: REPStockReportHBRComponent,
+    data: {
+      title: 'REP Stock Report Harbauer'
     }
-    },
-    {
-      path: 'Advance_Order_Adjustment',
-        component: AdvanceOrderAdjustmentComponent,
-        data: {
-          title: 'Advance Order Adjustment'
+  },
+  {
+    path: 'Slag_To_RM_Stock_Transfer',
+    component: SlagToRmStockTransferComponent,
+    data: {
+      title: 'Slag To RM Stock Transfer'
     }
-    },
-    {
-      path: 'Asset_Master',
-        component: AssetMasterComponent,
-        data: {
-          title: 'Asset Master'
+  },
+  {
+    path: 'Common_Stock_Transfer',
+    component: CommonStockTransferComponent,
+    data: {
+      title: 'Stock Transfer'
     }
-    },
-    {
-      path: 'HR_Training',
-        component: HrTrainingComponent,
-        data: {
-          title: 'Training'
+  },
+  {
+    path: 'Bill_No_Change',
+    component: BillNoChangeComponent,
+    data: {
+      title: 'Bill Number Change'
     }
-    },
-    {
-      path: 'Evaluate_For_Traning',
-        component: EvaluateForTrainingComponent,
-        data: {
-          title: 'Evaluate For Traning'
+  },
+  {
+    path: 'BL_Txn_Costcenter_Target_For_Joh',
+    component: CostcenterTargetJohComponent,
+    data: {
+      title: 'Costcenter Target'
     }
-    },
-    {
-      path: 'CR_Softhear_Audiologist_Target',
-      component: SofthearAudiologistTargetComponent,
-      data: {
-        title: 'Audiologist Target'
-      }
-    },
-    {
-      path: 'Salary_Slip',
-      component: SalarySlipComponent,
-      data: {
-        title: 'Salary Slip'
-      }
-    },
-    {
-      path: 'Approve_Evaluate_For_Traning',
-      component: ApproveEvaluateForTraningComponent,
-      data: {
-        title: 'Approve Evaluate For Traning'
-      }
-    },
-    {
-      path: 'Employee_Related_Report',
-      component: EmployeeRelatedReportComponent,
-      data: {
-        title: 'Employee Related Report'
-      }
-    },
-    {
-      path: 'BL_Txn_Service_Engineering_Team',
-      component: ServiceEngineeringTeamComponent,
-      data: {
-        title: 'Service Engineering Team'
-      }
-    },
-    {
-      path: 'Bl_Txn_Project_Master',
-      component: ProjectMasterComponent,
-      data: {
-        title: 'Project Master'
-      }
-    },
-    {
-      path: 'Training_Grade_Module',
-      component: TrainingGradeModuleComponent,
-      data: {
-        title: 'Training Grade Module'
-      }
-    },
-    {
-      path: 'K4C_Voucher',
-      component: K4cVoucherComponent,
-      data: {
-        title: 'Voucher'
-      }
-    },
-    {
-      path: 'CR_Salesman_Target_For_JOH',
-      component: SalesmanTargetForJohComponent,
-      data: {
-        title: 'Salesman Target For Joh'
-      }
-    },
-    {
-      path: 'BL_Txn_Service_Problem_Type',
-      component: ServiceProblemTypeComponent,
-      data: {
-        title: 'Service Problem Type'
-      }
-    },
-     {
-      path: 'BL_Txn_Service_Support_Ticket',
-      component: ServiceSupportTicketComponent,
-      data: {
-        title: 'Support Ticket'
-      }
-    },
-     {
-      path: 'Quiz_Module',
-      component: QuizModuleComponent,
-      data: {
-        title: 'Quiz Module'
-      }
-    },
-    {
-      path: 'K4C_All_Diagnosis',
-      component: K4cAllDiagnosisComponent,
-      data: {
-        title: 'K4C Diagnosis'
-      }
-    },
-    {
-      path: 'Patient_Create_With_Information',
-      component: PatientCreateWithInformationComponent,
-      data: {
-        title: 'Patient Create With Information'
-      }
-    },
-    {
-      path: 'Daily_Attendance_JOH_for_Employee',
-      component: DailyAttendanceJohForEmployeeComponent,
-      data: {
-        title: 'Daily Attendance JOH for Employee'
-      }
-    },
-    {
-      path: 'Leave_Encashment',
-      component: LeaveEncashmentComponent,
-      data: {
-        title: 'Leave Encashment'
-      }
-    },
-    {
-      path: 'BL_CRM_Doctor_Schedule_V2',
-      component: DoctorSchedulComponent,
-      data: {
-        title: 'Doctor Schedule Entry'
-      }
-    },
-    {
-      path: 'BL_Txn_Purchase_bill_MRP_update',
-      component: PurchaseBillMrpUpdateComponent,
-      data: {
-        title: 'Purchase Bill MRP Update'
-      }
-    },
-    {
-      path: 'Full_And_Final_Settlement_for_JOH',
-      component: FullAndFinalSettlementJohHrComponent,
-      data: {
-        title: 'Full And Final Settlement'
-      }
-    },
-    {
-      path: 'Followup_With_Sales_Details',
-      component: FollowupWithSalesDetailsComponent,
-      data: {
-        title: 'Followup With Sales Details'
-      }
-    },
-    {
-      path: 'BL_CRM_Enq_Case_History',
-      component: BlCrmEnqCaseHistoryComponent,
-      data: {
-        title: 'BL CRM Enquiry Case History'
-      }
-    },
-    {
-      path: 'New_Adult_Speech_Evaluation',
-      component: NewAdultSpeechEvaluationComponent,
-      data: {
-        title: 'Adult Speech Evaluation'
-      }
-    },
-    {
-      path: 'New_Child_Speech_Evaluation',
-      component: NewChildSpeechEvaluationComponent,
-      data: {
-        title: 'Child Speech Evaluation'
-      }
-    },
-    {
-      path: 'BL_CRM_LSQ_Bill_Management',
-      component: BlCrmLsqBillManagementComponent,
-      data: {
-        title: 'LSQ Bill Management'
-      }
-    },
-    {
-      path: 'BL_Txn_Coupon_Checking',
-      component: CouponCheckingComponent,
-      data: {
-        title: 'Coupon Check'
-      }
-    },
-    {
-      path: 'BL_Txn_Expense_Tracking_V2',
-      component: ExpenseTrackingComponent,
-      data: {
-        title: 'Expense Tracking'
-      }
-    },
-    {
-      path: 'Crate_Transfer_Dispatch_To_Outlet',
-      component: CrateTransferDispatchToOutletComponent,
-      data: {
-        title: 'Crate Transfer Dispatch To Outlet'
-      }
-    },
-    {
-      path: 'Change_Batch_Number',
-      component: ChangeBatchNumberComponent,
-      data: {
-        title: 'Change Batch Number'
-      }
-    },
-    {
-      path: 'Weekly_Reporting',
-      component: WeeklyReportingComponent,
-      data: {
-        title: 'Weekly Reporting'
-      }
-    },
-    {
-      path: 'CRM_Report_V2',
-      component: CrmReportV2Component,
-      data: {
-        title: 'Report'
-      }
-    },
-    {
-      path: 'Leave_Auto_Update',
-      component: LeaveAutoUpdateComponent,
-      data: {
-        title: 'Leave Auto Update'
-      }
-    },
-    {
-      path: 'BL_Txn_Package_Session_complete',
-      component: PackageSessionCompleteComponent,
-      data: {
-        title: 'Package Session Complete'
-      }
-    },
-    {
-      path: 'BL_Txn_Ref_Doc_Entry',
-      component: BlTxnRefDocEntryComponent,
-      data: {
-        title: 'Reference Doctor Entry'
-      }
-    },
-    {
-      path: 'bl_txn_petty_cash_voucher',
-      component: BlTxnPettyCashVoucherComponent,
-      data: {
-        title: 'Petty Cash'
-      }
-    },
-    {
-      path: 'Hearing_Stock_Report_New',
-      component: HearingStockReportNewComponent,
-      data: {
-        title: 'Stock Report'
-      }
-    }, 
-    {
-      path: 'BL_Txn_Purchase_Bill_from_GRN',
-      component: BLTxnPurchaseBillFromGRNComponent,
-      data: {
-        title: 'Purchase Bill from Purchase GRN'
-      }
-    },
-    {
-      path: 'Bl_Txn_Purchase_GRN',
-      component: BlTxnPurchaseGrnComponent,
-      data: {
-        title: 'GRN'
-      }
-    },
-    {
-      path: 'Patient_Information',
-      component: PatientInformationComponent,
-      data: {
-        title: 'Patient Information'
-      }
-    },
-    {
-      path: 'Doctors_Patients_Report',
-      component: DoctorsPatientsReportComponent,
-      data: {
-        title: 'Doctors Report'
-      }
-    },
-    {
-      path: 'Weekly_Audiologist_Report',
-      component: WeeklyAudiologistReportComponent,
-      data: {
-        title: 'Weekly Audiologist Report'
-      }
-    },
+  },
+  {
+    path: 'Leave_Register',
+    component: LeaveRegisterComponent,
+    data: {
+      title: 'Leave Register'
+    }
+  },
+  {
+    path: 'HR_Reports',
+    component: HrReportsComponent,
+    data: {
+      title: 'HR Reports'
+    }
+  },
+  {
+    path: 'Fins_Sub_Ledger',
+    component: FinsSubLedgerComponent,
+    data: {
+      title: 'Sub Ledger'
+    }
+  },
+  {
+    path: 'Advance_Order_Adjustment',
+    component: AdvanceOrderAdjustmentComponent,
+    data: {
+      title: 'Advance Order Adjustment'
+    }
+  },
+  {
+    path: 'Asset_Master',
+    component: AssetMasterComponent,
+    data: {
+      title: 'Asset Master'
+    }
+  },
+  {
+    path: 'HR_Training',
+    component: HrTrainingComponent,
+    data: {
+      title: 'Training'
+    }
+  },
+  {
+    path: 'Evaluate_For_Traning',
+    component: EvaluateForTrainingComponent,
+    data: {
+      title: 'Evaluate For Traning'
+    }
+  },
+  {
+    path: 'CR_Softhear_Audiologist_Target',
+    component: SofthearAudiologistTargetComponent,
+    data: {
+      title: 'Audiologist Target'
+    }
+  },
+  {
+    path: 'Salary_Slip',
+    component: SalarySlipComponent,
+    data: {
+      title: 'Salary Slip'
+    }
+  },
+  {
+    path: 'Approve_Evaluate_For_Traning',
+    component: ApproveEvaluateForTraningComponent,
+    data: {
+      title: 'Approve Evaluate For Traning'
+    }
+  },
+  {
+    path: 'Employee_Related_Report',
+    component: EmployeeRelatedReportComponent,
+    data: {
+      title: 'Employee Related Report'
+    }
+  },
+  {
+    path: 'BL_Txn_Service_Engineering_Team',
+    component: ServiceEngineeringTeamComponent,
+    data: {
+      title: 'Service Engineering Team'
+    }
+  },
+  {
+    path: 'Bl_Txn_Project_Master',
+    component: ProjectMasterComponent,
+    data: {
+      title: 'Project Master'
+    }
+  },
+  {
+    path: 'Training_Grade_Module',
+    component: TrainingGradeModuleComponent,
+    data: {
+      title: 'Training Grade Module'
+    }
+  },
+  {
+    path: 'K4C_Voucher',
+    component: K4cVoucherComponent,
+    data: {
+      title: 'Voucher'
+    }
+  },
+  {
+    path: 'CR_Salesman_Target_For_JOH',
+    component: SalesmanTargetForJohComponent,
+    data: {
+      title: 'Salesman Target For Joh'
+    }
+  },
+  {
+    path: 'BL_Txn_Service_Problem_Type',
+    component: ServiceProblemTypeComponent,
+    data: {
+      title: 'Service Problem Type'
+    }
+  },
+  {
+    path: 'BL_Txn_Service_Support_Ticket',
+    component: ServiceSupportTicketComponent,
+    data: {
+      title: 'Support Ticket'
+    }
+  },
+  {
+    path: 'Quiz_Module',
+    component: QuizModuleComponent,
+    data: {
+      title: 'Quiz Module'
+    }
+  },
+  {
+    path: 'K4C_All_Diagnosis',
+    component: K4cAllDiagnosisComponent,
+    data: {
+      title: 'K4C Diagnosis'
+    }
+  },
+  {
+    path: 'Patient_Create_With_Information',
+    component: PatientCreateWithInformationComponent,
+    data: {
+      title: 'Patient Create With Information'
+    }
+  },
+  {
+    path: 'Daily_Attendance_JOH_for_Employee',
+    component: DailyAttendanceJohForEmployeeComponent,
+    data: {
+      title: 'Daily Attendance JOH for Employee'
+    }
+  },
+  {
+    path: 'Leave_Encashment',
+    component: LeaveEncashmentComponent,
+    data: {
+      title: 'Leave Encashment'
+    }
+  },
+  {
+    path: 'BL_CRM_Doctor_Schedule_V2',
+    component: DoctorSchedulComponent,
+    data: {
+      title: 'Doctor Schedule Entry'
+    }
+  },
+  {
+    path: 'BL_Txn_Purchase_bill_MRP_update',
+    component: PurchaseBillMrpUpdateComponent,
+    data: {
+      title: 'Purchase Bill MRP Update'
+    }
+  },
+  {
+    path: 'Full_And_Final_Settlement_for_JOH',
+    component: FullAndFinalSettlementJohHrComponent,
+    data: {
+      title: 'Full And Final Settlement'
+    }
+  },
+  {
+    path: 'Followup_With_Sales_Details',
+    component: FollowupWithSalesDetailsComponent,
+    data: {
+      title: 'Followup With Sales Details'
+    }
+  },
+  {
+    path: 'BL_CRM_Enq_Case_History',
+    component: BlCrmEnqCaseHistoryComponent,
+    data: {
+      title: 'BL CRM Enquiry Case History'
+    }
+  },
+  {
+    path: 'New_Adult_Speech_Evaluation',
+    component: NewAdultSpeechEvaluationComponent,
+    data: {
+      title: 'Adult Speech Evaluation'
+    }
+  },
+  {
+    path: 'New_Child_Speech_Evaluation',
+    component: NewChildSpeechEvaluationComponent,
+    data: {
+      title: 'Child Speech Evaluation'
+    }
+  },
+  {
+    path: 'BL_CRM_LSQ_Bill_Management',
+    component: BlCrmLsqBillManagementComponent,
+    data: {
+      title: 'LSQ Bill Management'
+    }
+  },
+  {
+    path: 'BL_Txn_Coupon_Checking',
+    component: CouponCheckingComponent,
+    data: {
+      title: 'Coupon Check'
+    }
+  },
+  {
+    path: 'BL_Txn_Expense_Tracking_V2',
+    component: ExpenseTrackingComponent,
+    data: {
+      title: 'Expense Tracking'
+    }
+  },
+  {
+    path: 'Crate_Transfer_Dispatch_To_Outlet',
+    component: CrateTransferDispatchToOutletComponent,
+    data: {
+      title: 'Crate Transfer Dispatch To Outlet'
+    }
+  },
+  {
+    path: 'Change_Batch_Number',
+    component: ChangeBatchNumberComponent,
+    data: {
+      title: 'Change Batch Number'
+    }
+  },
+  {
+    path: 'Weekly_Reporting',
+    component: WeeklyReportingComponent,
+    data: {
+      title: 'Weekly Reporting'
+    }
+  },
+  {
+    path: 'CRM_Report_V2',
+    component: CrmReportV2Component,
+    data: {
+      title: 'Report'
+    }
+  },
+  {
+    path: 'Leave_Auto_Update',
+    component: LeaveAutoUpdateComponent,
+    data: {
+      title: 'Leave Auto Update'
+    }
+  },
+  {
+    path: 'BL_Txn_Package_Session_complete',
+    component: PackageSessionCompleteComponent,
+    data: {
+      title: 'Package Session Complete'
+    }
+  },
+  {
+    path: 'BL_Txn_Ref_Doc_Entry',
+    component: BlTxnRefDocEntryComponent,
+    data: {
+      title: 'Reference Doctor Entry'
+    }
+  },
+  {
+    path: 'bl_txn_petty_cash_voucher',
+    component: BlTxnPettyCashVoucherComponent,
+    data: {
+      title: 'Petty Cash'
+    }
+  },
+  {
+    path: 'Hearing_Stock_Report_New',
+    component: HearingStockReportNewComponent,
+    data: {
+      title: 'Stock Report'
+    }
+  },
+  {
+    path: 'BL_Txn_Purchase_Bill_from_GRN',
+    component: BLTxnPurchaseBillFromGRNComponent,
+    data: {
+      title: 'Purchase Bill from Purchase GRN'
+    }
+  },
+  {
+    path: 'Bl_Txn_Purchase_GRN',
+    component: BlTxnPurchaseGrnComponent,
+    data: {
+      title: 'GRN'
+    }
+  },
+  {
+    path: 'Patient_Information',
+    component: PatientInformationComponent,
+    data: {
+      title: 'Patient Information'
+    }
+  },
+  {
+    path: 'Doctors_Patients_Report',
+    component: DoctorsPatientsReportComponent,
+    data: {
+      title: 'Doctors Report'
+    }
+  },
+  {
+    path: 'Weekly_Audiologist_Report',
+    component: WeeklyAudiologistReportComponent,
+    data: {
+      title: 'Weekly Audiologist Report'
+    }
+  },
+  {
+    path: 'Hearing_BL_CRM_Appointment_Multiple',
+    component: HearingBlCrmAppointmentMultipleComponent,
+    data: {
+      title: 'Appointment Multiple'
+    }
+  },
     /*{
 
 
@@ -3461,4 +3469,4 @@ path: 'Doctors_Appointment_New_Fine_Tuning_Hearing',
   imports: [CommonModule, RouterModule.forChild(layoutRoutes)],
   exports: [RouterModule]
 })
-export class LayoutRouteModule {}
+export class LayoutRouteModule { }

@@ -58,15 +58,15 @@ import { RadioButtonModule, InputMaskModule } from "primeng/primeng";
 import { EditorModule } from "primeng/editor";
 import { CalendarModule } from "primeng/calendar";
 import { AccordionModule } from 'primeng/accordion';
-import {ProgressBarModule} from 'primeng/progressbar';
-import {FieldsetModule} from 'primeng/fieldset';
-import {TreeModule} from 'primeng/tree';
-import {SelectButtonModule} from 'primeng/selectbutton';
-import {TooltipModule} from 'primeng/tooltip';
-import {DataViewModule} from 'primeng/dataview';
-import {PanelModule} from 'primeng/panel';
-import {OverlayPanelModule} from 'primeng/overlaypanel';
-import {SliderModule} from 'primeng/slider';
+import { ProgressBarModule } from 'primeng/progressbar';
+import { FieldsetModule } from 'primeng/fieldset';
+import { TreeModule } from 'primeng/tree';
+import { SelectButtonModule } from 'primeng/selectbutton';
+import { TooltipModule } from 'primeng/tooltip';
+import { DataViewModule } from 'primeng/dataview';
+import { PanelModule } from 'primeng/panel';
+import { OverlayPanelModule } from 'primeng/overlaypanel';
+import { SliderModule } from 'primeng/slider';
 // SPINNER
 import { NgxUiLoaderModule } from "ngx-ui-loader";
 // SYN
@@ -82,7 +82,7 @@ import { DatePickerModule } from '@syncfusion/ej2-angular-calendars';
 import { TimePickerModule } from '@syncfusion/ej2-angular-calendars';
 // DATE TIME
 
-import { OwlDateTimeModule, OwlNativeDateTimeModule ,OWL_DATE_TIME_FORMATS, OWL_DATE_TIME_LOCALE } from 'ng-pick-datetime';
+import { OwlDateTimeModule, OwlNativeDateTimeModule, OWL_DATE_TIME_FORMATS, OWL_DATE_TIME_LOCALE } from 'ng-pick-datetime';
 
 
 // Nepali Date
@@ -123,10 +123,10 @@ import { NewHaCustomComponent } from "./common/SalesAndDistribution/Transaction/
 import { NewHAComponent } from "./common/SalesAndDistribution/Transaction/new-ha/new-ha.component";
 import { InwardOutwardRegisterComponent } from "./common/SalesAndDistribution/Transaction/inward-outward-register/inward-outward-register.component";
 import { EarMouldComponent } from "./common/SalesAndDistribution/Transaction/ear-mould/ear-mould.component";
-import { ConsultancyCommissionComponent} from './common/PatientManagement/Master/consultancy-commission/consultancy-commission.component';
-import { DoctorCommissionCalculatorComponent} from './common/PatientManagement/Master/doctor-commission-calculator/doctor-commission-calculator.component';
-import { AdjustmentVoucherComponent} from './common/PatientManagement/Transaction/adjustment-voucher/adjustment-voucher.component';
-import { InwardReplacementComponent} from './common/MaterialManagement/Inward/inward-replacement/inward-replacement.component';
+import { ConsultancyCommissionComponent } from './common/PatientManagement/Master/consultancy-commission/consultancy-commission.component';
+import { DoctorCommissionCalculatorComponent } from './common/PatientManagement/Master/doctor-commission-calculator/doctor-commission-calculator.component';
+import { AdjustmentVoucherComponent } from './common/PatientManagement/Transaction/adjustment-voucher/adjustment-voucher.component';
+import { InwardReplacementComponent } from './common/MaterialManagement/Inward/inward-replacement/inward-replacement.component';
 import { ClinicTrialComponent } from './common/PatientManagement/Transaction/clinic-trial/clinic-trial.component';
 import { CustomerSalesComponent } from './common/CRM/Report/customer-sales/customer-sales.component';
 import { CompacctStockReportComponent } from './common/MaterialManagement/Report/compacct-stock-report/compacct-stock-report.component';
@@ -236,7 +236,7 @@ import { OutletStockTransferAutoBatchComponent } from './common/OutletManagement
 import { BillEditFromAdminComponent } from './common/MaterialManagement/bill-edit-from-admin/bill-edit-from-admin.component';
 import { TxnEnqTenderHarbauerComponent } from './common/TenderManagement/txn-enq-tender-harbauer/txn-enq-tender-harbauer.component';
 // Chips
-import {ChipsModule} from 'primeng/chips';
+import { ChipsModule } from 'primeng/chips';
 import { TutoUploadDataSupportComponent } from './common/CRM/Master/tuto-upload-data-support/tuto-upload-data-support.component';
 import { EnggNepalMachineMasterComponent } from './common/MaterialManagement/Master/engg-nepal-machine-master/engg-nepal-machine-master.component';
 import { EnggNepalSparePartsComponent } from './common/MaterialManagement/Master/engg-nepal-spare-parts/engg-nepal-spare-parts.component';
@@ -271,14 +271,14 @@ import { AccOpeningBalcManagementComponent } from './common/OutletManagement/acc
 import { EngineeringQuotationNepalComponent } from './common/Engineering&CRM/Transaction/engineering-quotation-nepal/engineering-quotation-nepal.component';
 import { CompacctDocumentVaultComponent } from "./shared/compacct.components/compacct.document.vault/compacct.document.vault.component";
 import { GrnViewPurchaseBillComponent } from './common/MaterialManagement/Inward/grn-view-purchase-bill/grn-view-purchase-bill.component';
-import {SplitButtonModule} from 'primeng/splitbutton';
+import { SplitButtonModule } from 'primeng/splitbutton';
 import { ProductsPlaningComponent } from './common/TenderManagement/products-planing/products-planing.component';
 import { CompacctTxnTaskGanttComponent } from './common/TenderManagement/compacct-txn-task-gantt/compacct-txn-task-gantt.component';
-import {UserAbsentComponent} from './common/CRM/Master/user-absent/user-absent.component';
+import { UserAbsentComponent } from './common/CRM/Master/user-absent/user-absent.component';
 import { TutoBdaJoiningComponent } from './common/CRM/Transaction/tuto-bda-joining/tuto-bda-joining.component';
 import { TutoAspUnavaliblityComponent } from './common/CRM/Master/tuto-asp-unavaliblity/tuto-asp-unavaliblity.component'
 
-import { SortService, FilterService, ColumnMenuService  } from '@syncfusion/ej2-angular-gantt';
+import { SortService, FilterService, ColumnMenuService } from '@syncfusion/ej2-angular-gantt';
 import { RetailBrowseComponent } from './common/FinancialManagement/Retail/retail-browse/retail-browse.component';
 import { RetailBrowseReceiveComponent } from './common/FinancialManagement/Retail/retail-browse-receive/retail-browse-receive.component';
 import { RetailBrowseAdvanceComponent } from './common/FinancialManagement/Retail/retail-browse-advance/retail-browse-advance.component';
@@ -488,7 +488,7 @@ import { ApproveHrRequisitionFormComponent } from './common/Attendance/approve-h
 import { RetailAdvanceOrderComponent } from './common/FinancialManagement/Retail/retail-advance-order/retail-advance-order.component';
 import { SalesmanTargetComponent } from './common/PatientManagement/Audiologist/salesman-target/salesman-target.component';
 import { HRAttnDetalisComponent } from './common/HR/hr-attn-detalis/hr-attn-detalis.component';
-import {GMapModule} from 'primeng/gmap';
+import { GMapModule } from 'primeng/gmap';
 import { AgmCoreModule } from '@agm/core';
 import { EmployeeBonusComponent } from './common/MICL/employee-bonus/employee-bonus.component';
 import { HrRecruitmentTrackerComponent } from './common/Attendance/hr-recruitment-tracker/hr-recruitment-tracker.component';
@@ -546,6 +546,7 @@ import { BlTxnPurchaseGrnComponent } from './common/MaterialManagement/Inward/bl
 import { PatientInformationComponent } from './common/PatientManagement/patient-information/patient-information.component';
 import { DoctorsPatientsReportComponent } from './common/PatientManagement/doctors-patients-report/doctors-patients-report.component';
 import { WeeklyAudiologistReportComponent } from './common/PatientManagement/weekly-audiologist-report/weekly-audiologist-report.component';
+import { HearingBlCrmAppointmentMultipleComponent } from "./common/PatientManagement/hearing-bl-crm-appointment-multiple/hearing-bl-crm-appointment-multiple.component";
 @NgModule({
   declarations: [
     AppLayoutComponent,
@@ -658,16 +659,16 @@ import { WeeklyAudiologistReportComponent } from './common/PatientManagement/wee
     TutoDsBillComponent,
     TutoPaymentLinkComponent,
     HearingSpeechAppointmentComponent,
-    K4cMasterBOMReciepeComponent ,
-    IssueStockAdjustmentComponent ,
-    ReceiveStockAdjustmentComponent ,
-    StoreItemIndentComponent ,
+    K4cMasterBOMReciepeComponent,
+    IssueStockAdjustmentComponent,
+    ReceiveStockAdjustmentComponent,
+    StoreItemIndentComponent,
     OutletTxnBankDepositComponent,
     K4cFactoryIndentAdvanceComponent,
     MasterUOMCommonComponent,
     K4cRawMaterialIssueComponent,
     K4cRawMaterialIndentComponent,
-    OutletPhysicalClosingStockComponent ,
+    OutletPhysicalClosingStockComponent,
     K4cRawMaterialStockTransferComponent,
     K4cDispatchOutletStoreComponent,
     K4cPurchasePlaningComponent,
@@ -1005,7 +1006,8 @@ import { WeeklyAudiologistReportComponent } from './common/PatientManagement/wee
     BlTxnPurchaseGrnComponent,
     PatientInformationComponent,
     DoctorsPatientsReportComponent,
-    WeeklyAudiologistReportComponent
+    WeeklyAudiologistReportComponent,
+    HearingBlCrmAppointmentMultipleComponent
   ],
   imports: [
     CommonModule,
@@ -1059,7 +1061,7 @@ import { WeeklyAudiologistReportComponent } from './common/PatientManagement/wee
       // https://developers.google.com/maps/documentation/javascript/get-api-key?hl=en
       apiKey: 'AIzaSyDSloRmchjfZhHX2u-vXo1i9uGX7Qj7AV0'
     })
-  
+
   ],
   exports: [],
   providers: [
@@ -1074,10 +1076,10 @@ import { WeeklyAudiologistReportComponent } from './common/PatientManagement/wee
     DateNepalConvertService,
     CommonUserActivityService,
     SelectionService,
-    {provide: OWL_DATE_TIME_LOCALE, useValue: 'en-IN'},
+    { provide: OWL_DATE_TIME_LOCALE, useValue: 'en-IN' },
     SortService,
     FilterService,
     ColumnMenuService
   ]
 })
-export class LayoutModule {}
+export class LayoutModule { }
